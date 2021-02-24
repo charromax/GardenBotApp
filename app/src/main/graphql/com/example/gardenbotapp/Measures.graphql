@@ -1,0 +1,8 @@
+query Measures($deviceId: ID!) {
+    getMeasures(deviceId:$deviceId){
+        createdAt
+        airHum
+        airTemp
+        soilHum
+    }
+}
