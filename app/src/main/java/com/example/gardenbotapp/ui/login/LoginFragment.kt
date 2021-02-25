@@ -12,9 +12,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentLoginBinding
+import com.example.gardenbotapp.util.snack
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collect
 
 
@@ -62,18 +62,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             viewModel.logEvents.collect { event ->
                 when (event) {
                     is LoginViewModel.LoginEvents.LoginError -> {
-                        Snackbar.make(
-                            binding.root,
-                            "Error: ${event.message}",
-                            Snackbar.LENGTH_LONG
-                        ).show()
+                        binding.root.snack("Error: ${event.message}")
                     }
                     LoginViewModel.LoginEvents.LoginSuccess -> {
-                        Snackbar.make(
-                            binding.root,
+                        binding.root.snack(
                             "Bienvenido a GardenBot!",
                             Snackbar.LENGTH_SHORT
-                        ).show()
+                        )
                         viewModel.password = ""
                         viewModel.username = ""
                     }
