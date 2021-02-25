@@ -1,3 +1,7 @@
+<!--
+  ~ Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
+  -->
+
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.GardenBotApp" parent="Theme.MaterialComponents.DayNight.DarkActionBar">

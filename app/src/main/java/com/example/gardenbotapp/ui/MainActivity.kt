@@ -1,17 +1,14 @@
+/*
+ * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
+ */
+
 package com.example.gardenbotapp.ui
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import androidx.activity.viewModels
-import androidx.lifecycle.Observer
+import androidx.appcompat.app.AppCompatActivity
 import com.example.gardenbotapp.R
-import com.example.gardenbotapp.data.model.Device
-import com.example.gardenbotapp.data.model.User
 import com.example.gardenbotapp.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import java.sql.Date
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -27,7 +24,6 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.app_bar))
     }
 
-    @ExperimentalCoroutinesApi
 //    private fun observeViewModel() {
 //
 //        viewModel.allMeasures.observe(this, Observer {

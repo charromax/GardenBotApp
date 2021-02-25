@@ -1,22 +1,22 @@
+/*
+ * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
+ */
+
 package com.example.gardenbotapp.data.remote
 
-import android.content.Context
 import android.util.Log
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.coroutines.await
-import com.apollographql.apollo.coroutines.toFlow
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.LoginUserMutation
 import com.example.gardenbotapp.MeasuresQuery
 import com.example.gardenbotapp.RegisterUserMutation
-import com.example.gardenbotapp.data.model.User
 import com.example.gardenbotapp.type.RegisterInput
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
 import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import java.lang.Exception
 
 object Client {
     private const val TAG = "CLIENT"
@@ -100,7 +100,7 @@ object Client {
     }
 }
 
-class AuthInterceptor() : Interceptor {
+class AuthInterceptor : Interceptor {
     private val token: Nothing =
         TODO("after user login or registration save token in preferences manager to be used for requests")
 

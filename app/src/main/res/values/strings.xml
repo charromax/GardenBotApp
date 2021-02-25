@@ -1,3 +1,7 @@
+<!--
+  ~ Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
+  -->
+
 <resources>
     <string name="app_name">GardenBotApp</string>
     <string name="user_login">charr0max</string>
@@ -11,4 +15,5 @@
     <string name="email_label">email</string>
     <string name="register_label">Registro</string>
     <string name="empty_fields_message">Los campos no pueden estar vacíos!</string>
+    <string name="all_fields_required_message">Todos los campos son requeridos!</string>
 </resources>

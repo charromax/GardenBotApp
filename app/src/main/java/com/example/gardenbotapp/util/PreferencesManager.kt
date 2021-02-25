@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
+ */
+
 package com.example.gardenbotapp.util
 
 import android.content.Context
@@ -6,6 +10,7 @@ import androidx.datastore.preferences.edit
 import androidx.datastore.preferences.emptyPreferences
 import androidx.datastore.preferences.preferencesKey
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import java.io.IOException
@@ -19,7 +24,9 @@ enum class Categories { AIR_TEMP, AIR_HUM, SOIL_HUM, ALL }
 data class FilterPreferences(
     val order: SortOrder,
     val category: Categories,
-    val deviceId: String
+    val deviceId: String,
+    val userId: String,
+    val token: String
 )
 
 @Singleton
@@ -44,7 +51,9 @@ class PreferencesManager @Inject constructor(@ApplicationContext context: Contex
                 prefs[PreferencesKeys.SELECTED_CATEGORY] ?: Categories.ALL.name
             )
             val selectedDevice = prefs[PreferencesKeys.SELECTED_DEVICE] ?: ""
-            FilterPreferences(sortOrder, selectedCategory, selectedDevice)
+            val userId = prefs[PreferencesKeys.USER_ID] ?: ""
+            val token = prefs[PreferencesKeys.TOKEN] ?: ""
+            FilterPreferences(sortOrder, selectedCategory, selectedDevice, userId, token)
         }
 
     suspend fun updateSortOrder(sortOrder: SortOrder) {
@@ -63,6 +72,25 @@ class PreferencesManager @Inject constructor(@ApplicationContext context: Contex
         dataStore.edit { prefs ->
             prefs[PreferencesKeys.SELECTED_DEVICE] = deviceId
         }
+    }
+
+    suspend fun updateToken(token: String) {
+        dataStore.edit { prefs ->
+            prefs[PreferencesKeys.TOKEN] = token
+        }
+    }
+
+    suspend fun updateUserId(userId: String) {
+        dataStore.edit { prefs ->
+            prefs[PreferencesKeys.USER_ID] = userId
+        }
+    }
+
+    val tokenFlow: Flow<String> = dataStore.data.map {
+        it[PreferencesKeys.TOKEN] ?: ""
+    }
+    val userIdFlow: Flow<String> = dataStore.data.map {
+        it[PreferencesKeys.USER_ID] ?: ""
     }
 
     private object PreferencesKeys {

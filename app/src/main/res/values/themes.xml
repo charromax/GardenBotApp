@@ -1,3 +1,7 @@
+<!--
+  ~ Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
+  -->
+
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.GardenBotApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">
@@ -22,6 +26,7 @@
     <style name="GardenButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
         <item name="shapeAppearanceOverlay">@style/MyShapeAppearance</item>
     </style>
+
     <style name="MyShapeAppearance">
         <item name="cornerFamily">rounded</item>
         <item name="cornerFamilyTopLeft">cut</item>

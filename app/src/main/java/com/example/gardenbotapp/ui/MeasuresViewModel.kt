@@ -1,12 +1,14 @@
+/*
+ * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
+ */
+
 package com.example.gardenbotapp.ui
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
-import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.LoginUserMutation
-import com.example.gardenbotapp.MeasuresQuery
 import com.example.gardenbotapp.RegisterUserMutation
 import com.example.gardenbotapp.data.GardenBotRepository
 import com.example.gardenbotapp.type.RegisterInput
@@ -24,7 +26,6 @@ class MeasuresViewModel @Inject constructor(
     preferencesManager: PreferencesManager,
     @ApplicationContext private val applicationContext: Context
 ) : ViewModel() {
-    //TODO: measures view model with state flow  -> DONE or so it seems
 
     private val prefs = preferencesManager.preferencesFlow
 
@@ -78,8 +79,6 @@ class MeasuresViewModel @Inject constructor(
         const val TAG = "VIEWMODEL"
     }
 
-    sealed class GardenBotEvents {
-
-    }
+    sealed class GardenBotEvents
 
 }

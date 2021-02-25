@@ -1,7 +1,9 @@
+/*
+ * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
+ */
+
 package com.example.gardenbotapp.ui
 
-import androidx.lifecycle.LiveData
-import com.apollographql.apollo.api.Response
 import com.example.gardenbotapp.LoginUserMutation
 import com.example.gardenbotapp.MeasuresQuery
 import com.example.gardenbotapp.RegisterUserMutation

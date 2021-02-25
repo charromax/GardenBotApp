@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
+ */
+
 package com.example.gardenbotapp.ui.login
 
 import android.os.Bundle
@@ -13,7 +17,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentLoginBinding
 import com.example.gardenbotapp.util.snack
-import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -32,17 +35,20 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     ): View? {
         binding = FragmentLoginBinding.inflate(inflater)
         activity?.title = getString(R.string.login)
-        binding.notRegTextClick.setOnClickListener {
-            Log.i(TAG, "onCreateView: Clicked!")
-            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToRegisterFragment())
-        }
+
         setHasOptionsMenu(true)
         return binding.root
     }
 
     private fun setOnClickListeners() {
+
         binding.submitBtn.setOnClickListener {
             viewModel.loginUser()
+        }
+
+        binding.notRegTextClick.setOnClickListener {
+            Log.i(TAG, "onCreateView: Clicked!")
+            findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToRegisterFragment())
         }
     }
 
@@ -58,24 +64,31 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setOnClickListeners()
         setTextChangedListeners()
+        observeLiveData()
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.logEvents.collect { event ->
                 when (event) {
                     is LoginViewModel.LoginEvents.LoginError -> {
                         binding.root.snack("Error: ${event.message}")
                     }
-                    LoginViewModel.LoginEvents.LoginSuccess -> {
-                        binding.root.snack(
-                            "Bienvenido a GardenBot!",
-                            Snackbar.LENGTH_SHORT
-                        )
-                        viewModel.password = ""
-                        viewModel.username = ""
-                    }
                 }.exhaustive
 
             }
         }
+    }
+
+    private fun observeLiveData() {
+        viewModel.token.observe(viewLifecycleOwner, { token ->
+            if (token.isNotBlank() && token.isNotEmpty()) {
+                binding.root.snack(
+                    "Bienvenidx a GardenBot!"
+                )
+                findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
+            }
+        })
+        viewModel.logResponse.observe(viewLifecycleOwner, { login ->
+            viewModel.updatePreferences(login)
+        })
     }
 
     companion object {

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
+ */
+
 package com.example.gardenbotapp.data.model
 
 import android.os.Build
@@ -5,9 +9,7 @@ import android.os.Parcelable
 import androidx.annotation.RequiresApi
 import kotlinx.android.parcel.IgnoredOnParcel
 import kotlinx.android.parcel.Parcelize
-import java.text.DateFormat
 import java.time.LocalDateTime
-import kotlin.collections.ArrayList
 
 @Parcelize
 data class User(

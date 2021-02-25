@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
+ */
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'

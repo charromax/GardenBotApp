@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
+ */
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
