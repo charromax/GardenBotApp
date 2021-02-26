@@ -10,8 +10,8 @@ import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.RegisterUserMutation
 import com.example.gardenbotapp.data.GardenBotRepository
+import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.type.RegisterInput
-import com.example.gardenbotapp.util.PreferencesManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel

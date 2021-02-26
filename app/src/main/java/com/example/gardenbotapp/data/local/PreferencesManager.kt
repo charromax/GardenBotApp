@@ -2,7 +2,7 @@
  * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
  */
 
-package com.example.gardenbotapp.util
+package com.example.gardenbotapp.data.local
 
 import android.content.Context
 import androidx.datastore.preferences.createDataStore
@@ -86,12 +86,28 @@ class PreferencesManager @Inject constructor(@ApplicationContext context: Contex
         }
     }
 
-    val tokenFlow: Flow<String> = dataStore.data.map {
-        it[PreferencesKeys.TOKEN] ?: ""
-    }
-    val userIdFlow: Flow<String> = dataStore.data.map {
-        it[PreferencesKeys.USER_ID] ?: ""
-    }
+    val tokenFlow: Flow<String> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map {
+            it[PreferencesKeys.TOKEN] ?: ""
+        }
+    val userIdFlow: Flow<String> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map {
+            it[PreferencesKeys.USER_ID] ?: ""
+        }
 
     private object PreferencesKeys {
         val SORT_ORDER = preferencesKey<String>("sort_order")

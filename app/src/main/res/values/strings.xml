@@ -16,4 +16,9 @@
     <string name="register_label">Registro</string>
     <string name="empty_fields_message">Los campos no pueden estar vacíos!</string>
     <string name="all_fields_required_message">Todos los campos son requeridos!</string>
+    <string name="air_temp_line_mapping">{ x: \'x\', value: \'airTemp\' }</string>
+    <string name="air_hum_line_mapping">{ x: \'x\', value: \'airHum\' }</string>
+    <string name="soil_hum_line_mapping">{ x: \'x\', value: \'soilHum\' }</string>
+    <string name="chart_title">Información Ambiental</string>
+    <string name="chart_y_axis_title">% y °C</string>
 </resources>

@@ -16,7 +16,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentLoginBinding
+import com.example.gardenbotapp.util.enable
 import com.example.gardenbotapp.util.snack
+import com.example.gardenbotapp.util.visible
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -43,6 +46,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private fun setOnClickListeners() {
 
         binding.submitBtn.setOnClickListener {
+            binding.progressBar.visible(true)
             viewModel.loginUser()
         }
 
@@ -58,10 +62,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
         binding.passwordEd.addTextChangedListener {
             viewModel.password = it.toString()
+            binding.submitBtn.enable(viewModel.username.isNotEmpty() && it.toString().isNotEmpty())
         }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.progressBar.visible(false)
+        binding.submitBtn.enable(false)
         setOnClickListeners()
         setTextChangedListeners()
         observeLiveData()
@@ -79,9 +86,10 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun observeLiveData() {
         viewModel.token.observe(viewLifecycleOwner, { token ->
+            binding.progressBar.visible(false)
             if (token.isNotBlank() && token.isNotEmpty()) {
                 binding.root.snack(
-                    "Bienvenidx a GardenBot!"
+                    "Bienvenidx a GardenBot!", Snackbar.LENGTH_SHORT
                 )
                 findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
             }

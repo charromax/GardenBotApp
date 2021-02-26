@@ -17,18 +17,21 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 
-object Client {
-    private const val TAG = "CLIENT"
-    private const val BASE_URL = "http://192.168.0.6:5000/graphql"
-    private val apolloClient: ApolloClient by lazy {
+private const val TAG = "CLIENT"
+private const val BASE_URL = "http://192.168.0.6:5000/graphql"
+
+class Client(val token: String? = null) {
+
+    val apolloClient: ApolloClient by lazy {
         ApolloClient.builder()
             .serverUrl(BASE_URL)
-//            .okHttpClient(
-//                OkHttpClient.Builder()
-//        .addInterceptor(AuthInterceptor())
-//        .build()
-//    )
+            .okHttpClient(
+                OkHttpClient.Builder()
+                    .addInterceptor(AuthInterceptor(token))
+                    .build()
+            )
             .build()
     }
 
@@ -100,16 +103,13 @@ object Client {
     }
 }
 
-class AuthInterceptor : Interceptor {
-    private val token: Nothing =
-        TODO("after user login or registration save token in preferences manager to be used for requests")
-
+class AuthInterceptor(val token: String?) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
         val request = chain.request().newBuilder()
-            .addHeader("Authorization", token)
+            .addHeader("Authorization", if (token != null) "Bearer $token" else "")
             .build()
-
         return chain.proceed(request)
+
     }
 
 }

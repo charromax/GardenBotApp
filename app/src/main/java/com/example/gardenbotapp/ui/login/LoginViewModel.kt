@@ -9,7 +9,7 @@ import androidx.lifecycle.*
 import com.example.gardenbotapp.LoginUserMutation
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.data.GardenBotRepository
-import com.example.gardenbotapp.util.PreferencesManager
+import com.example.gardenbotapp.data.local.PreferencesManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*

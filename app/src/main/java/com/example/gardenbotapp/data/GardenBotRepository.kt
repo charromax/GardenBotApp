@@ -15,15 +15,22 @@ import kotlinx.coroutines.flow.Flow
 class GardenBotRepository: GardenBotContract {
 
 
-    override suspend fun getMeasuresForDevice(deviceId: String): Flow<List<MeasuresQuery.GetMeasure?>> {
-        return Client.getAllMeasures(deviceId)
+    override suspend fun getMeasuresForDevice(
+        deviceId: String,
+        token: String
+    ): Flow<List<MeasuresQuery.GetMeasure?>> {
+        return Client(token).getAllMeasures(deviceId)
     }
 
     override suspend fun registerNewUser(userInput: RegisterInput): RegisterUserMutation.Register? {
-        return Client.registerNewUser(userInput)
+        return Client(null).registerNewUser(userInput)
     }
 
     override suspend fun loginUser(username: String, password: String): LoginUserMutation.Login? {
-        return try { Client.loginUser(username, password) } catch (e:Exception) { throw Exception(e.message) }
+        return try {
+            Client(null).loginUser(username, password)
+        } catch (e: Exception) {
+            throw Exception(e.message)
+        }
     }
 }
