@@ -36,10 +36,22 @@
         <action
             android:id="@+id/action_registerFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
+        <action
+            android:id="@+id/action_registerFragment_to_viewPagerFragment"
+            app:destination="@id/viewPagerFragment" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.gardenbotapp.ui.home.HomeFragment"
         android:label="HomeFragment"
         tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/viewPagerFragment"
+        tools:layout="@layout/fragment_view_pager"
+        android:name="com.example.gardenbotapp.ui.onboarding.ViewPagerFragment"
+        android:label="ViewPagerFragment">
+        <action
+            android:id="@+id/action_viewPagerFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>
