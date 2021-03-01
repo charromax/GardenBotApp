@@ -6,6 +6,7 @@ package com.example.gardenbotapp.ui
 
 import com.example.gardenbotapp.LoginUserMutation
 import com.example.gardenbotapp.MeasuresQuery
+import com.example.gardenbotapp.RefreshTokenQuery
 import com.example.gardenbotapp.RegisterUserMutation
 import com.example.gardenbotapp.type.RegisterInput
 import kotlinx.coroutines.flow.Flow
@@ -17,5 +18,6 @@ interface GardenBotContract {
     ): Flow<List<MeasuresQuery.GetMeasure?>>
 
     suspend fun registerNewUser(userInput: RegisterInput): RegisterUserMutation.Register?
-    suspend fun loginUser(username: String, password:String): LoginUserMutation.Login?
+    suspend fun loginUser(username: String, password: String): LoginUserMutation.Login?
+    suspend fun refreshToken(token: String): RefreshTokenQuery.Data?
 }

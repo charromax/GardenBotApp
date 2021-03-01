@@ -10,9 +10,9 @@ import com.apollographql.apollo.coroutines.await
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.LoginUserMutation
 import com.example.gardenbotapp.MeasuresQuery
+import com.example.gardenbotapp.RefreshTokenQuery
 import com.example.gardenbotapp.RegisterUserMutation
 import com.example.gardenbotapp.type.RegisterInput
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
@@ -24,7 +24,7 @@ private const val BASE_URL = "http://192.168.0.6:5000/graphql"
 
 class Client(val token: String? = null) {
 
-    val apolloClient: ApolloClient by lazy {
+    private val apolloClient: ApolloClient by lazy {
         ApolloClient.builder()
             .serverUrl(BASE_URL)
             .okHttpClient(
@@ -39,7 +39,6 @@ class Client(val token: String? = null) {
         Log.i(TAG, "Client started...")
     }
 
-    @ExperimentalCoroutinesApi
     suspend fun getAllMeasures(deviceId: String): Flow<List<MeasuresQuery.GetMeasure?>> {
         if (deviceId.isNotBlank()) {
             try {
@@ -101,6 +100,26 @@ class Client(val token: String? = null) {
         return null
 
     }
+
+    suspend fun refreshToken(): RefreshTokenQuery.Data? {
+        try {
+            val response = apolloClient.query(RefreshTokenQuery()).await()
+
+            if (response.data == null || response.hasErrors()) {
+                Log.i(TAG, "refreshToken: ERROR: ${response.errors?.map { it.message }}")
+                return null
+            } else {
+                response.data?.let {
+                    return it
+                }
+            }
+        } catch (e: ApolloException) {
+            Log.i(TAG, "ERROR: ${e.message}")
+        }
+        return null
+    }
+
+
 }
 
 class AuthInterceptor(val token: String?) : Interceptor {

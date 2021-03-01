@@ -6,6 +6,7 @@ package com.example.gardenbotapp.data
 
 import com.example.gardenbotapp.LoginUserMutation
 import com.example.gardenbotapp.MeasuresQuery
+import com.example.gardenbotapp.RefreshTokenQuery
 import com.example.gardenbotapp.RegisterUserMutation
 import com.example.gardenbotapp.data.remote.Client
 import com.example.gardenbotapp.type.RegisterInput
@@ -22,6 +23,7 @@ class GardenBotRepository: GardenBotContract {
         return Client(token).getAllMeasures(deviceId)
     }
 
+
     override suspend fun registerNewUser(userInput: RegisterInput): RegisterUserMutation.Register? {
         return Client(null).registerNewUser(userInput)
     }
@@ -32,5 +34,9 @@ class GardenBotRepository: GardenBotContract {
         } catch (e: Exception) {
             throw Exception(e.message)
         }
+    }
+
+    override suspend fun refreshToken(token: String): RefreshTokenQuery.Data? {
+        return Client(token).refreshToken()
     }
 }
