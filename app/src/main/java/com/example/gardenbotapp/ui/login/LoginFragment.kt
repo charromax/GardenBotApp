@@ -4,11 +4,13 @@
 
 package com.example.gardenbotapp.ui.login
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentLoginBinding
+import com.example.gardenbotapp.util.UIState
 import com.example.gardenbotapp.util.enable
 import com.example.gardenbotapp.util.snack
 import com.example.gardenbotapp.util.visible
@@ -31,6 +34,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     private val viewModel: LoginViewModel by viewModels()
 
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -38,15 +42,18 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     ): View? {
         binding = FragmentLoginBinding.inflate(inflater)
         activity?.title = getString(R.string.login)
-
+        binding.progressBar.visible(false)
+        binding.submitBtn.enable(false)
+        binding.submitBtn.elevation = 0f
         setHasOptionsMenu(true)
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setOnClickListeners() {
 
         binding.submitBtn.setOnClickListener {
-            binding.progressBar.visible(true)
+            setUIState(UIState.LOADING)
             viewModel.loginUser()
         }
 
@@ -56,19 +63,53 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
+    private fun setUIState(state: UIState) {
+        when (state) {
+            UIState.READY -> {
+                binding.progressBar.visible(false)
+                with(binding.submitBtn) {
+                    enable(false)
+                    elevation = 0f
+
+                }
+                clearBoxes()
+            }
+            UIState.TYPING -> {
+                with(binding.submitBtn) {
+                    enable(
+                        viewModel.username.isNotEmpty()
+                                && viewModel.password.isNotEmpty()
+                    )
+                    elevation = 8f
+                }
+
+            }
+            UIState.LOADING -> {
+                binding.progressBar.visible(true)
+                with(binding.submitBtn) {
+                    enable(false)
+                    elevation = 0f
+                }
+            }
+        }.exhaustive
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setTextChangedListeners() {
         binding.usernameEd.addTextChangedListener {
             viewModel.username = it.toString()
         }
         binding.passwordEd.addTextChangedListener {
             viewModel.password = it.toString()
-            binding.submitBtn.enable(viewModel.username.isNotEmpty() && it.toString().isNotEmpty())
+            setUIState(UIState.TYPING)
+
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.progressBar.visible(false)
-        binding.submitBtn.enable(false)
         setOnClickListeners()
         setTextChangedListeners()
         observeLiveData()
@@ -76,6 +117,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             viewModel.logEvents.collect { event ->
                 when (event) {
                     is LoginViewModel.LoginEvents.LoginError -> {
+                        setUIState(UIState.READY)
                         binding.root.snack("Error: ${event.message}")
                     }
                 }.exhaustive
@@ -84,11 +126,23 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         }
     }
 
+    private fun clearBoxes() {
+        with(binding) {
+            usernameEd.setText("")
+            passwordEd.setText("")
+            usernameEd.requestFocus()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun observeLiveData() {
+
         viewModel.token.observe(viewLifecycleOwner, { token ->
             binding.progressBar.visible(false)
             if (token.isNotBlank() && token.isNotEmpty()) {
+                setUIState(UIState.READY)
                 binding.root.snack(
+
                     "Bienvenidx a GardenBot!", Snackbar.LENGTH_SHORT
                 )
                 findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())

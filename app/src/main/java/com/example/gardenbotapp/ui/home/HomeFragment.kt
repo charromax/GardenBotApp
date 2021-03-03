@@ -12,10 +12,12 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentHomeBinding
 import com.github.mikephil.charting.data.LineData
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
 
 @AndroidEntryPoint
@@ -38,6 +40,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        lifecycleScope.launchWhenStarted {
+            viewModel.homeEvents.collect { event ->
+                if (event is HomeViewModel.HomeEvents.TokenError) {
+
+                }
+            }
+        }
 
         viewModel.measures.observe(viewLifecycleOwner, { list ->
             val chartDataSet = viewModel.prepareDataSetForChart(list)

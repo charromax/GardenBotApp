@@ -11,6 +11,7 @@ import com.example.gardenbotapp.RegisterUserMutation
 import com.example.gardenbotapp.data.remote.Client
 import com.example.gardenbotapp.type.RegisterInput
 import com.example.gardenbotapp.ui.GardenBotContract
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 
 class GardenBotRepository: GardenBotContract {
@@ -20,23 +21,19 @@ class GardenBotRepository: GardenBotContract {
         deviceId: String,
         token: String
     ): Flow<List<MeasuresQuery.GetMeasure?>> {
-        return Client(token).getAllMeasures(deviceId)
+        return coroutineScope { Client(token).getAllMeasures(deviceId) }
     }
 
 
     override suspend fun registerNewUser(userInput: RegisterInput): RegisterUserMutation.Register? {
-        return Client(null).registerNewUser(userInput)
+        return coroutineScope { Client(null).registerNewUser(userInput) }
     }
 
     override suspend fun loginUser(username: String, password: String): LoginUserMutation.Login? {
-        return try {
-            Client(null).loginUser(username, password)
-        } catch (e: Exception) {
-            throw Exception(e.message)
-        }
+        return coroutineScope { Client(null).loginUser(username, password) }
     }
 
     override suspend fun refreshToken(token: String): RefreshTokenQuery.Data? {
-        return Client(token).refreshToken()
+        return coroutineScope { Client(token).refreshToken() }
     }
 }

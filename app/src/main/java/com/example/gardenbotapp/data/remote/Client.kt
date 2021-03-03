@@ -45,15 +45,16 @@ class Client(val token: String? = null) {
                 val response = apolloClient.query(MeasuresQuery(deviceId))
                     .await()
                 if (response.data?.getMeasures == null || response.hasErrors()) {
-                    Log.i(TAG, "getAllMeasures: ERROR: ${response.errors?.map { it.message }}")
-                    return emptyFlow()
+                    Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
+                    throw ApolloException("${response.errors?.map { it.message }}")
                 } else {
                     response.data?.let {
                         return flowOf(it.getMeasures)
                     }
                 }
             } catch (e: ApolloException) {
-                Log.i(TAG, "getAllMeasures: ERROR: ${e.message}")
+                Log.i(TAG, "ERROR: ${e.message}")
+                throw ApolloException("${e.message}")
             }
         }
         return emptyFlow()
@@ -66,8 +67,8 @@ class Client(val token: String? = null) {
                 .await()
 
             if (response.data?.register == null || response.hasErrors()) {
-                Log.i(TAG, "registerNewUser: ERROR: ${response.errors?.map { it.message }}")
-                return null
+                Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
+                throw ApolloException("${response.errors?.map { it.message }}")
             } else {
                 response.data?.let {
                     return it.register
@@ -75,7 +76,8 @@ class Client(val token: String? = null) {
             }
 
         } catch (e: ApolloException) {
-            Log.i(TAG, "registerNewUser: ERROR: ${e.message}")
+            Log.i(TAG, "ERROR: ${e.message}")
+            throw ApolloException("${e.message}")
         }
         return null
     }
@@ -87,15 +89,16 @@ class Client(val token: String? = null) {
                 .await()
 
             if (response.data?.login == null || response.hasErrors()) {
-                Log.i(TAG, "LoginUser: ERROR: ${response.errors?.map { it.message }}")
-                throw Exception(response.errors?.joinToString { it.message })
+                Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
+                throw ApolloException("${response.errors?.map { it.message }}")
             } else {
                 response.data?.let {
                     return it.login
                 }
             }
         } catch (e: ApolloException) {
-            Log.i(TAG, "loginUser: ERROR: ${e.message}")
+            Log.i(TAG, "ERROR: ${e.message}")
+            throw ApolloException("${e.message}")
         }
         return null
 
@@ -106,8 +109,8 @@ class Client(val token: String? = null) {
             val response = apolloClient.query(RefreshTokenQuery()).await()
 
             if (response.data == null || response.hasErrors()) {
-                Log.i(TAG, "refreshToken: ERROR: ${response.errors?.map { it.message }}")
-                return null
+                Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
+                throw ApolloException("${response.errors?.map { it.message }}")
             } else {
                 response.data?.let {
                     return it
@@ -115,6 +118,7 @@ class Client(val token: String? = null) {
             }
         } catch (e: ApolloException) {
             Log.i(TAG, "ERROR: ${e.message}")
+            throw e
         }
         return null
     }

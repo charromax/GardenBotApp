@@ -9,6 +9,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
+import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.MeasuresQuery
 import com.example.gardenbotapp.data.GardenBotRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
@@ -18,8 +19,11 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -35,13 +39,41 @@ class HomeViewModel @Inject constructor(
 
     private val _measures = MutableLiveData<List<MeasuresQuery.GetMeasure?>>()
     val measures: LiveData<List<MeasuresQuery.GetMeasure?>> get() = _measures
+    private val homeEventsChannel = Channel<HomeEvents>()
+    val homeEvents = homeEventsChannel.receiveAsFlow()
 
     init {
-        val token = runBlocking { preferencesManager.tokenFlow.first() }
+        populateChartData()
+    }
+
+    private fun populateChartData(token: String? = null) {
+        val currentToken = token ?: runBlocking { preferencesManager.tokenFlow.first() }
         viewModelScope.launch {
-            gardenBotRepository.getMeasuresForDevice("601599a09606f008af118b79", token).collect {
-                _measures.value = it
+            try {
+                gardenBotRepository.getMeasuresForDevice("601599a09606f008af118b79", currentToken)
+                    .collect {
+                        _measures.value = it
+                    }
+            } catch (e: ApolloException) {
+                e.message?.let { message ->
+                    if (message.contains("Invalid/Expired token")) {
+                        try {
+                            Log.i(TAG, "populateChartData: refresh token...")
+                            val res = async { gardenBotRepository.refreshToken(currentToken) }
+                            val newToken = res.await()
+                            preferencesManager.updateToken(newToken?.refreshToken)
+                            populateChartData(newToken?.refreshToken)
+                        } catch (e: ApolloException) {
+                            homeEventsChannel.send(HomeEvents.TokenError(e.message))
+                        }
+                    } else {
+                        preferencesManager.updateToken("")
+                        homeEventsChannel.send(HomeEvents.TokenError(e.message))
+
+                    }
+                }
             }
+
         }
     }
 
@@ -82,5 +114,9 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         const val TAG = "HOMEVIEWMODEL"
+    }
+
+    sealed class HomeEvents {
+        data class TokenError(val message: String?) : HomeEvents()
     }
 }

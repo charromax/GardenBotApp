@@ -74,9 +74,11 @@ class PreferencesManager @Inject constructor(@ApplicationContext context: Contex
         }
     }
 
-    suspend fun updateToken(token: String) {
-        dataStore.edit { prefs ->
-            prefs[PreferencesKeys.TOKEN] = token
+    suspend fun updateToken(token: String?) {
+        token?.let {
+            dataStore.edit { prefs ->
+                prefs[PreferencesKeys.TOKEN] = token
+            }
         }
     }
 
