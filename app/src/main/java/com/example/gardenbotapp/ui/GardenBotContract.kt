@@ -17,6 +17,8 @@ interface GardenBotContract {
         token: String
     ): Flow<List<MeasuresQuery.GetMeasure?>>
 
+    suspend fun activateDevice(deviceName: String, userId: String, token: String): String
+
     suspend fun registerNewUser(userInput: RegisterInput): RegisterUserMutation.Register?
     suspend fun loginUser(username: String, password: String): LoginUserMutation.Login?
     suspend fun refreshToken(token: String): RefreshTokenQuery.Data?

@@ -65,11 +65,10 @@ class HomeViewModel @Inject constructor(
                             populateChartData(newToken?.refreshToken)
                         } catch (e: ApolloException) {
                             homeEventsChannel.send(HomeEvents.TokenError(e.message))
+                            preferencesManager.updateToken("")
                         }
                     } else {
-                        preferencesManager.updateToken("")
-                        homeEventsChannel.send(HomeEvents.TokenError(e.message))
-
+                        homeEventsChannel.send(HomeEvents.HomeError(message))
                     }
                 }
             }
@@ -118,5 +117,6 @@ class HomeViewModel @Inject constructor(
 
     sealed class HomeEvents {
         data class TokenError(val message: String?) : HomeEvents()
+        data class HomeError(val message: String) : HomeEvents()
     }
 }

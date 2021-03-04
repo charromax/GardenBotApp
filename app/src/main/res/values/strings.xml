@@ -3,7 +3,7 @@
   -->
 
 <resources>
-    <string name="app_name">GardenBotApp</string>
+    <string name="app_name">GardenBot</string>
     <string name="user_login">charr0max</string>
     <string name="password_login">Contraseña</string>
     <string name="login_button">Login</string>
@@ -21,4 +21,6 @@
     <string name="soil_hum_line_mapping">{ x: \'x\', value: \'soilHum\' }</string>
     <string name="chart_title">Información Ambiental</string>
     <string name="chart_y_axis_title">% y °C</string>
+    <string name="serial_number_hint">Número de serie</string>
+    <string name="continue_text">Continuar</string>
 </resources>

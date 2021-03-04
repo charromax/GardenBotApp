@@ -13,9 +13,12 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentHomeBinding
+import com.example.gardenbotapp.util.snack
 import com.github.mikephil.charting.data.LineData
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -42,9 +45,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         lifecycleScope.launchWhenStarted {
             viewModel.homeEvents.collect { event ->
-                if (event is HomeViewModel.HomeEvents.TokenError) {
-
+                when (event) {
+                    is HomeViewModel.HomeEvents.TokenError -> {
+                        binding.root.snack(event.message!!, Snackbar.LENGTH_SHORT)
+                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
+                    }
+                    is HomeViewModel.HomeEvents.HomeError -> binding.root.snack(event.message)
                 }
+
             }
         }
 

@@ -8,10 +8,7 @@ import android.util.Log
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.coroutines.await
 import com.apollographql.apollo.exception.ApolloException
-import com.example.gardenbotapp.LoginUserMutation
-import com.example.gardenbotapp.MeasuresQuery
-import com.example.gardenbotapp.RefreshTokenQuery
-import com.example.gardenbotapp.RegisterUserMutation
+import com.example.gardenbotapp.*
 import com.example.gardenbotapp.type.RegisterInput
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -58,6 +55,27 @@ class Client(val token: String? = null) {
             }
         }
         return emptyFlow()
+    }
+
+    suspend fun activateDevice(deviceName: String, userId: String): String {
+        if (deviceName.isNotEmpty()) {
+            try {
+                val response =
+                    apolloClient.mutate(ActivateDeviceMutation(deviceName, userId)).await()
+                if (response.data?.activateDevice == null || response.hasErrors()) {
+                    Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
+                    throw ApolloException("${response.errors?.map { it.message }}")
+                } else {
+                    response.data?.let {
+                        return it.activateDevice.id
+                    }
+                }
+            } catch (e: ApolloException) {
+                Log.i(TAG, "ERROR: ${e.message}")
+                throw ApolloException("${e.message}")
+            }
+        }
+        return ""
     }
 
     suspend fun registerNewUser(userInput: RegisterInput): RegisterUserMutation.Register? {

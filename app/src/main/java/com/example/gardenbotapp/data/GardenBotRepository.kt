@@ -24,6 +24,14 @@ class GardenBotRepository: GardenBotContract {
         return coroutineScope { Client(token).getAllMeasures(deviceId) }
     }
 
+    override suspend fun activateDevice(
+        deviceName: String,
+        userId: String,
+        token: String
+    ): String {
+        return coroutineScope { Client(token).activateDevice(deviceName, userId) }
+    }
+
 
     override suspend fun registerNewUser(userInput: RegisterInput): RegisterUserMutation.Register? {
         return coroutineScope { Client(null).registerNewUser(userInput) }

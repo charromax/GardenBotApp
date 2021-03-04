@@ -1,0 +1,6 @@
+mutation ActivateDevice($deviceName:String!, $userId:ID!) {
+    activateDevice(deviceName: $deviceName,
+        userId: $userId) {
+        id
+    }
+}
