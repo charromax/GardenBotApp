@@ -4,24 +4,43 @@
 
 package com.example.gardenbotapp.data
 
-import com.example.gardenbotapp.LoginUserMutation
-import com.example.gardenbotapp.MeasuresQuery
-import com.example.gardenbotapp.RefreshTokenQuery
-import com.example.gardenbotapp.RegisterUserMutation
-import com.example.gardenbotapp.data.remote.Client
+import android.util.Log
+import com.apollographql.apollo.coroutines.await
+import com.apollographql.apollo.exception.ApolloException
+import com.example.gardenbotapp.*
 import com.example.gardenbotapp.type.RegisterInput
 import com.example.gardenbotapp.ui.GardenBotContract
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
 
 class GardenBotRepository: GardenBotContract {
+    companion object {
+        const val TAG = "REPO"
+    }
 
 
     override suspend fun getMeasuresForDevice(
         deviceId: String,
         token: String
     ): Flow<List<MeasuresQuery.GetMeasure?>> {
-        return coroutineScope { Client(token).getAllMeasures(deviceId) }
+        if (deviceId.isNotBlank()) {
+            try {
+                val response = Client.getInstance(token).query(MeasuresQuery(deviceId)).await()
+                if (response.data?.getMeasures == null || response.hasErrors()) {
+                    Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
+                    throw ApolloException("${response.errors?.map { it.message }}")
+                } else {
+                    response.data?.let {
+                        return flowOf(it.getMeasures)
+                    }
+                }
+            } catch (e: ApolloException) {
+                Log.i(TAG, "ERROR: ${e.message}")
+                throw ApolloException("${e.message}")
+            }
+        }
+        return emptyFlow()
     }
 
     override suspend fun activateDevice(
@@ -29,19 +48,87 @@ class GardenBotRepository: GardenBotContract {
         userId: String,
         token: String
     ): String {
-        return coroutineScope { Client(token).activateDevice(deviceName, userId) }
+        if (deviceName.isNotEmpty()) {
+            try {
+                val response =
+                    Client.getInstance(token).mutate(ActivateDeviceMutation(deviceName, userId))
+                        .await()
+                if (response.data?.activateDevice == null || response.hasErrors()) {
+                    Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
+                    throw ApolloException("${response.errors?.map { it.message }}")
+                } else {
+                    response.data?.let {
+                        return it.activateDevice.id
+                    }
+                }
+            } catch (e: ApolloException) {
+                Log.i(TAG, "ERROR: ${e.message}")
+                throw ApolloException("${e.message}")
+            }
+        }
+        return ""
     }
 
 
     override suspend fun registerNewUser(userInput: RegisterInput): RegisterUserMutation.Register? {
-        return coroutineScope { Client(null).registerNewUser(userInput) }
+        try {
+            val response = Client.getInstance()
+                .mutate(RegisterUserMutation(userInput))
+                .await()
+
+            if (response.data?.register == null || response.hasErrors()) {
+                Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
+                throw ApolloException("${response.errors?.map { it.message }}")
+            } else {
+                response.data?.let {
+                    return it.register
+                }
+            }
+
+        } catch (e: ApolloException) {
+            Log.i(TAG, "ERROR: ${e.message}")
+            throw ApolloException("${e.message}")
+        }
+        return null
     }
 
     override suspend fun loginUser(username: String, password: String): LoginUserMutation.Login? {
-        return coroutineScope { Client(null).loginUser(username, password) }
+        try {
+            val response = Client.getInstance()
+                .mutate(LoginUserMutation(username, password))
+                .await()
+
+            if (response.data?.login == null || response.hasErrors()) {
+                Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
+                throw ApolloException("${response.errors?.map { it.message }}")
+            } else {
+                response.data?.let {
+                    return it.login
+                }
+            }
+        } catch (e: ApolloException) {
+            Log.i(TAG, "ERROR: ${e.message}")
+            throw ApolloException("${e.message}")
+        }
+        return null
     }
 
     override suspend fun refreshToken(token: String): RefreshTokenQuery.Data? {
-        return coroutineScope { Client(token).refreshToken() }
+        try {
+            val response = Client.getInstance(token).query(RefreshTokenQuery()).await()
+
+            if (response.data == null || response.hasErrors()) {
+                Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
+                throw ApolloException("${response.errors?.map { it.message }}")
+            } else {
+                response.data?.let {
+                    return it
+                }
+            }
+        } catch (e: ApolloException) {
+            Log.i(TAG, "ERROR: ${e.message}")
+            throw e
+        }
+        return null
     }
 }
