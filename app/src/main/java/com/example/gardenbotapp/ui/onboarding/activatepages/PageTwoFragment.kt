@@ -49,7 +49,7 @@ class PageTwoFragment : Fragment(R.layout.fragment_page2) {
                         event.message
                     )
                     OnboardingViewModel.OnboardingEvents.OnboardingSuccess -> {
-
+                        TODO("show success snack and advance to final fragment then home")
                     }
                     is OnboardingViewModel.OnboardingEvents.TokenError -> event.message?.let {
                         binding.root.snack(
