@@ -4,10 +4,6 @@ mutation LoginUser($username:String!, $password:String!) {
         token
         username
         createdAt
-        devices {
-            id
-            deviceName
-            createdAt
-        }
+        devices
     }
 }

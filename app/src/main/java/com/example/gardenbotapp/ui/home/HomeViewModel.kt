@@ -48,6 +48,7 @@ class HomeViewModel @Inject constructor(
 
     private fun populateChartData(token: String? = null) {
         val currentToken = token ?: runBlocking { preferencesManager.tokenFlow.first() }
+        Log.i(TAG, "populateChartData: $currentToken")
         viewModelScope.launch {
             try {
                 gardenBotRepository.getMeasuresForDevice("601599a09606f008af118b79", currentToken)
