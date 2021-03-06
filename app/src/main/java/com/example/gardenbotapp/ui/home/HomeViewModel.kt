@@ -22,9 +22,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -53,13 +55,18 @@ class HomeViewModel @Inject constructor(
     private fun subscribeToMeasures() {
         viewModelScope.launch {
             try {
-                gardenBotRepository.newMeasureSub().collect { res ->
-                    if (res.hasErrors() || res.data?.newMeasure == null) {
-                        homeEventsChannel.send(HomeEvents.SubError("ERROR: ${res.errors?.map { it.message }}"))
-                    } else {
-                        _measureSub.value = res.data?.newMeasure
+                gardenBotRepository.newMeasureSub()
+                    .retryWhen { _, attempt ->
+                        delay((attempt * 1000))    //exp delay
+                        true
                     }
-                }
+                    .collect { res ->
+                        if (res.hasErrors() || res.data?.newMeasure == null) {
+                            homeEventsChannel.send(HomeEvents.SubError("ERROR: ${res.errors?.map { it.message }}"))
+                        } else {
+                            _measureSub.value = res.data?.newMeasure
+                        }
+                    }
             } catch (e: ApolloException) {
                 homeEventsChannel.send(HomeEvents.SubError("ERROR: ${e.message}"))
             }
