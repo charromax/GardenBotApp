@@ -5,5 +5,6 @@
 package com.example.gardenbotapp.ui.onboarding.activatepages
 
 import androidx.fragment.app.Fragment
+import com.example.gardenbotapp.R
 
-class EndPageFragment : Fragment()
+class EndPageFragment : Fragment(R.layout.fragment_page1)

@@ -1,0 +1,10 @@
+subscription newMeasure {
+    newMeasure {
+        id
+        createdAt
+        airHum
+        airTemp
+        soilHum
+        deviceId
+    }
+}

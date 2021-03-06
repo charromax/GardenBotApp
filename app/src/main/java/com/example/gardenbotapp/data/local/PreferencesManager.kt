@@ -88,6 +88,19 @@ class PreferencesManager @Inject constructor(@ApplicationContext context: Contex
         }
     }
 
+    val deviceIdFlow: Flow<String> = dataStore.data
+        .catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                throw exception
+            }
+        }
+        .map {
+            it[PreferencesKeys.SELECTED_DEVICE] ?: ""
+        }
+
+
     val tokenFlow: Flow<String> = dataStore.data
         .catch { exception ->
             if (exception is IOException) {
@@ -99,6 +112,7 @@ class PreferencesManager @Inject constructor(@ApplicationContext context: Contex
         .map {
             it[PreferencesKeys.TOKEN] ?: ""
         }
+
     val userIdFlow: Flow<String> = dataStore.data
         .catch { exception ->
             if (exception is IOException) {

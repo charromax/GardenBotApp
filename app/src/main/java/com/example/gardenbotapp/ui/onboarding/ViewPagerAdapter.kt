@@ -17,4 +17,5 @@ class ViewPagerAdapter(fm: FragmentManager, lifecycle: Lifecycle, val list: Arra
     override fun createFragment(position: Int): Fragment {
         return list[position]
     }
+
 }

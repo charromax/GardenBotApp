@@ -1,0 +1,8 @@
+subscription newDevice{
+    newDevice{
+        id
+        deviceName
+        createdAt
+    }
+
+}

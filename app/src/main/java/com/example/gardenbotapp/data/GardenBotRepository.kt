@@ -5,7 +5,9 @@
 package com.example.gardenbotapp.data
 
 import android.util.Log
+import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.coroutines.await
+import com.apollographql.apollo.coroutines.toFlow
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.*
 import com.example.gardenbotapp.type.RegisterInput
@@ -14,9 +16,18 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 
-class GardenBotRepository: GardenBotContract {
+class GardenBotRepository : GardenBotContract {
     companion object {
         const val TAG = "REPO"
+    }
+
+    override suspend fun newMeasureSub(): Flow<Response<NewMeasureSubscription.Data>> {
+        try {
+            return Client.getInstance().subscribe(NewMeasureSubscription()).toFlow()
+        } catch (e: ApolloException) {
+            Log.i(TAG, "ERROR: ${e.message}")
+            throw ApolloException("${e.message}")
+        }
     }
 
 
@@ -72,9 +83,7 @@ class GardenBotRepository: GardenBotContract {
 
     override suspend fun registerNewUser(userInput: RegisterInput): RegisterUserMutation.Register? {
         try {
-            val response = Client.getInstance()
-                .mutate(RegisterUserMutation(userInput))
-                .await()
+            val response = Client.getInstance().mutate(RegisterUserMutation(userInput)).await()
 
             if (response.data?.register == null || response.hasErrors()) {
                 Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
@@ -94,9 +103,8 @@ class GardenBotRepository: GardenBotContract {
 
     override suspend fun loginUser(username: String, password: String): LoginUserMutation.Login? {
         try {
-            val response = Client.getInstance()
-                .mutate(LoginUserMutation(username, password))
-                .await()
+            val response =
+                Client.getInstance().mutate(LoginUserMutation(username, password)).await()
 
             if (response.data?.login == null || response.hasErrors()) {
                 Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")

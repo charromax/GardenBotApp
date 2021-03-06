@@ -5,22 +5,28 @@
 package com.example.gardenbotapp.data
 
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 
 object Client {
     const val TAG = "CLIENT"
     private const val BASE_URL = "http://192.168.0.6:5000/graphql"
+    private const val WSS_URL = "wss://192.168.0.6:5000/graphql"
     private var apolloClient: ApolloClient? = null
 
     fun getInstance(token: String? = null): ApolloClient {
+        val okHttpClient = OkHttpClient.Builder().addInterceptor(AuthInterceptor(token)).build()
         return apolloClient ?: ApolloClient.builder()
             .serverUrl(BASE_URL)
-            .okHttpClient(
-                OkHttpClient.Builder()
-                    .addInterceptor(AuthInterceptor(token))
-                    .build()
-            ).build()
+            .okHttpClient(okHttpClient)
+            .subscriptionTransportFactory(
+                WebSocketSubscriptionTransport.Factory(
+                    WSS_URL,
+                    okHttpClient
+                )
+            )
+            .build()
     }
 }
 

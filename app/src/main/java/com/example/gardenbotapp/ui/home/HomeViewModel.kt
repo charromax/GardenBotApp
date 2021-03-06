@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.MeasuresQuery
+import com.example.gardenbotapp.NewMeasureSubscription
 import com.example.gardenbotapp.data.GardenBotRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.github.mikephil.charting.components.YAxis
@@ -41,23 +42,42 @@ class HomeViewModel @Inject constructor(
     val measures: LiveData<List<MeasuresQuery.GetMeasure?>> get() = _measures
     private val homeEventsChannel = Channel<HomeEvents>()
     val homeEvents = homeEventsChannel.receiveAsFlow()
+    private val _measureSub = MutableLiveData<NewMeasureSubscription.NewMeasure>()
+    val measureSub: LiveData<NewMeasureSubscription.NewMeasure> get() = _measureSub
 
     init {
         populateChartData()
+        subscribeToMeasures()
+    }
+
+    private fun subscribeToMeasures() {
+        viewModelScope.launch {
+            try {
+                gardenBotRepository.newMeasureSub().collect { res ->
+                    if (res.hasErrors() || res.data?.newMeasure == null) {
+                        homeEventsChannel.send(HomeEvents.SubError("ERROR: ${res.errors?.map { it.message }}"))
+                    } else {
+                        _measureSub.value = res.data?.newMeasure
+                    }
+                }
+            } catch (e: ApolloException) {
+                homeEventsChannel.send(HomeEvents.SubError("ERROR: ${e.message}"))
+            }
+        }
     }
 
     private fun populateChartData(token: String? = null) {
         val currentToken = token ?: runBlocking { preferencesManager.tokenFlow.first() }
-        Log.i(TAG, "populateChartData: $currentToken")
         viewModelScope.launch {
             try {
-                gardenBotRepository.getMeasuresForDevice("601599a09606f008af118b79", currentToken)
+                val currentDevice = preferencesManager.deviceIdFlow.first()
+                gardenBotRepository.getMeasuresForDevice(currentDevice, currentToken)
                     .collect {
                         _measures.value = it
                     }
             } catch (e: ApolloException) {
                 e.message?.let { message ->
-                    if (message.contains("Invalid/Expired token")) {
+                    if (message.contains(EXP_TOKEN)) {
                         try {
                             Log.i(TAG, "populateChartData: refresh token...")
                             val res = async { gardenBotRepository.refreshToken(currentToken) }
@@ -114,10 +134,12 @@ class HomeViewModel @Inject constructor(
 
     companion object {
         const val TAG = "HOMEVIEWMODEL"
+        const val EXP_TOKEN = "Invalid/Expired token"
     }
 
     sealed class HomeEvents {
         data class TokenError(val message: String?) : HomeEvents()
         data class HomeError(val message: String) : HomeEvents()
+        data class SubError(val message: String) : HomeEvents()
     }
 }

@@ -50,7 +50,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
                 "Bienvenidx ${it.username}!",
                 Snackbar.LENGTH_SHORT
             )
-            findNavController().navigateUp()
+            findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToViewPagerFragment())
         })
     }
 

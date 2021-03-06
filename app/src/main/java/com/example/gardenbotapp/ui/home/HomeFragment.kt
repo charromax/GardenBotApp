@@ -63,6 +63,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 data = chardata
                 invalidate()
             }
+            TODO("modify chart list building logic to make it compatible with measure subscription")
+        })
+        viewModel.measureSub.observe(viewLifecycleOwner, {
+            TODO("add newmeasure to list and refresh chart")
         })
 
     }
