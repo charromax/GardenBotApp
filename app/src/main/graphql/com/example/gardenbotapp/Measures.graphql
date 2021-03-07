@@ -1,5 +1,6 @@
 query Measures($deviceId: ID!) {
     getMeasures(deviceId:$deviceId){
+        id
         createdAt
         airHum
         airTemp

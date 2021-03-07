@@ -10,10 +10,10 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
 import com.apollographql.apollo.exception.ApolloException
-import com.example.gardenbotapp.MeasuresQuery
-import com.example.gardenbotapp.NewMeasureSubscription
+import com.example.gardenbotapp.R
 import com.example.gardenbotapp.data.GardenBotRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
+import com.example.gardenbotapp.data.model.Measure
 import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineDataSet
@@ -40,12 +40,12 @@ class HomeViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private val _measures = MutableLiveData<List<MeasuresQuery.GetMeasure?>>()
-    val measures: LiveData<List<MeasuresQuery.GetMeasure?>> get() = _measures
+    private val _measures = MutableLiveData<List<Measure>>()
+    val measures: LiveData<List<Measure>> get() = _measures
     private val homeEventsChannel = Channel<HomeEvents>()
     val homeEvents = homeEventsChannel.receiveAsFlow()
-    private val _measureSub = MutableLiveData<NewMeasureSubscription.NewMeasure>()
-    val measureSub: LiveData<NewMeasureSubscription.NewMeasure> get() = _measureSub
+    private val _measureSub = MutableLiveData<Measure>()
+    val measureSub: LiveData<Measure> get() = _measureSub
 
     init {
         populateChartData()
@@ -64,7 +64,13 @@ class HomeViewModel @Inject constructor(
                         if (res.hasErrors() || res.data?.newMeasure == null) {
                             homeEventsChannel.send(HomeEvents.SubError("ERROR: ${res.errors?.map { it.message }}"))
                         } else {
-                            _measureSub.value = res.data?.newMeasure
+                            _measureSub.value = Measure(
+                                id = res.data?.newMeasure?.id ?: "",
+                                airTemp = res.data?.newMeasure?.airTemp ?: 0.0,
+                                airHum = res.data?.newMeasure?.airHum ?: 0.0,
+                                soilHum = res.data?.newMeasure?.soilHum ?: 0.0,
+                                createdAt = res.data?.newMeasure?.createdAt ?: ""
+                            )
                         }
                     }
             } catch (e: ApolloException) {
@@ -105,35 +111,46 @@ class HomeViewModel @Inject constructor(
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun prepareDataSetForChart(list: List<MeasuresQuery.GetMeasure?>?): ArrayList<ILineDataSet>? {
-        val sortedList = list?.sortedBy {
-            it?.createdAt
+    fun prepareDataSetForChart(list: List<Measure>): ArrayList<ILineDataSet>? {
+        val sortedList = list.sortedBy {
+            it.createdAt
         }
-        Log.i(TAG, "prepareDataSetForChart: ${sortedList.toString()}")
+        Log.i(TAG, "prepareDataSetForChart: $sortedList")
 
-        sortedList?.let { list ->
-            val airTSet = ArrayList<Entry>()
-            val airHSet = ArrayList<Entry>()
-            val soilHSet = ArrayList<Entry>()
-            list.forEachIndexed { index, getMeasure ->
-                airTSet.add(Entry(index.toFloat(), getMeasure!!.airTemp.toFloat()))
-                airHSet.add(Entry(index.toFloat(), getMeasure.airHum.toFloat()))
-                soilHSet.add(Entry(index.toFloat(), getMeasure.soilHum.toFloat()))
+        sortedList.let { list ->
+            val airTSet = list.mapIndexed { index, measure ->
+                Entry(
+                    index.toFloat(),
+                    measure.airTemp.toFloat()
+                )
             }
-            val airTLine = LineDataSet(airTSet, "Air Temp").also {
-                it.axisDependency = YAxis.AxisDependency.LEFT
+            val airHSet = list.mapIndexed { index, measure ->
+                Entry(
+                    index.toFloat(),
+                    measure.airHum.toFloat()
+                )
             }
-            val airHLine = LineDataSet(airHSet, "Air Hum").also {
-                it.axisDependency = YAxis.AxisDependency.LEFT
-            }
-            val soilHLine = LineDataSet(soilHSet, "Soil Hum").also {
-                it.axisDependency = YAxis.AxisDependency.LEFT
+            val soilHSet = list.mapIndexed { index, measure ->
+                Entry(
+                    index.toFloat(),
+                    measure.soilHum.toFloat()
+                )
             }
 
             val lines = ArrayList<ILineDataSet>()
-            lines.add(airTLine)
-            lines.add(airHLine)
-            lines.add(soilHLine)
+
+            lines.add(LineDataSet(airTSet, "Air Temp").also {
+                it.axisDependency = YAxis.AxisDependency.LEFT
+                it.color = context.getColor(R.color.red)
+            })
+            lines.add(LineDataSet(airHSet, "Air Hum").also {
+                it.axisDependency = YAxis.AxisDependency.LEFT
+                it.color = context.getColor(R.color.green)
+            })
+            lines.add(LineDataSet(soilHSet, "SoilHum").also {
+                it.axisDependency = YAxis.AxisDependency.LEFT
+                it.color = context.getColor(R.color.blue)
+            })
             return lines
         }
         return null

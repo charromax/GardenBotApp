@@ -10,6 +10,7 @@ import com.apollographql.apollo.coroutines.await
 import com.apollographql.apollo.coroutines.toFlow
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.*
+import com.example.gardenbotapp.data.model.Measure
 import com.example.gardenbotapp.type.RegisterInput
 import com.example.gardenbotapp.ui.GardenBotContract
 import kotlinx.coroutines.flow.Flow
@@ -34,7 +35,7 @@ class GardenBotRepository : GardenBotContract {
     override suspend fun getMeasuresForDevice(
         deviceId: String,
         token: String
-    ): Flow<List<MeasuresQuery.GetMeasure?>> {
+    ): Flow<List<Measure>> {
         if (deviceId.isNotBlank()) {
             try {
                 val response = Client.getInstance(token).query(MeasuresQuery(deviceId)).await()
@@ -43,7 +44,15 @@ class GardenBotRepository : GardenBotContract {
                     throw ApolloException("${response.errors?.map { it.message }}")
                 } else {
                     response.data?.let {
-                        return flowOf(it.getMeasures)
+                        return flowOf(it.getMeasures.map { data ->
+                            Measure(
+                                id = data?.id ?: "",
+                                airHum = data?.airHum ?: 0.0,
+                                airTemp = data?.airTemp ?: 0.0,
+                                soilHum = data?.soilHum ?: 0.0,
+                                createdAt = data?.createdAt ?: ""
+                            )
+                        })
                     }
                 }
             } catch (e: ApolloException) {

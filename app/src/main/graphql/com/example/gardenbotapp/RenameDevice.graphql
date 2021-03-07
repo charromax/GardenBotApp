@@ -1,0 +1,9 @@
+mutation RenameDevice($deviceId:ID!, $newName:String!) {
+    renameDevice(deviceId: $deviceId, newName: $newName) {
+        id
+        devices{
+            deviceName
+            id
+        }
+    }
+}
