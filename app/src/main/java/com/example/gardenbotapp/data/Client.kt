@@ -6,13 +6,15 @@ package com.example.gardenbotapp.data
 
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport
+import com.example.gardenbotapp.data.Client.AUTH
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 
 object Client {
     const val TAG = "CLIENT"
-    private const val BASE_URL = "http://192.168.0.6:5000/graphql"
-    private const val WSS_URL = "wss://192.168.0.6:5000/graphql"
+    private const val BASE_URL = "https://charr0bot.herokuapp.com/graphql"
+    private const val WSS_URL = "wss://charr0bot.herokuapp.com/graphql"
+    const val AUTH = "Authorization"
     private var apolloClient: ApolloClient? = null
 
     fun getInstance(token: String? = null): ApolloClient {
@@ -33,7 +35,7 @@ object Client {
 class AuthInterceptor(val token: String?) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
         val request = chain.request().newBuilder()
-            .addHeader("Authorization", if (token != null) "Bearer $token" else "")
+            .addHeader(AUTH, if (token != null) "Bearer $token" else "")
             .build()
         return chain.proceed(request)
 
