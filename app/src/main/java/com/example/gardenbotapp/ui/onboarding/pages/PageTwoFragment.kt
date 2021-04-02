@@ -2,46 +2,46 @@
  * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
  */
 
-package com.example.gardenbotapp.ui.onboarding.activatepages
+package com.example.gardenbotapp.ui.onboarding.pages
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.gardenbotapp.R
-import com.example.gardenbotapp.databinding.FragmentPage2Binding
+import com.example.gardenbotapp.databinding.FragmentPageTwoBinding
 import com.example.gardenbotapp.ui.onboarding.OnboardingViewModel
 import com.example.gardenbotapp.util.snack
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
-@AndroidEntryPoint
-class PageTwoFragment : Fragment(R.layout.fragment_page2) {
+private const val TAG = "ACTIVATE"
 
-    private val viewModel: OnboardingViewModel by viewModels()
-    private lateinit var binding: FragmentPage2Binding
+@AndroidEntryPoint
+class PageTwoFragment : Fragment(R.layout.fragment_page_two) {
+
+    private val viewModel: OnboardingViewModel by activityViewModels()
+    private lateinit var binding: FragmentPageTwoBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentPage2Binding.inflate(inflater)
-
+    ): View {
+        binding = FragmentPageTwoBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setOnClickListeners()
         observeLiveData()
-        collectEvents()
+        collectFlows()
     }
 
-    private fun collectEvents() {
+    private fun collectFlows() {
         lifecycleScope.launchWhenStarted {
             viewModel.onboardEvents.collect { event ->
                 when (event) {
@@ -49,7 +49,7 @@ class PageTwoFragment : Fragment(R.layout.fragment_page2) {
                         event.message
                     )
                     OnboardingViewModel.OnboardingEvents.OnboardingSuccess -> {
-                        TODO("show success snack and advance to final fragment then home")
+                        findNavController().navigate(PageTwoFragmentDirections.actionPageTwoFragmentToEndPageFragment())
                     }
                     is OnboardingViewModel.OnboardingEvents.TokenError -> event.message?.let {
                         binding.root.snack(it)
@@ -60,16 +60,20 @@ class PageTwoFragment : Fragment(R.layout.fragment_page2) {
     }
 
     private fun observeLiveData() {
-        viewModel.deviceId.observe(viewLifecycleOwner, Observer { deviceId ->
-            if (deviceId.isNotEmpty()) {
-                viewModel.onDeviceActivated(deviceId)
-            }
+        var devName = ""
+        viewModel.deviceName.observe(viewLifecycleOwner, { name ->
+            viewModel.subscribeToDevice(name)
+            devName = name
+        })
+        viewModel.subDevice.observe(viewLifecycleOwner, { device ->
+            binding.root.snack("GardenBot detectado!")
+            viewModel.activateDevice(devName)
+        })
+
+        viewModel.deviceId.observe(viewLifecycleOwner, { deviceID ->
+            viewModel.onDeviceActivated(deviceID)
         })
     }
 
-    private fun setOnClickListeners() {
-        binding.submitBtn.setOnClickListener {
-            viewModel.activateDevice()
-        }
-    }
+
 }

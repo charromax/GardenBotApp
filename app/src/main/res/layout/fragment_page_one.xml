@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gardenbot_green_light"
+    android:background="@color/onboarding_bg_color"
     android:padding="32dp">
 
     <ImageView
@@ -25,7 +25,7 @@
         style="@style/TextAppearance.MaterialComponents.Headline4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="GardenBot {ungardenbot} detectado! Ahora por favor ingresa el codigo de tu dispositivo para continuar"
+        android:text="@string/onboarding_page_1_message"
         android:textAlignment="center"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/deviceIdEd"
@@ -33,22 +33,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
-    <com.google.android.material.textfield.TextInputEditText
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/deviceIdEd"
-        style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        app:boxBackgroundMode="outline"
         android:hint="@string/serial_number_hint"
-        android:padding="16dp"
-        android:textColorHint="@color/light_gray"
-        android:textSize="20sp"
-        android:textStyle="bold"
+        android:textColorHint="@color/white"
+        app:boxStrokeColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/submit_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+        app:layout_constraintTop_toBottomOf="@+id/textView5">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </com.google.android.material.textfield.TextInputLayout>
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/submit_btn"

@@ -24,6 +24,7 @@ import com.example.gardenbotapp.util.snack
 import com.example.gardenbotapp.util.visible
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.flow.collect
 
 
@@ -41,7 +42,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentLoginBinding.inflate(inflater)
-        activity?.title = getString(R.string.login)
+        requireActivity().app_bar.title = getString(R.string.login)
         binding.progressBar.visible(false)
         binding.submitBtn.enable(false)
         binding.submitBtn.elevation = 0f

@@ -23,7 +23,7 @@
         android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Bienvenidx! Por favor enciende tu GardenBot para comenzar el proceso de activacion"
+        android:text="@string/onboarding_2_message"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -5,7 +5,9 @@
 package com.example.gardenbotapp.util
 
 import android.os.Build
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import com.anychart.core.cartesian.series.Line
 import com.anychart.enums.Anchor
@@ -47,4 +49,11 @@ fun Line.chartSettings(name: String) {
         .anchor(Anchor.LEFT_CENTER)
         .offsetX(5)
         .offsetY(5)
+}
+
+fun getInflatedViewHolder(
+    parent: ViewGroup,
+    layoutID: Int
+): View {
+    return LayoutInflater.from(parent.context).inflate(layoutID, parent, false)
 }

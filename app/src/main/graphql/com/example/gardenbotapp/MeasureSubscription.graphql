@@ -1,5 +1,5 @@
-subscription newMeasure {
-    newMeasure {
+subscription newMeasure($devId:ID!) {
+    newMeasure(devId: $devId) {
         id
         createdAt
         airHum

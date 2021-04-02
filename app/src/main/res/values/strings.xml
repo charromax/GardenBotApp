@@ -23,4 +23,9 @@
     <string name="chart_y_axis_title">% y °C</string>
     <string name="serial_number_hint">Número de serie</string>
     <string name="continue_text">Continuar</string>
+    <string name="chart_data_title">Chart Data</string>
+    <string name="onboarding_page_1_message">Para comenzar por favor ingresa el codigo de tu dispositivo</string>
+    <string name="onboarding_2_message">Ahora por favor enciende tu GardenBot para comenzar el proceso de activación</string>
+    <string name="init_activation">Iniciando activación...</string>
+    <string name="error_empty_device_name">Parece que hubo un error al activar tu GardenBot</string>
 </resources>

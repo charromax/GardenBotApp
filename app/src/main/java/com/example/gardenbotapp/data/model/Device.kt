@@ -10,6 +10,6 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class Device(
     val id: String,
-    val serial: String,
+    val deviceName: String,
     val createdAt: String
 ): Parcelable

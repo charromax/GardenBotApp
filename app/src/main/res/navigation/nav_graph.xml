@@ -41,12 +41,8 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
         <action
-            android:id="@+id/action_registerFragment_to_viewPagerFragment"
-            app:destination="@id/viewPagerFragment"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
+            android:id="@+id/action_registerFragment_to_onboardingActivity"
+            app:destination="@id/onboarding" />
     </fragment>
     <fragment
         android:id="@+id/homeFragment"
@@ -60,21 +56,40 @@
             app:exitAnim="@android:anim/slide_out_right"
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right" />
-    </fragment>
-    <fragment
-        android:id="@+id/viewPagerFragment"
-        tools:layout="@layout/fragment_view_pager"
-        android:name="com.example.gardenbotapp.ui.onboarding.ViewPagerFragment"
-        android:label="ViewPagerFragment">
         <action
-            android:id="@+id/action_viewPagerFragment_to_homeFragment"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@android:anim/slide_in_left"
-            app:exitAnim="@android:anim/slide_out_right"
-            app:popEnterAnim="@android:anim/slide_in_left"
-            app:popExitAnim="@android:anim/slide_out_right" />
-        <action
-            android:id="@+id/action_viewPagerFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            android:id="@+id/action_homeFragment_to_onboardingActivity"
+            app:destination="@id/onboarding" />
     </fragment>
+
+    <navigation
+        android:id="@+id/onboarding"
+        app:startDestination="@id/pageOneFragment">
+        <fragment
+            android:id="@+id/pageTwoFragment"
+            android:name="com.example.gardenbotapp.ui.onboarding.pages.PageTwoFragment"
+            tools:layout="@layout/fragment_page_two"
+            android:label="PageTwoFragment">
+            <action
+                android:id="@+id/action_pageTwoFragment_to_endPageFragment"
+                app:destination="@id/endPageFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/pageOneFragment"
+            android:name="com.example.gardenbotapp.ui.onboarding.pages.PageOneFragment"
+            tools:layout="@layout/fragment_page_one"
+            android:label="PageOneFragment">
+            <action
+                android:id="@+id/action_pageOneFragment_to_pageTwoFragment"
+                app:destination="@id/pageTwoFragment" />
+        </fragment>
+        <fragment
+            android:id="@+id/endPageFragment"
+            android:name="com.example.gardenbotapp.ui.onboarding.pages.EndPageFragment"
+            tools:layout="@layout/fragment_endpage"
+            android:label="EndPageFragment" />
+        <activity
+            android:id="@+id/onboardingActivity"
+            android:name="com.example.gardenbotapp.ui.onboarding.OnboardingActivity"
+            android:label="OnboardingActivity" />
+    </navigation>
 </navigation>

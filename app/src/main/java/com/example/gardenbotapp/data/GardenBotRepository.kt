@@ -22,9 +22,18 @@ class GardenBotRepository : GardenBotContract {
         const val TAG = "REPO"
     }
 
-    override suspend fun newMeasureSub(): Flow<Response<NewMeasureSubscription.Data>> {
+    override suspend fun newMeasureSub(deviceId: String): Flow<Response<NewMeasureSubscription.Data>> {
         try {
-            return Client.getInstance().subscribe(NewMeasureSubscription()).toFlow()
+            return Client.getInstance().subscribe(NewMeasureSubscription(deviceId)).toFlow()
+        } catch (e: ApolloException) {
+            Log.i(TAG, "ERROR: ${e.message}")
+            throw ApolloException("${e.message}")
+        }
+    }
+
+    override suspend fun newDeviceSub(deviceName: String): Flow<Response<NewDeviceSubscription.Data>> {
+        try {
+            return Client.getInstance().subscribe(NewDeviceSubscription(deviceName)).toFlow()
         } catch (e: ApolloException) {
             Log.i(TAG, "ERROR: ${e.message}")
             throw ApolloException("${e.message}")
@@ -93,7 +102,6 @@ class GardenBotRepository : GardenBotContract {
     override suspend fun registerNewUser(userInput: RegisterInput): RegisterUserMutation.Register? {
         try {
             val response = Client.getInstance().mutate(RegisterUserMutation(userInput)).await()
-
             if (response.data?.register == null || response.hasErrors()) {
                 Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
                 throw ApolloException("${response.errors?.map { it.message }}")
@@ -124,7 +132,7 @@ class GardenBotRepository : GardenBotContract {
                 }
             }
         } catch (e: ApolloException) {
-            Log.i(TAG, "ERROR: ${e.message}")
+            Log.i(TAG, "ERROR: ${e.printStackTrace()}")
             throw ApolloException("${e.message}")
         }
         return null

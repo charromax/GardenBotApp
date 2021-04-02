@@ -32,6 +32,7 @@ class LoginViewModel @Inject constructor(
 
     val token: LiveData<String> = preferencesManager.tokenFlow.asLiveData()
 
+
     var username = state.get<String>("username") ?: ""
         set(value) {
             field = value
