@@ -28,4 +28,5 @@
     <string name="onboarding_2_message">Ahora por favor enciende tu GardenBot para comenzar el proceso de activación</string>
     <string name="init_activation">Iniciando activación...</string>
     <string name="error_empty_device_name">Parece que hubo un error al activar tu GardenBot</string>
+    <string name="awaiting_connection">Esperando conexión con tu GardenBot</string>
 </resources>

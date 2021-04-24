@@ -4,16 +4,16 @@
 
 package com.example.gardenbotapp.ui.onboarding
 
-import android.content.Context
 import android.util.Log
 import androidx.lifecycle.*
+import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
-import com.example.gardenbotapp.R
+import com.example.gardenbotapp.NewDeviceSubscription
 import com.example.gardenbotapp.data.GardenBotRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.data.model.Device
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -28,13 +28,8 @@ private val DEV_NAME = "deviceName"
 class OnboardingViewModel @Inject constructor(
     private val gardenBotRepository: GardenBotRepository,
     private val preferencesManager: PreferencesManager,
-    private val state: SavedStateHandle,
-    @ApplicationContext private val context: Context
+    private val state: SavedStateHandle
 ) : ViewModel() {
-
-    init {
-        Log.i(TAG, "Owner: ${this.context}")
-    }
 
     private val _deviceName = MutableLiveData<String>()
     val deviceName: LiveData<String> get() = _deviceName
@@ -45,8 +40,8 @@ class OnboardingViewModel @Inject constructor(
     private val _subDevice = MutableLiveData<Device>()
     val subDevice: LiveData<Device> get() = _subDevice
 
-    private val onboardingEventsChannel = Channel<OnboardingEvents>()
-    val onboardEvents = onboardingEventsChannel.receiveAsFlow()
+    private val _onboardingEventsChannel = Channel<OnboardingEvents>()
+    val onboardEvents = _onboardingEventsChannel.receiveAsFlow()
 
     fun setDeviceName(name: String) {
         _deviceName.value = name
@@ -55,7 +50,7 @@ class OnboardingViewModel @Inject constructor(
     fun subscribeToDevice(devName: String) {
         viewModelScope.launch {
             try {
-                onboardingEventsChannel.send(OnboardingEvents.DeviceSuscriptionStart)
+                _onboardingEventsChannel.send(OnboardingEvents.DeviceSuscriptionStart)
                 gardenBotRepository.newDeviceSub(devName)
                     .retryWhen { _, attempt ->
                         delay((attempt * 1000))    //exp delay
@@ -63,73 +58,94 @@ class OnboardingViewModel @Inject constructor(
                     }
                     .collect { res ->
                         if (res.hasErrors() || res.data?.newDevice == null) {
-                            onboardingEventsChannel.send(OnboardingEvents.OnboardingError("ERROR: ${res.errors?.map { it.message }}"))
+                            _onboardingEventsChannel.send(OnboardingEvents.OnboardingError("ERROR: ${res.errors?.map { it.message }}"))
                         } else {
-                            with(res.data!!.newDevice) {
-                                Log.i(TAG, "subscribeToDevice: device found")
-                                _subDevice.value = Device(
-                                    id = id,
-                                    deviceName = deviceName,
-                                    createdAt = createdAt
-                                )
-
-                            }
+                            onDeviceFound(res)
                         }
                     }
             } catch (e: ApolloException) {
-                onboardingEventsChannel.send(OnboardingEvents.OnboardingError("ERROR: ${e.message}"))
+                _onboardingEventsChannel.send(OnboardingEvents.OnboardingError("ERROR: ${e.message}"))
             }
         }
     }
+
+    private fun onDeviceFound(res: Response<NewDeviceSubscription.Data>) {
+        viewModelScope.launch { _onboardingEventsChannel.send(OnboardingEvents.DeviceFoundEvent) }
+        with(res.data!!.newDevice) {
+            Log.i(TAG, "subscribeToDevice: device found")
+            _subDevice.value = Device(
+                id = id,
+                deviceName = deviceName,
+                createdAt = createdAt
+            )
+
+        }
+    }
+
 
     fun activateDevice(devName: String, token: String? = null) {
         viewModelScope.launch {
             val currentToken = token ?: preferencesManager.tokenFlow.first()
             val currentUser = preferencesManager.userIdFlow.first()
             if (devName.isBlank()) {
-                onboardingEventsChannel.send(
-                    OnboardingEvents.OnboardingError(
-                        context.getString(R.string.error_empty_device_name)
-                    )
+                _onboardingEventsChannel.send(
+                    OnboardingEvents.EmptyDeviceNameError
                 )
                 return@launch
             } else {
                 try {
                     _deviceId.value =
                         gardenBotRepository.activateDevice(devName, currentUser, currentToken)
-
                 } catch (e: ApolloException) {
                     e.message?.let { message ->
-                        if (message.contains("Invalid/Expired token")) {
-                            try {
-                                Log.i(TAG, "refresh token...")
-                                val res = async { gardenBotRepository.refreshToken(currentToken) }
-                                val newToken = res.await()
-                                preferencesManager.updateToken(newToken?.refreshToken)
-                                activateDevice(devName, newToken?.refreshToken)
-                            } catch (e: ApolloException) {
-                                onboardingEventsChannel.send(OnboardingEvents.TokenError(e.message))
-                                preferencesManager.updateToken("")
-                            }
-                        } else {
-                            onboardingEventsChannel.send(OnboardingEvents.OnboardingError(message))
-                        }
+                        onErrorMessage(message, currentToken, devName)
                     }
                 }
             }
         }
     }
 
+    private suspend fun CoroutineScope.onErrorMessage(
+        message: String,
+        currentToken: String,
+        devName: String
+    ) {
+        if (message.contains("Invalid/Expired token")) {
+            refreshTokenAndRetry(currentToken, devName)
+        } else {
+            _onboardingEventsChannel.send(OnboardingEvents.OnboardingError(message))
+        }
+    }
+
+    private suspend fun CoroutineScope.refreshTokenAndRetry(
+        currentToken: String,
+        devName: String
+    ) {
+        try {
+            Log.i(TAG, "refresh token...")
+            val res = async { gardenBotRepository.refreshToken(currentToken) }
+            val newToken = res.await()
+            preferencesManager.updateToken(newToken?.refreshToken)
+            activateDevice(devName, newToken?.refreshToken)
+        } catch (e: ApolloException) {
+            _onboardingEventsChannel.send(OnboardingEvents.TokenError(e.message))
+            preferencesManager.updateToken("")
+        }
+    }
+
+
     fun onDeviceActivated(devId: String) {
         viewModelScope.launch {
             preferencesManager.updateDevice(devId)
-            onboardingEventsChannel.send(OnboardingEvents.OnboardingSuccess)
+            _onboardingEventsChannel.send(OnboardingEvents.OnboardingSuccess)
         }
     }
 
 
     sealed class OnboardingEvents {
         data class OnboardingError(val message: String) : OnboardingEvents()
+        object EmptyDeviceNameError : OnboardingEvents()
+        object DeviceFoundEvent : OnboardingEvents()
         object OnboardingSuccess : OnboardingEvents()
         object DeviceSuscriptionStart : OnboardingEvents()
         data class TokenError(val message: String?) : OnboardingEvents()

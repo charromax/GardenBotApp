@@ -54,6 +54,15 @@ class PageTwoFragment : Fragment(R.layout.fragment_page_two) {
                     is OnboardingViewModel.OnboardingEvents.TokenError -> event.message?.let {
                         binding.root.snack(it)
                     }
+                    OnboardingViewModel.OnboardingEvents.DeviceSuscriptionStart -> binding.root.snack(
+                        getString(
+                            R.string.awaiting_connection
+                        )
+                    )
+                    OnboardingViewModel.OnboardingEvents.EmptyDeviceNameError -> binding.root.snack(
+                        getString(R.string.error_empty_device_name)
+                    )
+                    OnboardingViewModel.OnboardingEvents.DeviceFoundEvent -> binding.root.snack("GardenBot detectado!")
                 }
             }
         }
@@ -66,7 +75,6 @@ class PageTwoFragment : Fragment(R.layout.fragment_page_two) {
             devName = name
         })
         viewModel.subDevice.observe(viewLifecycleOwner, { device ->
-            binding.root.snack("GardenBot detectado!")
             viewModel.activateDevice(devName)
         })
 
