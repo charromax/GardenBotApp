@@ -13,6 +13,8 @@ import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.databinding.ActivityMainBinding
+import com.example.gardenbotapp.ui.home.HomeFragment
+import com.example.gardenbotapp.util.getCurrentFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 
@@ -47,6 +49,12 @@ open class MainActivity : AppCompatActivity() {
      */
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
+    override fun onBackPressed() {
+        if (getCurrentFragment() is HomeFragment) {
+            finish()
+        } else super.onBackPressed()
     }
 
     companion object {
