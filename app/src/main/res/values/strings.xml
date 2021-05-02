@@ -34,4 +34,5 @@
     <string name="ventilador">Ventilador</string>
     <string name="extractor">Extractor</string>
     <string name="intractor">Intractor</string>
+    <string name="network_error_message">Ocurrió un error de red, por favor revisa tu conexión</string>
 </resources>
