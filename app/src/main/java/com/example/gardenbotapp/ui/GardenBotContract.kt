@@ -7,6 +7,7 @@ package com.example.gardenbotapp.ui
 import com.apollographql.apollo.api.Response
 import com.example.gardenbotapp.*
 import com.example.gardenbotapp.data.model.Measure
+import com.example.gardenbotapp.type.Payload
 import com.example.gardenbotapp.type.RegisterInput
 import kotlinx.coroutines.flow.Flow
 
@@ -28,5 +29,5 @@ interface GardenBotContract {
 
     suspend fun refreshToken(token: String): RefreshTokenQuery.Data?
 
-
+    suspend fun sendMqttOrder(payload: Payload, token: String): String?
 }

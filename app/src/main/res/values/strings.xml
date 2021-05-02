@@ -29,4 +29,10 @@
     <string name="init_activation">Iniciando activación...</string>
     <string name="error_empty_device_name">Parece que hubo un error al activar tu GardenBot</string>
     <string name="awaiting_connection">Esperando conexión con tu GardenBot</string>
+    <string name="control_manual">Control Manual</string>
+    <string name="lamp_label">Lámpara</string>
+    <string name="ventilador">Ventilador</string>
+    <string name="extractor">Extractor</string>
+    <string name="intractor">Intractor</string>
+    <string name="network_error_message">Ocurrió un error de red, por favor revisa tu conexión</string>
 </resources>

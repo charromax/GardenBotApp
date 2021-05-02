@@ -121,7 +121,7 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                         setUIState(UIState.READY)
                         binding.root.snack("Error: ${event.message}")
                     }
-                }.exhaustive
+                }
 
             }
         }
@@ -143,7 +143,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
             if (token.isNotBlank() && token.isNotEmpty()) {
                 setUIState(UIState.READY)
                 binding.root.snack(
-
                     "Bienvenidx a GardenBot!", Snackbar.LENGTH_SHORT
                 )
                 findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())

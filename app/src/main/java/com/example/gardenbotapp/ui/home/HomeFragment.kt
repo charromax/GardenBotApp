@@ -44,7 +44,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private fun observeLiveData() {
         viewModel.deviceId.observe(viewLifecycleOwner, { deviceID ->
             if (deviceID.isEmpty()) {
-                findNavController().navigate(R.id.onboarding)
+//                findNavController().navigate(R.id.onboarding)
             }
         })
     }

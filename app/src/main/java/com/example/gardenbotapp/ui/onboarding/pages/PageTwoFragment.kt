@@ -74,7 +74,7 @@ class PageTwoFragment : Fragment(R.layout.fragment_page_two) {
             viewModel.subscribeToDevice(name)
             devName = name
         })
-        viewModel.subDevice.observe(viewLifecycleOwner, { device ->
+        viewModel.subDevice.observe(viewLifecycleOwner, {
             viewModel.activateDevice(devName)
         })
 
