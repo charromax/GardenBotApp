@@ -27,7 +27,7 @@ class LoginViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
     private val prefs = preferencesManager.preferencesFlow
-    private var loginResponse = MutableLiveData<LoginUserMutation.Login>()
+    private val loginResponse = MutableLiveData<LoginUserMutation.Login>()
     val logResponse: LiveData<LoginUserMutation.Login> get() = loginResponse
 
     val token: LiveData<String> = preferencesManager.tokenFlow.asLiveData()
@@ -72,6 +72,7 @@ class LoginViewModel @Inject constructor(
         viewModelScope.launch {
             preferencesManager.updateToken(login.token)
             preferencesManager.updateUserId(login.id)
+            preferencesManager.updateDevice(login.devices[0]?.id ?: "")
         }
     }
 

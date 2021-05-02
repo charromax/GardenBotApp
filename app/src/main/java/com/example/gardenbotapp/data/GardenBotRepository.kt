@@ -5,12 +5,14 @@
 package com.example.gardenbotapp.data
 
 import android.util.Log
+import com.apollographql.apollo.api.Input
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.coroutines.await
 import com.apollographql.apollo.coroutines.toFlow
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.*
 import com.example.gardenbotapp.data.model.Measure
+import com.example.gardenbotapp.type.Payload
 import com.example.gardenbotapp.type.RegisterInput
 import com.example.gardenbotapp.ui.GardenBotContract
 import kotlinx.coroutines.flow.Flow
@@ -155,5 +157,27 @@ class GardenBotRepository : GardenBotContract {
             throw e
         }
         return null
+    }
+
+    override suspend fun sendMqttOrder(payload: Payload, token: String): String? {
+        try {
+            val response =
+                Client.getInstance(token).mutate(SendMqttOrderMutation(Input.fromNullable(payload)))
+                    .await()
+
+            if (response.data == null || response.hasErrors()) {
+                Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
+                throw ApolloException("${response.errors?.map { it.message }}")
+            } else {
+                response.data?.let {
+                    return it.sendMqttOrder
+                }
+            }
+        } catch (e: ApolloException) {
+            Log.i(TAG, "ERROR: ${e.message}")
+            throw e
+        }
+        return null
+
     }
 }

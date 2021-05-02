@@ -2,7 +2,7 @@
  * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
  */
 
-package com.example.gardenbotapp.ui.home.sections
+package com.example.gardenbotapp.ui.home.sections.chart
 
 import android.os.Build
 import android.os.Bundle
@@ -36,6 +36,7 @@ class ChartFragment : Fragment(R.layout.fragment_chart) {
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        viewModel.populateChartData()
         viewModel.measures.observe(viewLifecycleOwner, { list ->
             val chartDataSet = viewModel.prepareDataSetForChart(requireContext(), list)
             val chardata = LineData(chartDataSet)

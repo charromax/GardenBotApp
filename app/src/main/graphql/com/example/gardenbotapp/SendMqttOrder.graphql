@@ -1,0 +1,2 @@
+mutation SendMqttOrder($payload: Payload){
+    sendMqttOrder(payload: $payload)}

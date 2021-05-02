@@ -13,7 +13,7 @@
         android:id="@+id/chart_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:name="com.example.gardenbotapp.ui.home.sections.ChartFragment"
+        android:name="com.example.gardenbotapp.ui.home.sections.chart.ChartFragment"
         app:layout_constraintBottom_toTopOf="@+id/control_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,8 +24,9 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/control_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:name="com.example.gardenbotapp.ui.home.sections.deviceorders.OrdersFragment"
         app:layout_constraintBottom_toTopOf="@+id/social_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -34,7 +35,7 @@
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/social_container"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

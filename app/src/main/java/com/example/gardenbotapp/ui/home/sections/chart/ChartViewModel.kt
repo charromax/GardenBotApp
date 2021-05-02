@@ -2,7 +2,7 @@
  * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
  */
 
-package com.example.gardenbotapp.ui.home.sections
+package com.example.gardenbotapp.ui.home.sections.chart
 
 import android.content.Context
 import android.os.Build
@@ -32,7 +32,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
-private const val EXP_TOKEN = "Invalid/Expired token"
+const val EXP_TOKEN = "Invalid/Expired token"
 
 @HiltViewModel
 class ChartViewModel @Inject constructor(
@@ -89,7 +89,7 @@ class ChartViewModel @Inject constructor(
         _measures.value = listSoFar
     }
 
-    private fun populateChartData(token: String? = null) {
+    fun populateChartData(token: String? = null) {
         val currentToken = token ?: runBlocking { preferencesManager.tokenFlow.first() }
         viewModelScope.launch {
             try {

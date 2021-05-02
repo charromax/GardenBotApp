@@ -47,6 +47,7 @@ type Mutation {
     register(registerInput: RegisterInput): User!
     registerNewDevice(deviceName: String!): Device!
     renameDevice(deviceId: ID!, newName: String!): User!
+    sendMqttOrder(payload: Payload): String!
 }
 
 type Post {
@@ -88,6 +89,17 @@ type User {
 enum CacheControlScope {
     PRIVATE
     PUBLIC
+}
+
+input Order {
+    action: Boolean!
+    device_pin: Int!
+}
+
+input Payload {
+    deviceId: ID!
+    order: Order!
+    type: String!
 }
 
 input RegisterInput {

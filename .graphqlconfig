@@ -4,7 +4,7 @@
   "extensions": {
     "endpoints": {
       "Default GraphQL Endpoint": {
-        "url": "http://charr0bot.herokuapp.com",
+        "url": "https://charr0bot.herokuapp.com",
         "headers": {
           "user-agent": "JS GraphQL"
         },
