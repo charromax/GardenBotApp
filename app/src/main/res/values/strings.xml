@@ -4,7 +4,7 @@
 
 <resources>
     <string name="app_name">GardenBot</string>
-    <string name="user_login">charr0max</string>
+    <string name="user_login">Nombre de Usuario</string>
     <string name="password_login">Contraseña</string>
     <string name="login_button">Login</string>
     <string name="not_reg_message">Aún no te registraste? </string>
@@ -35,4 +35,9 @@
     <string name="extractor">Extractor</string>
     <string name="intractor">Intractor</string>
     <string name="network_error_message">Ocurrió un error de red, por favor revisa tu conexión</string>
+    <string name="empty_username_input">El nombre de usuario no puede estar vacío!</string>
+    <string name="dont_forget_me">No te olvides de mi!</string>
+    <string name="register">Register</string>
+    <string name="gardenhome">GardenHome</string>
+    <string name="welcome">Bienvenidx!</string>
 </resources>

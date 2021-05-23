@@ -24,7 +24,7 @@
     </style>
 
     <style name="GardenButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
-        <item name="shapeAppearanceOverlay">@style/MyShapeAppearance</item>
+        <item name="shapeAppearanceOverlay">@style/ButtonAppearance</item>
     </style>
 
     <style name="GardenFragment" parent="Widget.MaterialComponents.CardView">
@@ -32,17 +32,21 @@
         <item name="background">@color/white</item>
     </style>
 
+    <style name="GardenLabel" parent="TextAppearance.MaterialComponents.Subtitle2">
+        <item name="android:paddingHorizontal" tools:targetApi="o">8dp</item>
+        <item name="android:textColor">@color/light_gray</item>
+    </style>
 
-    <style name="MyShapeAppearance">
-        <item name="strokeWidth">1dp</item>
-        <item name="strokeColor">@color/dark_gray</item>
+    <style name="ButtonAppearance" parent="SmallElementRoundCornersPadding">
+        <item name="background">@color/gardenbot_green</item>
+    </style>
+
+    <style name="SmallElementRoundCornersPadding">
         <item name="cornerFamily">rounded</item>
-        <item name="cornerFamilyTopLeft">cut</item>
-        <item name="cornerFamilyBottomLeft">cut</item>
-        <item name="cornerSizeTopRight">32dp</item>
-        <item name="cornerSizeBottomRight">32dp</item>
+        <item name="cornerSize">4dp</item>
         <item name="android:shadowDx">5</item>
         <item name="android:shadowDy">2</item>
+        <item name="android:padding">16dp</item>
     </style>
 
     <style name="RoundCorners">
@@ -50,6 +54,29 @@
         <item name="cornerSize">8dp</item>
         <item name="android:shadowDx">5</item>
         <item name="android:shadowDy">2</item>
+    </style>
+
+    <style name="TextInputLayoutAppearance" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <!-- reference our hint & error styles -->
+        <item name="hintTextAppearance">@style/HintText</item>
+        <item name="errorTextAppearance">@style/ErrorText</item>
+        <item name="android:textColor">@color/gardenbot_green_dark</item>
+        <item name="android:textColorHint">@color/gardenbot_green_light</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="colorControlActivated">@color/gardenbot_green</item>
+        <item name="colorControlHighlight">@color/gardenbot_green</item>
+        <item name="android:textSize">20sp</item>
+        <item name="boxBackgroundColor">@color/white</item>
+    </style>
+
+    <style name="ErrorText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/red</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="HintText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/gardenbot_green_light</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
 

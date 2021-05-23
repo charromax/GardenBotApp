@@ -27,7 +27,6 @@ class HomeViewModel @Inject constructor(
     private val homeEventsChannel = Channel<Errors>()
     val homeEvents = homeEventsChannel.receiveAsFlow()
 
-
     companion object {
         const val TAG = "HOMEVIEWMODEL"
 

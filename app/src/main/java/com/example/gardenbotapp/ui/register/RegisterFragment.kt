@@ -5,19 +5,13 @@
 package com.example.gardenbotapp.ui.register
 
 import android.os.Build
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentRegisterUserBinding
-import com.example.gardenbotapp.ui.login.LoginFragment.Companion.exhaustive
+import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.util.UIState
 import com.example.gardenbotapp.util.enable
 import com.example.gardenbotapp.util.snack
@@ -27,20 +21,21 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
-class RegisterFragment : Fragment(R.layout.fragment_register_user) {
-    private lateinit var binding: FragmentRegisterUserBinding
-    private val viewModel: RegisterViewModel by viewModels()
+class RegisterFragment : GardenbotBaseFragment<FragmentRegisterUserBinding, RegisterViewModel>() {
+
+    override fun getViewModelClass() = RegisterViewModel::class.java
+
+    override fun getViewBinding() = FragmentRegisterUserBinding.inflate(layoutInflater)
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setOnClickListeners()
-        setTextChangedListeners()
-        collectEventsFlow()
-        observeLiveData()
+    override fun setUpUI() {
+        activity?.title = getString(R.string.register_label)
+//        (activity as MainActivity).changeTitle(getString(R.string.register)) check which one works
+        setUIState(UIState.READY)
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun observeLiveData() {
+    override fun observeLiveData() {
         viewModel.regResponse.observe(viewLifecycleOwner, {
             viewModel.updatePreferences(it.id, it.token)
         })
@@ -52,6 +47,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
             )
             findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToOnboardingActivity())
         })
+        collectEventsFlow()
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
@@ -63,7 +59,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
                         setUIState(UIState.READY)
                         binding.root.snack("Error: ${event.message}")
                     }
-                }.exhaustive
+                }
             }
         }
     }
@@ -98,7 +94,7 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
                     elevation = 0f
                 }
             }
-        }.exhaustive
+        }
 
     }
 
@@ -124,7 +120,8 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun setOnClickListeners() {
+    override fun setClickListeners() {
+        setTextChangedListeners()
         binding.submitBtn.setOnClickListener {
             setUIState(UIState.LOADING)
             viewModel.registerNewUser()
@@ -141,15 +138,5 @@ class RegisterFragment : Fragment(R.layout.fragment_register_user) {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentRegisterUserBinding.inflate(inflater)
-        activity?.title = getString(R.string.register_label)
-        setUIState(UIState.READY)
-        return binding.root
-    }
+
 }

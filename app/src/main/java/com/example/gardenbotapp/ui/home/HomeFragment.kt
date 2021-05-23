@@ -4,19 +4,13 @@
 
 package com.example.gardenbotapp.ui.home
 
-import android.os.Build
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.annotation.RequiresApi
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentHomeBinding
+import com.example.gardenbotapp.ui.MainActivity
+import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.util.Errors
 import com.example.gardenbotapp.util.snack
 import com.google.android.material.snackbar.Snackbar
@@ -24,33 +18,25 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
 private const val TAG = "HOME"
-@AndroidEntryPoint
-class HomeFragment : Fragment(R.layout.fragment_home) {
-    private lateinit var binding: FragmentHomeBinding
-    private val viewModel: HomeViewModel by viewModels()
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentHomeBinding.inflate(inflater)
-        activity?.title = getString(R.string.app_name)
-        observeLiveData()
+@AndroidEntryPoint
+class HomeFragment : GardenbotBaseFragment<FragmentHomeBinding, HomeViewModel>() {
+    override fun getViewBinding() = FragmentHomeBinding.inflate(layoutInflater)
+    override fun getViewModelClass() = HomeViewModel::class.java
+
+    override fun setUpUI() {
+        (activity as MainActivity).changeTitle(getString(R.string.gardenhome))
         setHasOptionsMenu(true)
-        return binding.root
     }
 
-    private fun observeLiveData() {
+    override fun observeLiveData() {
+
         viewModel.deviceId.observe(viewLifecycleOwner, { deviceID ->
             if (deviceID.isEmpty()) {
 //                findNavController().navigate(R.id.onboarding)
             }
         })
-    }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         lifecycleScope.launchWhenStarted {
             viewModel.homeEvents.collect { event ->
                 when (event) {
@@ -63,7 +49,6 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 }
             }
         }
-
     }
 
 }
