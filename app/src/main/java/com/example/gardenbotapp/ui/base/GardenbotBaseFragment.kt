@@ -55,16 +55,22 @@ abstract class GardenbotBaseFragment<VBinding : ViewBinding, VM : ViewModel> : F
     /**
      * override to setup fragment initial state
      */
-    open fun setUpUI() {}
+    open fun setUpUI() {
+        //unimplemented in base
+    }
 
     /**
      * override to observe viewmodel livedata
      */
-    open fun observeLiveData() {}
+    open fun observeLiveData() {
+        //unimplemented in base
+    }
 
     /**
      * override to set UI click listeners
      */
-    open fun setClickListeners() {}
+    open fun setClickListeners() {
+        //unimplemented in base
+    }
 
 }
