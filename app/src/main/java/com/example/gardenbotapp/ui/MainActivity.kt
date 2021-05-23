@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupActionBarWithNavController
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.databinding.ActivityMainBinding
@@ -29,15 +28,14 @@ open class MainActivity : AppCompatActivity() {
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setTheme(R.style.Theme_GardenBotApp)
         setContentView(binding.root)
-        setSupportActionBar(findViewById(R.id.app_bar))
         // Retrieve NavController from the NavHostFragment
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
-        // Set up the action bar for use with the NavController
-        setupActionBarWithNavController(navController)
-
+        //retrieve default device's id and token to use in this session
+        // this comes from a stackoverflow where somene said if you do this in MainActivity
+        // then you can use runBlocking{} to get the data when you need it
         lifecycleScope.launchWhenStarted {
             preferencesManager.tokenFlow.first()
             preferencesManager.deviceIdFlow.first()
@@ -49,6 +47,10 @@ open class MainActivity : AppCompatActivity() {
      */
     override fun onSupportNavigateUp(): Boolean {
         return navController.navigateUp() || super.onSupportNavigateUp()
+    }
+
+    fun changeTitle(title: String) {
+        actionBar?.title = title
     }
 
     override fun onBackPressed() {

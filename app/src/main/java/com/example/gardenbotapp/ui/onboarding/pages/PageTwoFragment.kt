@@ -4,16 +4,11 @@
 
 package com.example.gardenbotapp.ui.onboarding.pages
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentPageTwoBinding
+import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.ui.onboarding.OnboardingViewModel
 import com.example.gardenbotapp.util.snack
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,24 +17,11 @@ import kotlinx.coroutines.flow.collect
 private const val TAG = "ACTIVATE"
 
 @AndroidEntryPoint
-class PageTwoFragment : Fragment(R.layout.fragment_page_two) {
+class PageTwoFragment : GardenbotBaseFragment<FragmentPageTwoBinding, OnboardingViewModel>() {
 
-    private val viewModel: OnboardingViewModel by activityViewModels()
-    private lateinit var binding: FragmentPageTwoBinding
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentPageTwoBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        observeLiveData()
-        collectFlows()
-    }
+    override fun getViewBinding() = FragmentPageTwoBinding.inflate(layoutInflater)
+    override fun getViewModelClass() = OnboardingViewModel::class.java
+    override var useSharedViewModel = true
 
     private fun collectFlows() {
         lifecycleScope.launchWhenStarted {
@@ -68,7 +50,8 @@ class PageTwoFragment : Fragment(R.layout.fragment_page_two) {
         }
     }
 
-    private fun observeLiveData() {
+    override fun observeLiveData() {
+        collectFlows()
         var devName = ""
         viewModel.deviceName.observe(viewLifecycleOwner, { name ->
             viewModel.subscribeToDevice(name)

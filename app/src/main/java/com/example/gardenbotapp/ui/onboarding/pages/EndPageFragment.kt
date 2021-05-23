@@ -4,28 +4,29 @@
 
 package com.example.gardenbotapp.ui.onboarding.pages
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentEndpageBinding
+import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.ui.onboarding.OnboardingViewModel
 
-class EndPageFragment : Fragment(R.layout.fragment_endpage) {
-    private lateinit var binding: FragmentEndpageBinding
-    private val viewModel: OnboardingViewModel by activityViewModels()
+class EndPageFragment : GardenbotBaseFragment<FragmentEndpageBinding, OnboardingViewModel>() {
+    override fun getViewBinding() = FragmentEndpageBinding.inflate(layoutInflater)
+    override fun getViewModelClass() = OnboardingViewModel::class.java
+    override var useSharedViewModel = true
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentEndpageBinding.inflate(inflater)
+    override fun setClickListeners() {
+        binding.skipButton.setOnClickListener {
+            takeMeToHomeFragment()
+        }
 
-        return binding.root
+        binding.renameButton.setOnClickListener {
+            //TODO: send rename mutation
+        }
+    }
+
+    private fun takeMeToHomeFragment() {
+        findNavController().navigate(R.id.homeFragment)
     }
 
 }

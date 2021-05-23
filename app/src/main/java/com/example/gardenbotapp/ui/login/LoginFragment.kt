@@ -5,57 +5,45 @@
 package com.example.gardenbotapp.ui.login
 
 import android.os.Build
-import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentLoginBinding
+import com.example.gardenbotapp.ui.MainActivity
+import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.util.UIState
 import com.example.gardenbotapp.util.enable
 import com.example.gardenbotapp.util.snack
 import com.example.gardenbotapp.util.visible
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.flow.collect
 
 
 @AndroidEntryPoint
-class LoginFragment : Fragment(R.layout.fragment_login) {
+class LoginFragment : GardenbotBaseFragment<FragmentLoginBinding, LoginViewModel>() {
 
-    private lateinit var binding: FragmentLoginBinding
-    private val viewModel: LoginViewModel by viewModels()
+    override fun getViewModelClass() = LoginViewModel::class.java
 
-
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentLoginBinding.inflate(inflater)
-        requireActivity().app_bar.title = getString(R.string.login)
-        binding.progressBar.visible(false)
-        binding.submitBtn.enable(false)
-        binding.submitBtn.elevation = 0f
-        setHasOptionsMenu(true)
-        return binding.root
-    }
+    override fun getViewBinding() = FragmentLoginBinding.inflate(layoutInflater)
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun setOnClickListeners() {
-
+    override fun setClickListeners() {
+        setTextChangedListeners()
         binding.submitBtn.setOnClickListener {
             setUIState(UIState.LOADING)
-            viewModel.loginUser()
+            when {
+                binding.usernameEd.editText?.text?.isEmpty() == true -> binding.usernameEd.error =
+                    getString(R.string.dont_forget_me)
+                binding.passwordEd.editText?.text?.isEmpty() == true -> binding.passwordEd.error =
+                    getString(
+                        R.string.dont_forget_me
+                    )
+                else -> viewModel.loginUser()
+            }
         }
 
         binding.notRegTextClick.setOnClickListener {
@@ -93,16 +81,15 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
                     elevation = 0f
                 }
             }
-        }.exhaustive
-
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     private fun setTextChangedListeners() {
-        binding.usernameEd.addTextChangedListener {
+        binding.usernameEd.editText?.addTextChangedListener {
             viewModel.username = it.toString()
         }
-        binding.passwordEd.addTextChangedListener {
+        binding.passwordEd.editText?.addTextChangedListener {
             viewModel.password = it.toString()
             setUIState(UIState.TYPING)
 
@@ -110,10 +97,13 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setOnClickListeners()
-        setTextChangedListeners()
-        observeLiveData()
+    override fun setUpUI() {
+        (activity as MainActivity).changeTitle(getString(R.string.login))
+        binding.progressBar.visible(false)
+        binding.submitBtn.enable(false)
+        binding.submitBtn.elevation = 0f
+        setHasOptionsMenu(true)
+
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.logEvents.collect { event ->
                 when (event) {
@@ -129,14 +119,14 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     private fun clearBoxes() {
         with(binding) {
-            usernameEd.setText("")
-            passwordEd.setText("")
-            usernameEd.requestFocus()
+            usernameEd.editText?.setText("")
+            passwordEd.editText?.setText("")
+            usernameEd.editText?.requestFocus()
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    private fun observeLiveData() {
+    override fun observeLiveData() {
 
         viewModel.token.observe(viewLifecycleOwner, { token ->
             binding.progressBar.visible(false)
@@ -155,7 +145,6 @@ class LoginFragment : Fragment(R.layout.fragment_login) {
 
     companion object {
         const val TAG = "LOGIN"
-        val <T> T.exhaustive: T
-            get() = this
     }
+
 }
