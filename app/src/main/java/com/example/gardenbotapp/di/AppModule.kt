@@ -6,6 +6,7 @@ package com.example.gardenbotapp.di
 
 import android.content.Context
 import com.example.gardenbotapp.data.GardenBotRepository
+import com.example.gardenbotapp.data.NotificationsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,6 +21,10 @@ object AppModule {
     @Provides
     @Singleton
     fun provideGardenBotRepository() = GardenBotRepository()
+
+    @Provides
+    @Singleton
+    fun provideNotificationsRepository() = NotificationsRepository()
 
     @Provides
     fun provideContext(@ActivityContext context: Context): Context = context

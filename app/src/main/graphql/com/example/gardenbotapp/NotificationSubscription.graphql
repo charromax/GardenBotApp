@@ -1,0 +1,7 @@
+subscription newNotification($devId:ID!) {
+    newNotification(devId: $devId) {
+        createdAt
+        code
+        message
+    }
+}

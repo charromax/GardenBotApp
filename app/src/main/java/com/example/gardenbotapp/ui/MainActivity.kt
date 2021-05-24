@@ -11,6 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.data.local.PreferencesManager
+import com.example.gardenbotapp.data.model.Notification
 import com.example.gardenbotapp.databinding.ActivityMainBinding
 import com.example.gardenbotapp.ui.home.HomeFragment
 import com.example.gardenbotapp.util.getCurrentFragment
@@ -22,6 +23,7 @@ open class MainActivity : AppCompatActivity() {
 
     private val preferencesManager = PreferencesManager(this)
     private lateinit var navController: NavController
+    val notificationsList = arrayListOf<Notification>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +52,7 @@ open class MainActivity : AppCompatActivity() {
     }
 
     fun changeTitle(title: String) {
-        actionBar?.title = title
+        supportActionBar?.title = title
     }
 
     override fun onBackPressed() {

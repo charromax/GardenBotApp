@@ -27,18 +27,19 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:name="com.example.gardenbotapp.ui.home.sections.deviceorders.OrdersFragment"
-        app:layout_constraintBottom_toTopOf="@+id/social_container"
+        app:layout_constraintBottom_toTopOf="@+id/notifications_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/chart_container" />
 
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/social_container"
+        android:id="@+id/notifications_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
+        android:layout_marginBottom="8dp"
+        android:name="com.example.gardenbotapp.ui.home.sections.notifications.NotificationsFragment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/control_container" />
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

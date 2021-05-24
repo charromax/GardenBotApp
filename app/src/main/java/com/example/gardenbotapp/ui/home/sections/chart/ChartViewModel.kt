@@ -89,7 +89,7 @@ class ChartViewModel @Inject constructor(
         _measures.value = listSoFar
     }
 
-    fun populateChartData(token: String? = null) {
+    private fun populateChartData(token: String? = null) {
         val currentToken = token ?: runBlocking { preferencesManager.tokenFlow.first() }
         viewModelScope.launch {
             try {

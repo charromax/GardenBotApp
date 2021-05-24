@@ -30,7 +30,6 @@ class OrdersFragment : GardenbotBaseFragment<FragmentDeviceControlBinding, Order
                 when (event) {
                     OrdersViewModel.OrdersEvents.OnInitialState -> viewModel.refreshDeviceState()
                     is OrdersViewModel.OrdersEvents.OnOrderError -> showSnack(event.message)
-                    is OrdersViewModel.OrdersEvents.OnOrderSent -> showSnack(event.message)
                     OrdersViewModel.OrdersEvents.OnTokenError -> showSnack(getString(R.string.network_error_message))
                 }
             }
