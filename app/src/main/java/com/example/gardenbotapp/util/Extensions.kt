@@ -9,9 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment
 import com.anychart.core.cartesian.series.Line
 import com.anychart.enums.Anchor
 import com.anychart.enums.MarkerType
@@ -54,11 +51,6 @@ fun Line.chartSettings(name: String) {
         .anchor(Anchor.LEFT_CENTER)
         .offsetX(5)
         .offsetY(5)
-}
-
-fun AppCompatActivity.getCurrentFragment(): Fragment? {
-    val currentNavHost = supportFragmentManager.primaryNavigationFragment as NavHostFragment
-    return currentNavHost.childFragmentManager.primaryNavigationFragment
 }
 
 fun getInflatedViewHolder(

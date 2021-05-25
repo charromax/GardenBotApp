@@ -15,6 +15,7 @@ import com.example.gardenbotapp.data.model.Notification
 import com.example.gardenbotapp.databinding.ActivityMainBinding
 import com.example.gardenbotapp.ui.home.HomeFragment
 import com.example.gardenbotapp.util.getCurrentFragment
+import com.example.gardenbotapp.util.setAsActionBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 
@@ -30,13 +31,14 @@ open class MainActivity : AppCompatActivity() {
         val binding = ActivityMainBinding.inflate(layoutInflater)
         setTheme(R.style.Theme_GardenBotApp)
         setContentView(binding.root)
+        setAsActionBar(binding.toolbar)
         // Retrieve NavController from the NavHostFragment
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
 
         //retrieve default device's id and token to use in this session
-        // this comes from a stackoverflow where somene said if you do this in MainActivity
+        // this comes from a stackoverflow where someone said if you do this in MainActivity
         // then you can use runBlocking{} to get the data when you need it
         lifecycleScope.launchWhenStarted {
             preferencesManager.tokenFlow.first()
