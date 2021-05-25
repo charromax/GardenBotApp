@@ -79,5 +79,10 @@
         <item name="android:textSize">14sp</item>
     </style>
 
+    <style name="LittleGrayText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/light_gray</item>
+        <item name="android:textSize">9sp</item>
+    </style>
+
 
 </resources>

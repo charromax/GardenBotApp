@@ -38,6 +38,7 @@ type Measure {
 type Mutation {
     activateDevice(deviceName: String!, userId: ID!): Device!
     addMeasure(airHum: Float!, airTemp: Float!, deviceId: ID!, soilHum: Float!): Measure!
+    addNotification(code: Int!, deviceId: ID!, message: String!): Notification!
     createComment(body: String!, postId: ID!): Post!
     createPost(body: String!): Post!
     deleteComment(commentId: ID!, postId: ID!): Post!
@@ -48,6 +49,14 @@ type Mutation {
     registerNewDevice(deviceName: String!): Device!
     renameDevice(deviceId: ID!, newName: String!): User!
     sendMqttOrder(payload: Payload): String!
+}
+
+type Notification {
+    code: Int!
+    createdAt: String!
+    deviceId: ID!
+    id: ID!
+    message: String!
 }
 
 type Post {
@@ -72,6 +81,7 @@ type Query {
 type Subscription {
     newDevice(devName: String!): Device!
     newMeasure(devId: ID!): Measure!
+    newNotification(devId: ID!): Notification!
     newPost: Post!
 }
 

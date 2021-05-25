@@ -9,16 +9,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment
 import com.anychart.core.cartesian.series.Line
 import com.anychart.enums.Anchor
 import com.anychart.enums.MarkerType
 import com.google.android.material.snackbar.Snackbar
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.util.*
 
 fun View.snack(message: String, duration: Int = Snackbar.LENGTH_LONG) {
     val snack = Snackbar.make(this, message, duration)
@@ -54,14 +53,24 @@ fun Line.chartSettings(name: String) {
         .offsetY(5)
 }
 
-fun AppCompatActivity.getCurrentFragment(): Fragment? {
-    val currentNavHost = supportFragmentManager.primaryNavigationFragment as NavHostFragment
-    return currentNavHost.childFragmentManager.primaryNavigationFragment
-}
-
 fun getInflatedViewHolder(
     parent: ViewGroup,
     layoutID: Int
 ): View {
     return LayoutInflater.from(parent.context).inflate(layoutID, parent, false)
+}
+
+fun String.toDate(
+    dateFormat: String = "yyyy-MM-dd'T'HH:mm:ss",
+    timeZone: TimeZone = TimeZone.getTimeZone("UTC")
+): Date {
+    val parser = SimpleDateFormat(dateFormat, Locale.getDefault())
+    parser.timeZone = timeZone
+    return parser.parse(this)
+}
+
+fun Date.formatTo(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()): String {
+    val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
+    formatter.timeZone = timeZone
+    return formatter.format(this)
 }
