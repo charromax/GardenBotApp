@@ -5,8 +5,8 @@
 package com.example.gardenbotapp.di
 
 import android.content.Context
-import com.example.gardenbotapp.data.GardenBotRepository
-import com.example.gardenbotapp.data.NotificationsRepository
+import com.example.gardenbotapp.data.remote.GardenBotRepository
+import com.example.gardenbotapp.data.remote.NotificationsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

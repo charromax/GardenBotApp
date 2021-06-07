@@ -9,9 +9,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import com.anychart.core.cartesian.series.Line
-import com.anychart.enums.Anchor
-import com.anychart.enums.MarkerType
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -38,19 +35,6 @@ fun View.visible(isVisible: Boolean) {
 fun View.enable(enable: Boolean) {
     isEnabled = enable
     alpha = if (enable) 1f else .5f
-}
-
-fun Line.chartSettings(name: String) {
-    name(name)
-    hovered().markers().enabled(true)
-    hovered().markers()
-        .type(MarkerType.CIRCLE)
-        .size(4)
-    tooltip()
-        .position("right")
-        .anchor(Anchor.LEFT_CENTER)
-        .offsetX(5)
-        .offsetY(5)
 }
 
 fun getInflatedViewHolder(

@@ -2,7 +2,7 @@
  * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
  */
 
-package com.example.gardenbotapp.data.model
+package com.example.gardenbotapp.data.remote.model
 
 data class Measure(
     val id: String,

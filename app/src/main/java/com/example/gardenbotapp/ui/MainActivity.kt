@@ -11,7 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.data.local.PreferencesManager
-import com.example.gardenbotapp.data.model.Notification
+import com.example.gardenbotapp.data.remote.model.Notification
 import com.example.gardenbotapp.databinding.ActivityMainBinding
 import com.example.gardenbotapp.ui.home.HomeFragment
 import com.example.gardenbotapp.util.getCurrentFragment
@@ -27,9 +27,9 @@ open class MainActivity : AppCompatActivity() {
     val notificationsList = arrayListOf<Notification>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.Theme_GardenBotApp)
         super.onCreate(savedInstanceState)
         val binding = ActivityMainBinding.inflate(layoutInflater)
-        setTheme(R.style.Theme_GardenBotApp)
         setContentView(binding.root)
         setAsActionBar(binding.toolbar)
         // Retrieve NavController from the NavHostFragment

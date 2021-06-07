@@ -5,7 +5,7 @@
 package com.example.gardenbotapp.ui.home.sections.notifications
 
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.gardenbotapp.data.model.Notification
+import com.example.gardenbotapp.data.remote.model.Notification
 import com.example.gardenbotapp.databinding.FragmentNotificationsBinding
 import com.example.gardenbotapp.ui.MainActivity
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
