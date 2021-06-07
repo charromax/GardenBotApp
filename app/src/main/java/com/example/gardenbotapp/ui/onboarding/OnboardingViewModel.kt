@@ -9,9 +9,9 @@ import androidx.lifecycle.*
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.NewDeviceSubscription
-import com.example.gardenbotapp.data.GardenBotRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
-import com.example.gardenbotapp.data.model.Device
+import com.example.gardenbotapp.data.remote.GardenBotRepository
+import com.example.gardenbotapp.data.remote.model.Device
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async

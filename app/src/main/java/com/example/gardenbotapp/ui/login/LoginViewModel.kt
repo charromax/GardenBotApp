@@ -8,8 +8,8 @@ import android.content.Context
 import androidx.lifecycle.*
 import com.example.gardenbotapp.LoginUserMutation
 import com.example.gardenbotapp.R
-import com.example.gardenbotapp.data.GardenBotRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
+import com.example.gardenbotapp.data.remote.GardenBotRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*

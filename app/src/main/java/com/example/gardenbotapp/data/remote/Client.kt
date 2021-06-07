@@ -2,11 +2,11 @@
  * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
  */
 
-package com.example.gardenbotapp.data
+package com.example.gardenbotapp.data.remote
 
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.subscription.WebSocketSubscriptionTransport
-import com.example.gardenbotapp.data.Client.AUTH
+import com.example.gardenbotapp.data.remote.Client.AUTH
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 

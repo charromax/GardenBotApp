@@ -2,7 +2,7 @@
  * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
  */
 
-package com.example.gardenbotapp.data
+package com.example.gardenbotapp.data.remote
 
 import android.util.Log
 import com.apollographql.apollo.api.Input
@@ -11,7 +11,7 @@ import com.apollographql.apollo.coroutines.await
 import com.apollographql.apollo.coroutines.toFlow
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.*
-import com.example.gardenbotapp.data.model.Measure
+import com.example.gardenbotapp.data.remote.model.Measure
 import com.example.gardenbotapp.type.Payload
 import com.example.gardenbotapp.type.RegisterInput
 import kotlinx.coroutines.flow.Flow
@@ -40,7 +40,6 @@ class GardenBotRepository : GardenBotContract {
             throw ApolloException("${e.message}")
         }
     }
-
 
     override suspend fun getMeasuresForDevice(
         deviceId: String,

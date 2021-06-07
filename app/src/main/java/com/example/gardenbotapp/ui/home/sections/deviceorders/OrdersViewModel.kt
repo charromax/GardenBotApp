@@ -7,8 +7,8 @@ package com.example.gardenbotapp.ui.home.sections.deviceorders
 import android.util.Log
 import androidx.lifecycle.*
 import com.apollographql.apollo.exception.ApolloException
-import com.example.gardenbotapp.data.GardenBotRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
+import com.example.gardenbotapp.data.remote.GardenBotRepository
 import com.example.gardenbotapp.type.Order
 import com.example.gardenbotapp.type.Payload
 import com.example.gardenbotapp.ui.home.sections.chart.EXP_TOKEN

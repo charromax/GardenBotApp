@@ -2,10 +2,14 @@
  * Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
  */
 
-package com.example.gardenbotapp.data.model
+package com.example.gardenbotapp.data.remote.model
 
 import com.example.gardenbotapp.R
 import java.util.*
+
+const val DEVICES = 101
+const val WEATHER = 102
+const val WATERING = 105
 
 data class Notification(
     val id: String? = UUID.randomUUID().toString(),
@@ -15,8 +19,9 @@ data class Notification(
 ) {
 
     val image = when (code) {
-        101 -> R.drawable.ic_internet_of_things
-        102 -> R.drawable.ic_weather
+        DEVICES -> R.drawable.ic_internet_of_things
+        WEATHER -> R.drawable.ic_weather
+        WATERING -> R.drawable.ic_watering_plants
         else -> -1
     }
 }

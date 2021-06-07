@@ -13,7 +13,6 @@ import com.example.gardenbotapp.databinding.FragmentChartBinding
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.util.Errors
 import com.example.gardenbotapp.util.snack
-import com.github.mikephil.charting.data.LineData
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -40,17 +39,13 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
     @RequiresApi(Build.VERSION_CODES.O)
     override fun observeLiveData() {
         collectEvents()
-        viewModel.measures.observe(viewLifecycleOwner, { list ->
-            val chartDataSet = viewModel.prepareDataSetForChart(requireContext(), list)
-            val chardata = LineData(chartDataSet)
-            binding.chart.apply {
-                data = chardata
-                invalidate()
-            }
-        })
         viewModel.measureSub.observe(viewLifecycleOwner, { newMeasure ->
             Log.i(TAG, "onViewCreated: $newMeasure")
             viewModel.refreshChartData(newMeasure)
+        })
+
+        viewModel.airHumChartModel.observe(viewLifecycleOwner, {
+            binding.chart.aa_drawChartWithChartModel(it)
         })
     }
 

@@ -4,22 +4,17 @@
 
 package com.example.gardenbotapp.ui.home.sections.chart
 
-import android.content.Context
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.*
 import com.apollographql.apollo.exception.ApolloException
-import com.example.gardenbotapp.R
-import com.example.gardenbotapp.data.GardenBotRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
-import com.example.gardenbotapp.data.model.Measure
+import com.example.gardenbotapp.data.remote.GardenBotRepository
+import com.example.gardenbotapp.data.remote.model.Measure
 import com.example.gardenbotapp.ui.home.HomeViewModel
 import com.example.gardenbotapp.util.Errors
-import com.github.mikephil.charting.components.YAxis
-import com.github.mikephil.charting.data.Entry
-import com.github.mikephil.charting.data.LineDataSet
-import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
+import com.github.aachartmodel.aainfographics.aachartcreator.AAChartType
+import com.github.aachartmodel.aainfographics.aachartcreator.AASeriesElement
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
@@ -82,6 +77,45 @@ class ChartViewModel @Inject constructor(
         }
     }
 
+    val airTempDataset: LiveData<MutableList<Float>> =
+        Transformations.switchMap(_measures) { rawList ->
+            liveData {
+                emit(
+                    rawList
+                        .asSequence()
+                        .filter { sensorData -> sensorData.airTemp > 0 }
+                        .map { measure -> measure.airTemp.toFloat() }
+                        .toMutableList()
+                )
+            }
+        }
+
+    val airHumDataset: LiveData<MutableList<Float>> =
+        Transformations.switchMap(_measures) { rawList ->
+            liveData {
+                emit(
+                    rawList
+                        .asSequence()
+                        .filter { sensorData -> sensorData.airHum > 0 }
+                        .map { measure -> measure.airHum.toFloat() }
+                        .toMutableList()
+                )
+            }
+        }
+
+    val soilHumDataset: LiveData<MutableList<Float>> =
+        Transformations.switchMap(_measures) { rawList ->
+            liveData {
+                emit(
+                    rawList
+                        .asSequence()
+                        .filter { sensorData -> sensorData.soilHum > 0 }
+                        .map { measure -> measure.soilHum.toFloat() }
+                        .toMutableList()
+                )
+            }
+        }
+
     fun refreshChartData(measure: Measure) {
         val listSoFar = arrayListOf<Measure>()
         _measures.value?.let { listSoFar.addAll(it) }
@@ -116,49 +150,29 @@ class ChartViewModel @Inject constructor(
                     }
                 }
             }
-
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun prepareDataSetForChart(context: Context, list: List<Measure>): ArrayList<ILineDataSet> {
-        list.sortedBy {
-            it.createdAt
-        }.let { theList ->
-            val airTSet = theList.mapIndexed { index, measure ->
-                Entry(
-                    index.toFloat(),
-                    measure.airTemp.toFloat()
-                )
+    val airHumChartModel: LiveData<AAChartModel> =
+        Transformations.switchMap(airHumDataset) { dataset ->
+            liveData {
+                val elements = AASeriesElement().apply {
+                    name("Humedad ambiental")
+                    data(dataset.toTypedArray())
+                }
+                val aaChartModel = AAChartModel().apply {
+                    chartType(AAChartType.Bar)
+                    title("title")
+                    subtitle("subtitle")
+                    backgroundColor("#4b2b7f")
+                    dataLabelsEnabled(true)
+                    series(
+                        arrayOf(elements)
+                    )
+                }
+                emit(aaChartModel)
             }
-            val airHSet = theList.mapIndexed { index, measure ->
-                Entry(
-                    index.toFloat(),
-                    measure.airHum.toFloat()
-                )
-            }
-            val soilHSet = theList.mapIndexed { index, measure ->
-                Entry(
-                    index.toFloat(),
-                    measure.soilHum.toFloat()
-                )
-            }
-
-            val lines = ArrayList<ILineDataSet>()
-
-            lines.add(LineDataSet(airTSet, "Air Temp").also {
-                it.axisDependency = YAxis.AxisDependency.LEFT
-                it.color = context.getColor(R.color.red)
-            })
-            lines.add(LineDataSet(airHSet, "Air Hum").also {
-                it.axisDependency = YAxis.AxisDependency.LEFT
-                it.color = context.getColor(R.color.green)
-            })
-            lines.add(LineDataSet(soilHSet, "SoilHum").also {
-                it.axisDependency = YAxis.AxisDependency.LEFT
-                it.color = context.getColor(R.color.blue)
-            })
-            return lines
         }
-    }
+
+
 }
