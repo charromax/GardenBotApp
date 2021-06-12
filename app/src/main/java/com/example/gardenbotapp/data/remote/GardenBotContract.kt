@@ -4,30 +4,9 @@
 
 package com.example.gardenbotapp.data.remote
 
-import com.apollographql.apollo.api.Response
-import com.example.gardenbotapp.*
-import com.example.gardenbotapp.data.remote.model.Measure
-import com.example.gardenbotapp.type.Payload
-import com.example.gardenbotapp.type.RegisterInput
-import kotlinx.coroutines.flow.Flow
+import com.example.gardenbotapp.RefreshTokenQuery
 
 interface GardenBotContract {
-    suspend fun getMeasuresForDevice(
-        deviceId: String,
-        token: String
-    ): Flow<List<Measure>>
-
-    suspend fun newMeasureSub(deviceId: String): Flow<Response<NewMeasureSubscription.Data>>
-
-    suspend fun newDeviceSub(deviceName: String): Flow<Response<NewDeviceSubscription.Data>>
-
-    suspend fun activateDevice(deviceName: String, userId: String, token: String): String
-
-    suspend fun registerNewUser(userInput: RegisterInput): RegisterUserMutation.Register?
-
-    suspend fun loginUser(username: String, password: String): LoginUserMutation.Login?
 
     suspend fun refreshToken(token: String): RefreshTokenQuery.Data?
-
-    suspend fun sendMqttOrder(payload: Payload, token: String): String?
 }

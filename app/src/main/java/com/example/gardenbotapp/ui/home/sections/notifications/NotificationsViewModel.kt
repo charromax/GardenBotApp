@@ -7,7 +7,7 @@ package com.example.gardenbotapp.ui.home.sections.notifications
 import androidx.lifecycle.*
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.data.local.PreferencesManager
-import com.example.gardenbotapp.data.remote.NotificationsRepository
+import com.example.gardenbotapp.data.remote.NotificationsRepositoryImpl
 import com.example.gardenbotapp.data.remote.model.Notification
 import com.example.gardenbotapp.util.Errors
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotificationsViewModel @Inject constructor(
-    private val notificationsRepository: NotificationsRepository,
+    private val notificationsRepositoryImpl: NotificationsRepositoryImpl,
     private val preferencesManager: PreferencesManager,
     private val state: SavedStateHandle
 ) : ViewModel() {
@@ -41,7 +41,7 @@ class NotificationsViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val deviceId = preferencesManager.deviceIdFlow.first()
-                notificationsRepository.newNotificationSub(deviceId)
+                notificationsRepositoryImpl.newNotificationSub(deviceId)
                     .retryWhen { _, attempt ->
                         delay((attempt * 1000))    //exp delay
                         true

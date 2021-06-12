@@ -6,9 +6,12 @@ package com.example.gardenbotapp.ui.home.sections.chart
 
 import android.util.Log
 import androidx.lifecycle.*
+import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
+import com.example.gardenbotapp.NewMeasureSubscription
+import com.example.gardenbotapp.RefreshTokenQuery
+import com.example.gardenbotapp.data.domain.ChartRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
-import com.example.gardenbotapp.data.remote.GardenBotRepository
 import com.example.gardenbotapp.data.remote.model.Measure
 import com.example.gardenbotapp.ui.home.HomeViewModel
 import com.example.gardenbotapp.util.Errors
@@ -19,10 +22,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.retryWhen
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -31,10 +31,9 @@ const val EXP_TOKEN = "Invalid/Expired token"
 
 @HiltViewModel
 class ChartViewModel @Inject constructor(
-    private val gardenBotRepository: GardenBotRepository,
-    private val preferencesManager: PreferencesManager,
-    private val state: SavedStateHandle
-) : ViewModel() {
+    private val chartRepository: ChartRepository,
+    private val preferencesManager: PreferencesManager
+) : ViewModel(), ChartRepository {
 
     private val _measures = MutableLiveData<List<Measure>>()
     val measures: LiveData<List<Measure>> get() = _measures
@@ -52,7 +51,7 @@ class ChartViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val deviceId = preferencesManager.deviceIdFlow.first()
-                gardenBotRepository.newMeasureSub(deviceId)
+                newMeasureSub(deviceId)
                     .retryWhen { _, attempt ->
                         delay((attempt * 1000))    //exp delay
                         true
@@ -128,7 +127,7 @@ class ChartViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val currentDevice = preferencesManager.deviceIdFlow.first()
-                gardenBotRepository.getMeasuresForDevice(currentDevice, currentToken)
+                getMeasuresForDevice(currentDevice, currentToken)
                     .collect {
                         _measures.value = it
                     }
@@ -137,7 +136,7 @@ class ChartViewModel @Inject constructor(
                     if (message.contains(EXP_TOKEN)) {
                         try {
                             Log.i(HomeViewModel.TAG, "populateChartData: refresh token...")
-                            val res = async { gardenBotRepository.refreshToken(currentToken) }
+                            val res = async { refreshToken(currentToken) }
                             val newToken = res.await()
                             preferencesManager.updateToken(newToken?.refreshToken)
                             populateChartData(newToken?.refreshToken)
@@ -174,5 +173,19 @@ class ChartViewModel @Inject constructor(
             }
         }
 
+    override suspend fun getMeasuresForDevice(
+        deviceId: String,
+        token: String
+    ): Flow<List<Measure>> {
+        return chartRepository.getMeasuresForDevice(deviceId, token)
+    }
+
+    override suspend fun newMeasureSub(deviceId: String): Flow<Response<NewMeasureSubscription.Data>> {
+        return chartRepository.newMeasureSub(deviceId)
+    }
+
+    override suspend fun refreshToken(token: String): RefreshTokenQuery.Data? {
+        return chartRepository.refreshToken(token)
+    }
 
 }
