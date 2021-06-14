@@ -9,9 +9,11 @@ import androidx.lifecycle.*
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.RegisterUserMutation
+import com.example.gardenbotapp.data.domain.GardenBotRepository
+import com.example.gardenbotapp.data.domain.RegisterUserRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
-import com.example.gardenbotapp.data.remote.GardenBotRepository
 import com.example.gardenbotapp.type.RegisterInput
+import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.channels.Channel
@@ -21,11 +23,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    private val gardenBotRepository: GardenBotRepository,
+    gardenBotRepository: GardenBotRepository,
+    private val registerUserRepository: RegisterUserRepository,
     private val state: SavedStateHandle,
     private val preferencesManager: PreferencesManager,
     @ApplicationContext private val context: Context
-) : ViewModel() {
+) : GardenBotBaseViewModel(gardenBotRepository) {
     private var registerResponse = MutableLiveData<RegisterUserMutation.Register>()
     val regResponse: LiveData<RegisterUserMutation.Register> get() = registerResponse
     private val regEventsChannel = Channel<RegisterEvents>()
@@ -58,7 +61,7 @@ class RegisterViewModel @Inject constructor(
                 regEventsChannel.send(RegisterEvents.RegisterError(context.getString(R.string.all_fields_required_message)))
             } else {
                 registerResponse.value = try {
-                    gardenBotRepository.registerNewUser(
+                    registerUserRepository.registerNewUser(
                         RegisterInput(
                             username,
                             password,

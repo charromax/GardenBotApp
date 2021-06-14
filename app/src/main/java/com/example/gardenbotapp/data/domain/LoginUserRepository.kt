@@ -5,9 +5,8 @@
 package com.example.gardenbotapp.data.domain
 
 import com.example.gardenbotapp.LoginUserMutation
-import com.example.gardenbotapp.data.remote.GardenBotContract
 
-interface LoginUserRepository : GardenBotContract {
+interface LoginUserRepository : GardenBotRepository {
 
     suspend fun loginUser(username: String, password: String): LoginUserMutation.Login?
 }

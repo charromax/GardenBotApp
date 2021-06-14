@@ -8,8 +8,10 @@ import android.content.Context
 import androidx.lifecycle.*
 import com.example.gardenbotapp.LoginUserMutation
 import com.example.gardenbotapp.R
+import com.example.gardenbotapp.data.domain.GardenBotRepository
+import com.example.gardenbotapp.data.domain.LoginUserRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
-import com.example.gardenbotapp.data.remote.GardenBotRepository
+import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
@@ -21,11 +23,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val gardenBotRepository: GardenBotRepository,
+    gardenBotRepository: GardenBotRepository,
+    private val loginUserRepository: LoginUserRepository,
     private val preferencesManager: PreferencesManager,
     private val state: SavedStateHandle,
     @ApplicationContext private val context: Context
-) : ViewModel() {
+) : GardenBotBaseViewModel(gardenBotRepository) {
     private val prefs = preferencesManager.preferencesFlow
     private val loginResponse = MutableLiveData<LoginUserMutation.Login>()
     val logResponse: LiveData<LoginUserMutation.Login> get() = loginResponse
@@ -55,7 +58,7 @@ class LoginViewModel @Inject constructor(
                 return@launch
             } else {
                 loginResponse.value = try {
-                    gardenBotRepository.loginUser(
+                    loginUserRepository.loginUser(
                         username,
                         password
                     )

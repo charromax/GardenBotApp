@@ -9,9 +9,11 @@ import androidx.lifecycle.*
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.NewDeviceSubscription
+import com.example.gardenbotapp.data.domain.GardenBotRepository
+import com.example.gardenbotapp.data.domain.OnboardingRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
-import com.example.gardenbotapp.data.remote.GardenBotRepository
 import com.example.gardenbotapp.data.remote.model.Device
+import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -26,10 +28,11 @@ private val DEV_NAME = "deviceName"
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    private val gardenBotRepository: GardenBotRepository,
+    gardenBotRepository: GardenBotRepository,
+    private val onboardingRepository: OnboardingRepository,
     private val preferencesManager: PreferencesManager,
     private val state: SavedStateHandle
-) : ViewModel() {
+) : GardenBotBaseViewModel(gardenBotRepository) {
 
     private val _deviceName = MutableLiveData<String>()
     val deviceName: LiveData<String> get() = _deviceName
@@ -51,7 +54,7 @@ class OnboardingViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 _onboardingEventsChannel.send(OnboardingEvents.DeviceSuscriptionStart)
-                gardenBotRepository.newDeviceSub(devName)
+                onboardingRepository.newDeviceSub(devName)
                     .retryWhen { _, attempt ->
                         delay((attempt * 1000))    //exp delay
                         true
@@ -95,7 +98,7 @@ class OnboardingViewModel @Inject constructor(
             } else {
                 try {
                     _deviceId.value =
-                        gardenBotRepository.activateDevice(devName, currentUser, currentToken)
+                        onboardingRepository.activateDevice(devName, currentUser, currentToken)
                 } catch (e: ApolloException) {
                     e.message?.let { message ->
                         onErrorMessage(message, currentToken, devName)
@@ -123,7 +126,7 @@ class OnboardingViewModel @Inject constructor(
     ) {
         try {
             Log.i(TAG, "refresh token...")
-            val res = async { gardenBotRepository.refreshToken(currentToken) }
+            val res = async { refreshToken(currentToken) }
             val newToken = res.await()
             preferencesManager.updateToken(newToken?.refreshToken)
             activateDevice(devName, newToken?.refreshToken)

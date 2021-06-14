@@ -6,17 +6,16 @@ package com.example.gardenbotapp.ui.base
 
 import androidx.lifecycle.ViewModel
 import com.example.gardenbotapp.RefreshTokenQuery
-import com.example.gardenbotapp.data.remote.GardenBotContract
-import com.example.gardenbotapp.data.remote.GardenBotRepository
+import com.example.gardenbotapp.data.domain.GardenBotRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 open class GardenBotBaseViewModel @Inject constructor(
     private val gardenBotRepository: GardenBotRepository
-) : ViewModel(), GardenBotContract {
+) : ViewModel(), GardenBotRepository {
 
     override suspend fun refreshToken(token: String): RefreshTokenQuery.Data? {
-        TODO("Not yet implemented")
+        return gardenBotRepository.refreshToken(token)
     }
 }

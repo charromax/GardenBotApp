@@ -6,13 +6,12 @@ package com.example.gardenbotapp.ui.home.sections.chart
 
 import android.util.Log
 import androidx.lifecycle.*
-import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
-import com.example.gardenbotapp.NewMeasureSubscription
-import com.example.gardenbotapp.RefreshTokenQuery
 import com.example.gardenbotapp.data.domain.ChartRepository
+import com.example.gardenbotapp.data.domain.GardenBotRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.data.remote.model.Measure
+import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import com.example.gardenbotapp.ui.home.HomeViewModel
 import com.example.gardenbotapp.util.Errors
 import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
@@ -22,7 +21,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
@@ -32,8 +34,9 @@ const val EXP_TOKEN = "Invalid/Expired token"
 @HiltViewModel
 class ChartViewModel @Inject constructor(
     private val chartRepository: ChartRepository,
+    gardenBotRepository: GardenBotRepository,
     private val preferencesManager: PreferencesManager
-) : ViewModel(), ChartRepository {
+) : GardenBotBaseViewModel(gardenBotRepository) {
 
     private val _measures = MutableLiveData<List<Measure>>()
     val measures: LiveData<List<Measure>> get() = _measures
@@ -51,7 +54,7 @@ class ChartViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val deviceId = preferencesManager.deviceIdFlow.first()
-                newMeasureSub(deviceId)
+                chartRepository.newMeasureSub(deviceId)
                     .retryWhen { _, attempt ->
                         delay((attempt * 1000))    //exp delay
                         true
@@ -127,7 +130,7 @@ class ChartViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val currentDevice = preferencesManager.deviceIdFlow.first()
-                getMeasuresForDevice(currentDevice, currentToken)
+                chartRepository.getMeasuresForDevice(currentDevice, currentToken)
                     .collect {
                         _measures.value = it
                     }
@@ -172,20 +175,4 @@ class ChartViewModel @Inject constructor(
                 emit(aaChartModel)
             }
         }
-
-    override suspend fun getMeasuresForDevice(
-        deviceId: String,
-        token: String
-    ): Flow<List<Measure>> {
-        return chartRepository.getMeasuresForDevice(deviceId, token)
-    }
-
-    override suspend fun newMeasureSub(deviceId: String): Flow<Response<NewMeasureSubscription.Data>> {
-        return chartRepository.newMeasureSub(deviceId)
-    }
-
-    override suspend fun refreshToken(token: String): RefreshTokenQuery.Data? {
-        return chartRepository.refreshToken(token)
-    }
-
 }

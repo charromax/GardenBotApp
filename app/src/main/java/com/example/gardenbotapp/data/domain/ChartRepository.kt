@@ -6,11 +6,10 @@ package com.example.gardenbotapp.data.domain
 
 import com.apollographql.apollo.api.Response
 import com.example.gardenbotapp.NewMeasureSubscription
-import com.example.gardenbotapp.data.remote.GardenBotContract
 import com.example.gardenbotapp.data.remote.model.Measure
 import kotlinx.coroutines.flow.Flow
 
-interface ChartRepository : GardenBotContract {
+interface ChartRepository : GardenBotRepository {
     suspend fun getMeasuresForDevice(
         deviceId: String,
         token: String

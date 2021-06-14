@@ -10,10 +10,15 @@ import com.apollographql.apollo.coroutines.await
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.SendMqttOrderMutation
 import com.example.gardenbotapp.data.remote.Client
-import com.example.gardenbotapp.data.remote.GardenBotRepository
 import com.example.gardenbotapp.type.Payload
+import javax.inject.Singleton
 
-class ManualControlRepositoryImpl : ManualControlRepository, GardenBotBaseRepositoryImpl() {
+@Singleton
+class ManualControlRepositoryImpl : ManualControlRepository, GardenBotRepositoryImpl() {
+
+    companion object {
+        const val TAG = "MANUAL_CONTROL_REPO"
+    }
 
     override suspend fun sendMqttOrder(payload: Payload, token: String): String? {
         try {
@@ -22,7 +27,7 @@ class ManualControlRepositoryImpl : ManualControlRepository, GardenBotBaseReposi
                     .await()
 
             if (response.data == null || response.hasErrors()) {
-                Log.i(GardenBotRepository.TAG, "ERROR: ${response.errors?.map { it.message }}")
+                Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
                 throw ApolloException("${response.errors?.map { it.message }}")
             } else {
                 response.data?.let {
@@ -30,7 +35,7 @@ class ManualControlRepositoryImpl : ManualControlRepository, GardenBotBaseReposi
                 }
             }
         } catch (e: ApolloException) {
-            Log.i(GardenBotRepository.TAG, "ERROR: ${e.message}")
+            Log.i(TAG, "ERROR: ${e.message}")
             throw e
         }
         return null

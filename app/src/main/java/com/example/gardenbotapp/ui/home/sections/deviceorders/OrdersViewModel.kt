@@ -5,12 +5,17 @@
 package com.example.gardenbotapp.ui.home.sections.deviceorders
 
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.exception.ApolloException
+import com.example.gardenbotapp.data.domain.GardenBotRepository
+import com.example.gardenbotapp.data.domain.ManualControlRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
-import com.example.gardenbotapp.data.remote.GardenBotRepository
 import com.example.gardenbotapp.type.Order
 import com.example.gardenbotapp.type.Payload
+import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import com.example.gardenbotapp.ui.home.sections.chart.EXP_TOKEN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
@@ -28,10 +33,11 @@ enum class ConnectedDevice(val pin: Int) {
 
 @HiltViewModel
 class OrdersViewModel @Inject constructor(
-    private val gardenBotRepository: GardenBotRepository,
+    gardenBotRepository: GardenBotRepository,
+    private val manualControlRepository: ManualControlRepository,
     private val preferencesManager: PreferencesManager,
     private val state: SavedStateHandle
-) : ViewModel() {
+) : GardenBotBaseViewModel(gardenBotRepository) {
     private val ordersEventsChannel = Channel<OrdersEvents>()
     val ordersEvents = ordersEventsChannel.receiveAsFlow()
 
@@ -48,7 +54,7 @@ class OrdersViewModel @Inject constructor(
         viewModelScope.launch {
             val deviceId = preferencesManager.deviceIdFlow.first()
             try {
-                val response = gardenBotRepository.sendMqttOrder(
+                val response = manualControlRepository.sendMqttOrder(
                     Payload(
                         deviceId,
                         OrderType.MANUAL.name,
@@ -62,7 +68,7 @@ class OrdersViewModel @Inject constructor(
                     if (message.contains(EXP_TOKEN)) {
                         try {
                             Log.i(TAG, "sendOrder: refresh token...")
-                            val res = async { gardenBotRepository.refreshToken(currentToken) }
+                            val res = async { refreshToken(currentToken) }
                             val newToken = res.await()
                             preferencesManager.updateToken(newToken?.refreshToken)
                         } catch (e: ApolloException) {

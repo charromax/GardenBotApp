@@ -5,9 +5,8 @@
 package com.example.gardenbotapp.data.domain
 
 import com.example.gardenbotapp.RegisterUserMutation
-import com.example.gardenbotapp.data.remote.GardenBotContract
 import com.example.gardenbotapp.type.RegisterInput
 
-interface RegisterUserRepository : GardenBotContract {
+interface RegisterUserRepository : GardenBotRepository {
     suspend fun registerNewUser(userInput: RegisterInput): RegisterUserMutation.Register?
 }

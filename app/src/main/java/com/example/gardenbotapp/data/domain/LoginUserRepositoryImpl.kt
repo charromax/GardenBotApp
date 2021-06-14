@@ -9,9 +9,10 @@ import com.apollographql.apollo.coroutines.await
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.LoginUserMutation
 import com.example.gardenbotapp.data.remote.Client
-import com.example.gardenbotapp.data.remote.GardenBotRepository
+import javax.inject.Singleton
 
-class LoginUserRepositoryImpl : LoginUserRepository {
+@Singleton
+class LoginUserRepositoryImpl : LoginUserRepository, GardenBotRepositoryImpl() {
 
     override suspend fun loginUser(username: String, password: String): LoginUserMutation.Login? {
         try {
@@ -19,7 +20,7 @@ class LoginUserRepositoryImpl : LoginUserRepository {
                 Client.getInstance().mutate(LoginUserMutation(username, password)).await()
 
             if (response.data?.login == null || response.hasErrors()) {
-                Log.i(GardenBotRepository.TAG, "ERROR: ${response.errors?.map { it.message }}")
+                Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
                 throw ApolloException("${response.errors?.map { it.message }}")
             } else {
                 response.data?.let {
@@ -27,7 +28,7 @@ class LoginUserRepositoryImpl : LoginUserRepository {
                 }
             }
         } catch (e: ApolloException) {
-            Log.i(GardenBotRepository.TAG, "ERROR: ${e.printStackTrace()}")
+            Log.i(TAG, "ERROR: ${e.printStackTrace()}")
             throw ApolloException("${e.message}")
         }
         return null

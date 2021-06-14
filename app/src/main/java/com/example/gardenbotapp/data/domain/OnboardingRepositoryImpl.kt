@@ -12,16 +12,21 @@ import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.ActivateDeviceMutation
 import com.example.gardenbotapp.NewDeviceSubscription
 import com.example.gardenbotapp.data.remote.Client
-import com.example.gardenbotapp.data.remote.GardenBotRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Singleton
 
-class OnboardingRepositoryImpl : GardenBotBaseRepositoryImpl(), OnboardingRepository {
+@Singleton
+class OnboardingRepositoryImpl : GardenBotRepositoryImpl(), OnboardingRepository {
+
+    companion object {
+        const val TAG = "ONBOARDING_REPO"
+    }
 
     override suspend fun newDeviceSub(deviceName: String): Flow<Response<NewDeviceSubscription.Data>> {
         try {
             return Client.getInstance().subscribe(NewDeviceSubscription(deviceName)).toFlow()
         } catch (e: ApolloException) {
-            Log.i(GardenBotRepository.TAG, "ERROR: ${e.message}")
+            Log.i(TAG, "ERROR: ${e.message}")
             throw ApolloException("${e.message}")
         }
     }
@@ -37,7 +42,7 @@ class OnboardingRepositoryImpl : GardenBotBaseRepositoryImpl(), OnboardingReposi
                     Client.getInstance(token).mutate(ActivateDeviceMutation(deviceName, userId))
                         .await()
                 if (response.data?.activateDevice == null || response.hasErrors()) {
-                    Log.i(GardenBotRepository.TAG, "ERROR: ${response.errors?.map { it.message }}")
+                    Log.i(TAG, "ERROR: ${response.errors?.map { it.message }}")
                     throw ApolloException("${response.errors?.map { it.message }}")
                 } else {
                     response.data?.let {
@@ -45,7 +50,7 @@ class OnboardingRepositoryImpl : GardenBotBaseRepositoryImpl(), OnboardingReposi
                     }
                 }
             } catch (e: ApolloException) {
-                Log.i(GardenBotRepository.TAG, "ERROR: ${e.message}")
+                Log.i(TAG, "ERROR: ${e.message}")
                 throw ApolloException("${e.message}")
             }
         }
