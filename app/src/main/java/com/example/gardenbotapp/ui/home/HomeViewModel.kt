@@ -9,7 +9,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import com.example.gardenbotapp.data.local.PreferencesManager
-import com.example.gardenbotapp.data.remote.GardenBotRepository
 import com.example.gardenbotapp.util.Errors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -18,7 +17,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val gardenBotRepository: GardenBotRepository,
     private val preferencesManager: PreferencesManager,
     private val state: SavedStateHandle
 ) : ViewModel() {
