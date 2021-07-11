@@ -5,38 +5,36 @@
 package com.example.gardenbotapp.ui.home.sections.chart
 
 import android.util.Log
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.data.domain.ChartRepository
 import com.example.gardenbotapp.data.domain.GardenBotRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.data.remote.model.Measure
+import com.example.gardenbotapp.di.ApplicationDefaultScope
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import com.example.gardenbotapp.ui.home.HomeViewModel
 import com.example.gardenbotapp.util.Errors
-import com.github.aachartmodel.aainfographics.aachartcreator.AAChartModel
-import com.github.aachartmodel.aainfographics.aachartcreator.AAChartType
-import com.github.aachartmodel.aainfographics.aachartcreator.AASeriesElement
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.retryWhen
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
 const val EXP_TOKEN = "Invalid/Expired token"
 
 @HiltViewModel
 class ChartViewModel @Inject constructor(
+    @ApplicationDefaultScope private val defScope: CoroutineScope,
     private val chartRepository: ChartRepository,
     gardenBotRepository: GardenBotRepository,
     private val preferencesManager: PreferencesManager
-) : GardenBotBaseViewModel(gardenBotRepository) {
+) : GardenBotBaseViewModel() {
 
     private val _measures = MutableLiveData<List<Measure>>()
     val measures: LiveData<List<Measure>> get() = _measures
@@ -48,6 +46,11 @@ class ChartViewModel @Inject constructor(
     init {
         populateChartData()
         subscribeToMeasures()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        defScope.cancel()
     }
 
     private fun subscribeToMeasures() {
@@ -79,44 +82,7 @@ class ChartViewModel @Inject constructor(
         }
     }
 
-    val airTempDataset: LiveData<MutableList<Float>> =
-        Transformations.switchMap(_measures) { rawList ->
-            liveData {
-                emit(
-                    rawList
-                        .asSequence()
-                        .filter { sensorData -> sensorData.airTemp > 0 }
-                        .map { measure -> measure.airTemp.toFloat() }
-                        .toMutableList()
-                )
-            }
-        }
 
-    val airHumDataset: LiveData<MutableList<Float>> =
-        Transformations.switchMap(_measures) { rawList ->
-            liveData {
-                emit(
-                    rawList
-                        .asSequence()
-                        .filter { sensorData -> sensorData.airHum > 0 }
-                        .map { measure -> measure.airHum.toFloat() }
-                        .toMutableList()
-                )
-            }
-        }
-
-    val soilHumDataset: LiveData<MutableList<Float>> =
-        Transformations.switchMap(_measures) { rawList ->
-            liveData {
-                emit(
-                    rawList
-                        .asSequence()
-                        .filter { sensorData -> sensorData.soilHum > 0 }
-                        .map { measure -> measure.soilHum.toFloat() }
-                        .toMutableList()
-                )
-            }
-        }
 
     fun refreshChartData(measure: Measure) {
         val listSoFar = arrayListOf<Measure>()
@@ -125,7 +91,7 @@ class ChartViewModel @Inject constructor(
         _measures.value = listSoFar
     }
 
-    private fun populateChartData(token: String? = null) {
+    fun populateChartData(token: String? = null) {
         val currentToken = token ?: runBlocking { preferencesManager.tokenFlow.first() }
         viewModelScope.launch {
             try {
@@ -154,25 +120,4 @@ class ChartViewModel @Inject constructor(
             }
         }
     }
-
-    val airHumChartModel: LiveData<AAChartModel> =
-        Transformations.switchMap(airHumDataset) { dataset ->
-            liveData {
-                val elements = AASeriesElement().apply {
-                    name("Humedad ambiental")
-                    data(dataset.toTypedArray())
-                }
-                val aaChartModel = AAChartModel().apply {
-                    chartType(AAChartType.Bar)
-                    title("title")
-                    subtitle("subtitle")
-                    backgroundColor("#4b2b7f")
-                    dataLabelsEnabled(true)
-                    series(
-                        arrayOf(elements)
-                    )
-                }
-                emit(aaChartModel)
-            }
-        }
 }

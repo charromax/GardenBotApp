@@ -7,12 +7,16 @@ package com.example.gardenbotapp.ui.home.sections.chart
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentChartBinding
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.util.Errors
 import com.example.gardenbotapp.util.snack
+import com.github.mikephil.charting.components.Description
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
@@ -22,6 +26,28 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
     private val TAG = "CHART"
     override fun getViewBinding() = FragmentChartBinding.inflate(layoutInflater)
     override fun getViewModelClass() = ChartViewModel::class.java
+
+    private val calculationsViewModel: ChartCalculationsViewModel by viewModels()
+
+    override fun setUpUI() {
+        super.setUpUI()
+        collectEvents()
+        setupChart()
+    }
+
+    /**
+     * setup chart UI
+     */
+    private fun setupChart() {
+        with(binding.chart) {
+            description = Description().apply { isEnabled = false }
+            setNoDataText(context.getString(R.string.chart_no_data_message))
+            axisRight.valueFormatter = TemperatureLabelFormatter()
+            axisLeft.valueFormatter = NoLabelFormatter()
+            xAxis.valueFormatter = NoLabelFormatter()
+            invalidate()
+        }
+    }
 
     private fun collectEvents() {
         lifecycleScope.launchWhenStarted {
@@ -38,14 +64,24 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun observeLiveData() {
-        collectEvents()
+        //launch on started and repeat
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.populateChartData()
+            }
+        }
         viewModel.measureSub.observe(viewLifecycleOwner, { newMeasure ->
             Log.i(TAG, "onViewCreated: $newMeasure")
             viewModel.refreshChartData(newMeasure)
         })
 
-        viewModel.airHumChartModel.observe(viewLifecycleOwner, {
-            binding.chart.aa_drawChartWithChartModel(it)
+        viewModel.measures.observe(viewLifecycleOwner, {
+            calculationsViewModel.initModelCalculations(it)
+        })
+
+        calculationsViewModel.airTempLineData.observe(viewLifecycleOwner, {
+            binding.chart.data = it
+            binding.chart.notifyDataSetChanged()
         })
     }
 

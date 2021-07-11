@@ -11,9 +11,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-open class GardenBotBaseViewModel @Inject constructor(
-    private val gardenBotRepository: GardenBotRepository
-) : ViewModel(), GardenBotRepository {
+open class GardenBotBaseViewModel @Inject constructor() : ViewModel(), GardenBotRepository {
+
+    @Inject
+    lateinit var gardenBotRepository: GardenBotRepository
 
     override suspend fun refreshToken(token: String): RefreshTokenQuery.Data? {
         return gardenBotRepository.refreshToken(token)

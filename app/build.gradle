@@ -84,6 +84,8 @@ dependencies {
     // Lifecycle + ViewModel & LiveData
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycleVersion"
+    //lifecycle scope
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha01"
     implementation "android.arch.lifecycle:common-java8:$lifecycleVersion"
 
     // Navigation Component
@@ -119,5 +121,8 @@ dependencies {
 
     //AA Chart
     implementation 'com.github.AAChartModel:AAChartCore-Kotlin:-SNAPSHOT'
+
+    // MP Android Chart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
 }

@@ -8,12 +8,10 @@ import android.content.Context
 import androidx.lifecycle.*
 import com.example.gardenbotapp.LoginUserMutation
 import com.example.gardenbotapp.R
-import com.example.gardenbotapp.data.domain.GardenBotRepository
 import com.example.gardenbotapp.data.domain.LoginUserRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -23,12 +21,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    gardenBotRepository: GardenBotRepository,
     private val loginUserRepository: LoginUserRepository,
     private val preferencesManager: PreferencesManager,
-    private val state: SavedStateHandle,
-    @ApplicationContext private val context: Context
-) : GardenBotBaseViewModel(gardenBotRepository) {
+    private val state: SavedStateHandle
+) : GardenBotBaseViewModel() {
     private val prefs = preferencesManager.preferencesFlow
     private val loginResponse = MutableLiveData<LoginUserMutation.Login>()
     val logResponse: LiveData<LoginUserMutation.Login> get() = loginResponse
@@ -51,7 +47,7 @@ class LoginViewModel @Inject constructor(
     val logEvents = loginEventsChannel.receiveAsFlow()
 
 
-    fun loginUser() {
+    fun loginUser(context: Context) {
         viewModelScope.launch {
             if (username.isBlank() || password.isBlank()) {
                 loginEventsChannel.send(LoginEvents.LoginError(context.getString(R.string.empty_fields_message)))

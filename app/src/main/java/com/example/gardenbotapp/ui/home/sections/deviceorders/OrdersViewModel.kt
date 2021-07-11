@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.exception.ApolloException
-import com.example.gardenbotapp.data.domain.GardenBotRepository
 import com.example.gardenbotapp.data.domain.ManualControlRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.type.Order
@@ -33,11 +32,10 @@ enum class ConnectedDevice(val pin: Int) {
 
 @HiltViewModel
 class OrdersViewModel @Inject constructor(
-    gardenBotRepository: GardenBotRepository,
     private val manualControlRepository: ManualControlRepository,
     private val preferencesManager: PreferencesManager,
     private val state: SavedStateHandle
-) : GardenBotBaseViewModel(gardenBotRepository) {
+) : GardenBotBaseViewModel() {
     private val ordersEventsChannel = Channel<OrdersEvents>()
     val ordersEvents = ordersEventsChannel.receiveAsFlow()
 
