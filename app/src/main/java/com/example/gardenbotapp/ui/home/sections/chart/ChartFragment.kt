@@ -16,6 +16,7 @@ import com.example.gardenbotapp.databinding.FragmentChartBinding
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.util.Errors
 import com.example.gardenbotapp.util.snack
+import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.components.Description
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -81,7 +82,8 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
 
         calculationsViewModel.airTempLineData.observe(viewLifecycleOwner, {
             binding.chart.data = it
-            binding.chart.notifyDataSetChanged()
+            binding.chart.animateX(2000, Easing.EaseInBack)
+            binding.chart.invalidate()
         })
     }
 

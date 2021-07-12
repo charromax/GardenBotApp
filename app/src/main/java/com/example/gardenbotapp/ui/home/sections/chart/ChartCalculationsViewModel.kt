@@ -4,9 +4,10 @@
 
 package com.example.gardenbotapp.ui.home.sections.chart
 
+import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
@@ -15,11 +16,12 @@ import com.example.gardenbotapp.R
 import com.example.gardenbotapp.data.remote.model.Measure
 import com.example.gardenbotapp.di.ApplicationDefaultScope
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
-import com.example.gardenbotapp.util.toLocalDate
+import com.example.gardenbotapp.util.toDate
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import javax.inject.Inject
@@ -31,6 +33,10 @@ class ChartCalculationsViewModel @Inject constructor(
     @Inject
     @ApplicationDefaultScope
     lateinit var defScope: CoroutineScope
+
+    @Inject
+    @ApplicationContext
+    lateinit var context: Context
     private val _measures = MutableLiveData<List<Measure>>()
 
     override fun onCleared() {
@@ -52,17 +58,12 @@ class ChartCalculationsViewModel @Inject constructor(
             liveData(context = defScope.coroutineContext) {
                 emit(
                     rawList
+                        .take(15)
                         .asSequence()
                         .filter { sensorData -> sensorData.airTemp > 0 }
-                        .groupBy {
-                            Log.i("charr0max", "date: ${it.createdAt.toLocalDate()?.dayOfYear}")
-                            it.createdAt.toLocalDate()?.dayOfYear
-                        }
-                        .map { entry ->
-                            entry.value.map { it.airTemp }.average()
-                        }
-                        .mapIndexed { index, airTemp ->
-                            Entry(index.toFloat(), airTemp.toFloat())
+                        .sortedBy { it.createdAt.toDate() }
+                        .mapIndexed { index, entry ->
+                            Entry(index.toFloat(), entry.airTemp.toFloat(), entry.createdAt)
                         }
                         .toMutableList()
                 )
@@ -74,11 +75,12 @@ class ChartCalculationsViewModel @Inject constructor(
             liveData(context = defScope.coroutineContext) {
                 emit(
                     LineDataSet(entries, "Temperatura Ambiental").apply {
-                        valueFormatter = TemperatureLabelFormatter()
-                        color = R.color.gardenbot_green
+                        valueFormatter = DateLabelFormatter()
+                        color = ContextCompat.getColor(context, R.color.blue)
                         setDrawCircles(false)
                         lineWidth = 4f
-                        valueTextColor = R.color.gardenbot_green_dark
+                        valueTextColor =
+                            ContextCompat.getColor(context, R.color.gardenbot_green_dark)
                         mode = LineDataSet.Mode.CUBIC_BEZIER
                     }
                 )

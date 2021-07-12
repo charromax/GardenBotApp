@@ -10,7 +10,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.data.domain.ChartRepository
-import com.example.gardenbotapp.data.domain.GardenBotRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.data.remote.model.Measure
 import com.example.gardenbotapp.di.ApplicationDefaultScope
@@ -32,7 +31,6 @@ const val EXP_TOKEN = "Invalid/Expired token"
 class ChartViewModel @Inject constructor(
     @ApplicationDefaultScope private val defScope: CoroutineScope,
     private val chartRepository: ChartRepository,
-    gardenBotRepository: GardenBotRepository,
     private val preferencesManager: PreferencesManager
 ) : GardenBotBaseViewModel() {
 
@@ -85,10 +83,13 @@ class ChartViewModel @Inject constructor(
 
 
     fun refreshChartData(measure: Measure) {
-        val listSoFar = arrayListOf<Measure>()
-        _measures.value?.let { listSoFar.addAll(it) }
-        listSoFar.add(measure)
-        _measures.value = listSoFar
+        defScope.launch {
+            val listSoFar = arrayListOf<Measure>()
+            _measures.value?.forEach { listSoFar.add(it) }
+            listSoFar.add(measure)
+            _measures.postValue(listSoFar)
+        }
+
     }
 
     fun populateChartData(token: String? = null) {

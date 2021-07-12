@@ -53,17 +53,6 @@ fun String.toDate(
     return parser.parse(this)
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-fun String.toLocalDate(dateFormat: String = "yyyy-MM-dd'T'HH:mm:ss"): LocalDateTime? {
-    return try {
-        val formatter = DateTimeFormatter.ISO_ZONED_DATE_TIME
-        LocalDateTime.parse(this, formatter)
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    }
-}
-
 fun Date.formatTo(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()): String {
     val formatter = SimpleDateFormat(dateFormat, Locale.getDefault())
     formatter.timeZone = timeZone

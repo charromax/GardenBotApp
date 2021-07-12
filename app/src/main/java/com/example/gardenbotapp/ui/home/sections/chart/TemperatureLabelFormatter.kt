@@ -6,7 +6,8 @@ package com.example.gardenbotapp.ui.home.sections.chart
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import com.example.gardenbotapp.util.toDateFormat
+import com.example.gardenbotapp.util.formatTo
+import com.example.gardenbotapp.util.toDate
 import com.example.gardenbotapp.util.toTemperatureString
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.Entry
@@ -30,7 +31,7 @@ class TemperatureLabelFormatter : ValueFormatter() {
 class DateLabelFormatter : ValueFormatter() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun getPointLabel(entry: Entry?): String {
-        return (entry?.data as String).toDateFormat()
+        return (entry?.data as String).toDate().formatTo("EEE, HH:mm")
     }
 }
 
