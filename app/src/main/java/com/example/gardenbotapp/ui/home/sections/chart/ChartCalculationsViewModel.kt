@@ -94,29 +94,84 @@ class ChartCalculationsViewModel @Inject constructor(
     }
 
 
-    val airHumDataset: LiveData<MutableList<Float>> =
+    @RequiresApi(Build.VERSION_CODES.O)
+    val airHumEntrySet: LiveData<MutableList<Entry>> =
         Transformations.switchMap(_measures) { rawList ->
             liveData(context = defScope.coroutineContext) {
                 emit(
                     rawList
+                        .take(15)
                         .asSequence()
                         .filter { sensorData -> sensorData.airHum > 0 }
-                        .map { measure -> measure.airHum.toFloat() }
+                        .sortedBy { it.createdAt.toDate() }
+                        .mapIndexed { index, entry ->
+                            Entry(index.toFloat(), entry.airHum.toFloat(), entry.createdAt)
+                        }
                         .toMutableList()
                 )
             }
         }
 
-    val soilHumDataset: LiveData<MutableList<Float>> =
+    val airHumDataSet: LiveData<LineDataSet> =
+        Transformations.switchMap(airHumEntrySet) { entries ->
+            liveData(context = defScope.coroutineContext) {
+                emit(
+                    LineDataSet(entries, "Humedad Ambiental").apply {
+                        valueFormatter = DateLabelFormatter()
+                        color = ContextCompat.getColor(context, R.color.gardenbot_green)
+                        setDrawCircles(false)
+                        lineWidth = 4f
+                        valueTextColor =
+                            ContextCompat.getColor(context, R.color.gardenbot_green_dark)
+                        mode = LineDataSet.Mode.CUBIC_BEZIER
+                    }
+                )
+            }
+        }
+
+    val airHumLineData: LiveData<LineData> = Transformations.switchMap(airHumDataSet) {
+        liveData(context = defScope.coroutineContext) {
+            emit(LineData(it))
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    val soilHumEntrySet: LiveData<MutableList<Entry>> =
         Transformations.switchMap(_measures) { rawList ->
             liveData(context = defScope.coroutineContext) {
                 emit(
                     rawList
+                        .take(15)
                         .asSequence()
-                        .filter { sensorData -> sensorData.soilHum > 0 }
-                        .map { measure -> measure.soilHum.toFloat() }
+                        .sortedBy { it.createdAt.toDate() }
+                        .mapIndexed { index, entry ->
+                            Entry(index.toFloat(), entry.soilHum.toFloat(), entry.createdAt)
+                        }
                         .toMutableList()
                 )
             }
         }
+
+    val soilHumDataSet: LiveData<LineDataSet> =
+        Transformations.switchMap(soilHumEntrySet) { entries ->
+            liveData(context = defScope.coroutineContext) {
+                emit(
+                    LineDataSet(entries, "Temperatura Ambiental").apply {
+                        valueFormatter = DateLabelFormatter()
+                        color = ContextCompat.getColor(context, R.color.red)
+                        setDrawCircles(false)
+                        lineWidth = 4f
+                        valueTextColor =
+                            ContextCompat.getColor(context, R.color.gardenbot_green_dark)
+                        mode = LineDataSet.Mode.CUBIC_BEZIER
+                    }
+                )
+            }
+        }
+
+    val soilHumLineData: LiveData<LineData> = Transformations.switchMap(soilHumDataSet) {
+        liveData(context = defScope.coroutineContext) {
+            emit(LineData(it))
+        }
+    }
 }

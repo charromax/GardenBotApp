@@ -27,7 +27,6 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
     private val TAG = "CHART"
     override fun getViewBinding() = FragmentChartBinding.inflate(layoutInflater)
     override fun getViewModelClass() = ChartViewModel::class.java
-
     private val calculationsViewModel: ChartCalculationsViewModel by viewModels()
 
     override fun setUpUI() {
@@ -44,8 +43,8 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
             description = Description().apply { isEnabled = false }
             setNoDataText(context.getString(R.string.chart_no_data_message))
             axisRight.valueFormatter = TemperatureLabelFormatter()
-            axisLeft.valueFormatter = NoLabelFormatter()
-            xAxis.valueFormatter = NoLabelFormatter()
+            axisLeft.isEnabled = false
+            xAxis.isEnabled = false
             invalidate()
         }
     }
@@ -82,8 +81,8 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
 
         calculationsViewModel.airTempLineData.observe(viewLifecycleOwner, {
             binding.chart.data = it
-            binding.chart.animateX(2000, Easing.EaseInBack)
-            binding.chart.invalidate()
+            binding.chart.animateY(700, Easing.EaseInOutCubic)
+            binding.chart.notifyDataSetChanged()
         })
     }
 
