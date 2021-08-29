@@ -31,7 +31,25 @@ class OrdersFragment : GardenbotBaseFragment<FragmentDeviceControlBinding, Order
                     OrdersViewModel.OrdersEvents.OnInitialState -> viewModel.refreshDeviceState()
                     is OrdersViewModel.OrdersEvents.OnOrderError -> showSnack(event.message)
                     OrdersViewModel.OrdersEvents.OnTokenError -> showSnack(getString(R.string.network_error_message))
+                    is OrdersViewModel.OrdersEvents.OnOrderSent -> showSnack(event.message)
+                    is OrdersViewModel.OrdersEvents.OnStatusResponseReceived -> handleStatusResponseReceived(
+                        event.devices
+                    )
                 }
+            }
+        }
+    }
+
+    private fun handleStatusResponseReceived(devices: List<OrdersViewModel.OnDeviceStateChanged>) {
+        devices.forEach { incomingChange ->
+            when (incomingChange.device) {
+                ConnectedDevice.LAMPARA -> binding.lampara.isChecked = incomingChange.newState
+                ConnectedDevice.VENTILADOR -> binding.ventilator.isChecked =
+                    incomingChange.newState
+                ConnectedDevice.EXTRACTOR -> binding.extractor.isChecked =
+                    incomingChange.newState
+                ConnectedDevice.INTRACTOR -> binding.intractor.isChecked =
+                    incomingChange.newState
             }
         }
     }
@@ -42,21 +60,6 @@ class OrdersFragment : GardenbotBaseFragment<FragmentDeviceControlBinding, Order
     }
 
     override fun observeLiveData() {
-        with(viewModel) {
-            //observe changes in device state and update buttons
-            onDeviceStateStateChanged.observe(viewLifecycleOwner, { incomingChange ->
-                when (incomingChange.device) {
-                    ConnectedDevice.LAMPARA -> binding.lampara.isChecked = incomingChange.newState
-                    ConnectedDevice.VENTILADOR -> binding.ventilator.isChecked =
-                        incomingChange.newState
-                    ConnectedDevice.EXTRACTOR -> binding.extractor.isChecked =
-                        incomingChange.newState
-                    ConnectedDevice.INTRACTOR -> binding.intractor.isChecked =
-                        incomingChange.newState
-                }
-
-            })
-        }
         collectEvents()
     }
 
@@ -74,10 +77,21 @@ class OrdersFragment : GardenbotBaseFragment<FragmentDeviceControlBinding, Order
             intractor.setOnCheckedChangeListener { _, state ->
                 updateState(state, ConnectedDevice.INTRACTOR)
             }
+            refresh.setOnClickListener {
+                viewModel.refreshDeviceState()
+            }
         }
     }
 
     private fun updateState(state: Boolean, device: ConnectedDevice) {
+        updateButtonsUI(device, state)
+        viewModel.sendOrder(device, state)
+    }
+
+    private fun updateButtonsUI(
+        device: ConnectedDevice,
+        state: Boolean
+    ) {
         when (device) {
             ConnectedDevice.LAMPARA -> binding.lampContainer.cardElevation =
                 if (state) BOTTOM else TOP
@@ -88,7 +102,6 @@ class OrdersFragment : GardenbotBaseFragment<FragmentDeviceControlBinding, Order
             ConnectedDevice.INTRACTOR -> binding.intContainer.cardElevation =
                 if (state) BOTTOM else TOP
         }
-        viewModel.sendOrder(device, state)
     }
 
     private fun showSnack(message: String) {

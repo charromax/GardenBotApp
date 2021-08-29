@@ -16,7 +16,6 @@ import com.example.gardenbotapp.di.ApplicationDefaultScope
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import com.example.gardenbotapp.ui.home.HomeViewModel
 import com.example.gardenbotapp.util.Errors
-import com.example.gardenbotapp.util.toDate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -43,7 +42,6 @@ class ChartViewModel @Inject constructor(
     val measureSub: LiveData<Measure> get() = _measureSub
 
     init {
-        populateChartData()
         subscribeToMeasures()
     }
 
@@ -86,14 +84,9 @@ class ChartViewModel @Inject constructor(
     fun refreshChartData(measure: Measure) {
         defScope.launch {
             val listSoFar = arrayListOf<Measure>()
-            _measures.value?.forEach { listSoFar.add(it) }
-            Log.i("charromax", "refreshChartData: size: ${listSoFar.size}")
+            _measures.value?.let { listSoFar.addAll(it) }
             listSoFar.add(measure)
-            Log.i("charromax", "refreshChartData: size: ${listSoFar.size}")
-            Log.i("charromax", "refreshChartData: before sort ${listSoFar.map { it.createdAt }}")
-            val sortedList = listSoFar.sortedWith(compareBy { it.createdAt.toDate() }).reversed()
-            Log.i("charromax", "refreshChartData: after sort ${sortedList.map { it.createdAt }}")
-            _measures.postValue(sortedList)
+            _measures.postValue(listSoFar)
         }
 
     }

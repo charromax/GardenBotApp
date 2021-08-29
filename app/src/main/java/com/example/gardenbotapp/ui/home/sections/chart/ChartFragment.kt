@@ -8,11 +8,9 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.example.gardenbotapp.R
-import com.example.gardenbotapp.databinding.FragmentChartBinding
+import com.example.gardenbotapp.databinding.FragmentChartItemBinding
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.util.Errors
 import com.example.gardenbotapp.util.snack
@@ -22,10 +20,10 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
-class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel>() {
+class ChartFragment : GardenbotBaseFragment<FragmentChartItemBinding, ChartViewModel>() {
 
     private val TAG = "CHART"
-    override fun getViewBinding() = FragmentChartBinding.inflate(layoutInflater)
+    override fun getViewBinding() = FragmentChartItemBinding.inflate(layoutInflater)
     override fun getViewModelClass() = ChartViewModel::class.java
     private val calculationsViewModel: ChartCalculationsViewModel by viewModels()
 
@@ -66,9 +64,7 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
     override fun observeLiveData() {
         //launch on started and repeat
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
-                viewModel.populateChartData()
-            }
+            viewModel.populateChartData()
         }
         viewModel.measureSub.observe(viewLifecycleOwner, { newMeasure ->
             Log.i(TAG, "onViewCreated: $newMeasure")
@@ -79,9 +75,9 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
             calculationsViewModel.initModelCalculations(it)
         })
 
-        calculationsViewModel.airTempLineData.observe(viewLifecycleOwner, {
+        calculationsViewModel.airHumLineData.observe(viewLifecycleOwner, {
             binding.chart.data = it
-            binding.chart.animateY(700, Easing.EaseInOutCubic)
+            binding.chart.animateX(450, Easing.EaseInElastic)
             binding.chart.notifyDataSetChanged()
         })
     }

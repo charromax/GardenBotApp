@@ -49,6 +49,8 @@ type Mutation {
     registerNewDevice(deviceName: String!): Device!
     renameDevice(deviceId: ID!, newName: String!): User!
     sendMqttOrder(payload: Payload): String!
+    statusRequest(request: StatusRequest!): String!
+    statusResponse(response: Response): String!
 }
 
 type Notification {
@@ -78,11 +80,22 @@ type Query {
     refreshToken: String!
 }
 
+type SmallDevice {
+    dev_id: Int!
+    status: Boolean!
+}
+
+type StatusResponse {
+    deviceId: ID!
+    devices: [SmallDevice]!
+}
+
 type Subscription {
     newDevice(devName: String!): Device!
     newMeasure(devId: ID!): Measure!
     newNotification(devId: ID!): Notification!
     newPost: Post!
+    newStatusResponse(deviceId: ID!): StatusResponse!
 }
 
 type User {
@@ -117,6 +130,21 @@ input RegisterInput {
     email: String!
     password: String!
     username: String!
+}
+
+input Response {
+    deviceId: ID!
+    devices: [SmallDev]!
+}
+
+input SmallDev {
+    dev_id: ID!
+    status: Boolean!
+}
+
+input StatusRequest {
+    deviceId: ID!
+    type: String!
 }
 
 

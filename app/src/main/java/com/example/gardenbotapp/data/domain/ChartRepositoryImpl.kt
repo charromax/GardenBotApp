@@ -54,7 +54,7 @@ class ChartRepositoryImpl : ChartRepository, GardenBotRepositoryImpl() {
                                 soilHum = data?.soilHum ?: 0.0,
                                 createdAt = data?.createdAt ?: ""
                             )
-                        })
+                        }.reversed())
                     }
                 }
             } catch (e: ApolloException) {

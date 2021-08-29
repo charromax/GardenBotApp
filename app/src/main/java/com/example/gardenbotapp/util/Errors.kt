@@ -10,3 +10,5 @@ sealed class Errors {
     data class SubError(val message: String) : Errors()
     data class ChartError(val message: String) : Errors()
 }
+
+

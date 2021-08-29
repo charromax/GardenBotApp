@@ -4,6 +4,7 @@
 
 package com.example.gardenbotapp.ui.home.sections.chart
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -16,7 +17,6 @@ import com.example.gardenbotapp.R
 import com.example.gardenbotapp.data.remote.model.Measure
 import com.example.gardenbotapp.di.ApplicationDefaultScope
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
-import com.example.gardenbotapp.util.toDate
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
@@ -25,6 +25,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import javax.inject.Inject
+import kotlin.math.roundToInt
+
+const val LINE_WIDTH = 3f
+
+//defines what percentage of measures are cut off to be shown in home screen
+const val CHUNK = .7
 
 @HiltViewModel
 class ChartCalculationsViewModel @Inject constructor(
@@ -34,6 +40,7 @@ class ChartCalculationsViewModel @Inject constructor(
     @ApplicationDefaultScope
     lateinit var defScope: CoroutineScope
 
+    @SuppressLint("StaticFieldLeak")
     @Inject
     @ApplicationContext
     lateinit var context: Context
@@ -58,10 +65,9 @@ class ChartCalculationsViewModel @Inject constructor(
             liveData(context = defScope.coroutineContext) {
                 emit(
                     rawList
-                        .take(15)
                         .asSequence()
                         .filter { sensorData -> sensorData.airTemp > 0 }
-                        .sortedBy { it.createdAt.toDate() }
+                        .takeWhile { rawList.indexOf(it) >= (rawList.size * CHUNK).roundToInt() }
                         .mapIndexed { index, entry ->
                             Entry(index.toFloat(), entry.airTemp.toFloat(), entry.createdAt)
                         }
@@ -78,10 +84,10 @@ class ChartCalculationsViewModel @Inject constructor(
                         valueFormatter = DateLabelFormatter()
                         color = ContextCompat.getColor(context, R.color.blue)
                         setDrawCircles(false)
-                        lineWidth = 4f
+                        lineWidth = LINE_WIDTH
                         valueTextColor =
                             ContextCompat.getColor(context, R.color.gardenbot_green_dark)
-                        mode = LineDataSet.Mode.CUBIC_BEZIER
+                        mode = LineDataSet.Mode.HORIZONTAL_BEZIER
                     }
                 )
             }
@@ -100,10 +106,9 @@ class ChartCalculationsViewModel @Inject constructor(
             liveData(context = defScope.coroutineContext) {
                 emit(
                     rawList
-                        .take(15)
-                        .asSequence()
                         .filter { sensorData -> sensorData.airHum > 0 }
-                        .sortedBy { it.createdAt.toDate() }
+                        .takeLast(10)
+                        .asSequence()
                         .mapIndexed { index, entry ->
                             Entry(index.toFloat(), entry.airHum.toFloat(), entry.createdAt)
                         }
@@ -120,10 +125,10 @@ class ChartCalculationsViewModel @Inject constructor(
                         valueFormatter = DateLabelFormatter()
                         color = ContextCompat.getColor(context, R.color.gardenbot_green)
                         setDrawCircles(false)
-                        lineWidth = 4f
+                        lineWidth = LINE_WIDTH
                         valueTextColor =
                             ContextCompat.getColor(context, R.color.gardenbot_green_dark)
-                        mode = LineDataSet.Mode.CUBIC_BEZIER
+                        mode = LineDataSet.Mode.HORIZONTAL_BEZIER
                     }
                 )
             }
@@ -141,9 +146,8 @@ class ChartCalculationsViewModel @Inject constructor(
             liveData(context = defScope.coroutineContext) {
                 emit(
                     rawList
-                        .take(15)
                         .asSequence()
-                        .sortedBy { it.createdAt.toDate() }
+                        .takeWhile { rawList.indexOf(it) >= (rawList.size * CHUNK).roundToInt() }
                         .mapIndexed { index, entry ->
                             Entry(index.toFloat(), entry.soilHum.toFloat(), entry.createdAt)
                         }
@@ -160,10 +164,10 @@ class ChartCalculationsViewModel @Inject constructor(
                         valueFormatter = DateLabelFormatter()
                         color = ContextCompat.getColor(context, R.color.red)
                         setDrawCircles(false)
-                        lineWidth = 4f
+                        lineWidth = LINE_WIDTH
                         valueTextColor =
                             ContextCompat.getColor(context, R.color.gardenbot_green_dark)
-                        mode = LineDataSet.Mode.CUBIC_BEZIER
+                        mode = LineDataSet.Mode.HORIZONTAL_BEZIER
                     }
                 )
             }

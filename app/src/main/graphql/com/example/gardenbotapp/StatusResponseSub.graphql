@@ -1,0 +1,9 @@
+subscription newStatusResponse($deviceId: ID!){
+    newStatusResponse(deviceId: $deviceId){
+        devices {
+            dev_id
+            status
+        }
+    }
+
+}
