@@ -65,17 +65,17 @@ class OrdersFragment : GardenbotBaseFragment<FragmentDeviceControlBinding, Order
 
     override fun setClickListeners() {
         with(binding) {
-            lampara.setOnCheckedChangeListener { _, state ->
-                updateState(state, ConnectedDevice.LAMPARA)
+            lampara.setOnCheckedChangeListener { button, state ->
+                if (button.isPressed) updateState(state, ConnectedDevice.LAMPARA)
             }
-            ventilator.setOnCheckedChangeListener { _, state ->
-                updateState(state, ConnectedDevice.VENTILADOR)
+            ventilator.setOnCheckedChangeListener { button, state ->
+                if (button.isPressed) updateState(state, ConnectedDevice.VENTILADOR)
             }
-            extractor.setOnCheckedChangeListener { _, state ->
-                updateState(state, ConnectedDevice.EXTRACTOR)
+            extractor.setOnCheckedChangeListener { button, state ->
+                if (button.isPressed) updateState(state, ConnectedDevice.EXTRACTOR)
             }
-            intractor.setOnCheckedChangeListener { _, state ->
-                updateState(state, ConnectedDevice.INTRACTOR)
+            intractor.setOnCheckedChangeListener { button, state ->
+                if (button.isPressed) updateState(state, ConnectedDevice.INTRACTOR)
             }
             refresh.setOnClickListener {
                 viewModel.refreshDeviceState()

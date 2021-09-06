@@ -7,25 +7,27 @@ package com.example.gardenbotapp.ui.home.sections.chart
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.example.gardenbotapp.R
-import com.example.gardenbotapp.databinding.FragmentChartItemBinding
+import com.example.gardenbotapp.databinding.FragmentChartBinding
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.util.Errors
 import com.example.gardenbotapp.util.snack
-import com.github.mikephil.charting.animation.Easing
-import com.github.mikephil.charting.components.Description
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
-class ChartFragment : GardenbotBaseFragment<FragmentChartItemBinding, ChartViewModel>() {
+class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel>() {
 
     private val TAG = "CHART"
-    override fun getViewBinding() = FragmentChartItemBinding.inflate(layoutInflater)
+    override fun getViewBinding() = FragmentChartBinding.inflate(layoutInflater)
     override fun getViewModelClass() = ChartViewModel::class.java
-    private val calculationsViewModel: ChartCalculationsViewModel by viewModels()
+    override var useSharedViewModel = true
+    private val calculationsViewModel: ChartCalculationsViewModel by activityViewModels()
+    private lateinit var chartAdapter: ChartsAdapter
+    private val charts =
+        listOf(AirHumChartFragment(), AirTempChartFragment(), SoilHumChartFragment())
 
     override fun setUpUI() {
         super.setUpUI()
@@ -37,14 +39,8 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartItemBinding, ChartViewM
      * setup chart UI
      */
     private fun setupChart() {
-        with(binding.chart) {
-            description = Description().apply { isEnabled = false }
-            setNoDataText(context.getString(R.string.chart_no_data_message))
-            axisRight.valueFormatter = TemperatureLabelFormatter()
-            axisLeft.isEnabled = false
-            xAxis.isEnabled = false
-            invalidate()
-        }
+        chartAdapter = ChartsAdapter(charts, this)
+        binding.pager.adapter = chartAdapter
     }
 
     private fun collectEvents() {
@@ -73,12 +69,6 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartItemBinding, ChartViewM
 
         viewModel.measures.observe(viewLifecycleOwner, {
             calculationsViewModel.initModelCalculations(it)
-        })
-
-        calculationsViewModel.airHumLineData.observe(viewLifecycleOwner, {
-            binding.chart.data = it
-            binding.chart.animateX(450, Easing.EaseInElastic)
-            binding.chart.notifyDataSetChanged()
         })
     }
 

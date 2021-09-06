@@ -25,7 +25,6 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
 import javax.inject.Inject
-import kotlin.math.roundToInt
 
 const val LINE_WIDTH = 3f
 
@@ -65,9 +64,9 @@ class ChartCalculationsViewModel @Inject constructor(
             liveData(context = defScope.coroutineContext) {
                 emit(
                     rawList
-                        .asSequence()
                         .filter { sensorData -> sensorData.airTemp > 0 }
-                        .takeWhile { rawList.indexOf(it) >= (rawList.size * CHUNK).roundToInt() }
+                        .takeLast(10)
+                        .asSequence()
                         .mapIndexed { index, entry ->
                             Entry(index.toFloat(), entry.airTemp.toFloat(), entry.createdAt)
                         }
@@ -146,8 +145,9 @@ class ChartCalculationsViewModel @Inject constructor(
             liveData(context = defScope.coroutineContext) {
                 emit(
                     rawList
+                        .filter { sensorData -> sensorData.soilHum > 0 }
+                        .takeLast(10)
                         .asSequence()
-                        .takeWhile { rawList.indexOf(it) >= (rawList.size * CHUNK).roundToInt() }
                         .mapIndexed { index, entry ->
                             Entry(index.toFloat(), entry.soilHum.toFloat(), entry.createdAt)
                         }
