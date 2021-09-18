@@ -27,9 +27,10 @@ import kotlinx.coroutines.cancel
 import javax.inject.Inject
 
 const val LINE_WIDTH = 3f
+const val VALUE_TEXT_SIZE = 10f
 
-//defines what percentage of measures are cut off to be shown in home screen
-const val CHUNK = .7
+//defines the number of measures shown in home screen charts
+const val MAX_ENTRIES = 10
 
 @HiltViewModel
 class ChartCalculationsViewModel @Inject constructor(
@@ -65,7 +66,7 @@ class ChartCalculationsViewModel @Inject constructor(
                 emit(
                     rawList
                         .filter { sensorData -> sensorData.airTemp > 0 }
-                        .takeLast(10)
+                        .takeLast(MAX_ENTRIES)
                         .asSequence()
                         .mapIndexed { index, entry ->
                             Entry(index.toFloat(), entry.airTemp.toFloat(), entry.createdAt)
@@ -79,11 +80,12 @@ class ChartCalculationsViewModel @Inject constructor(
         Transformations.switchMap(airTempEntrySet) { entries ->
             liveData(context = defScope.coroutineContext) {
                 emit(
-                    LineDataSet(entries, "Temperatura Ambiental").apply {
-                        valueFormatter = DateLabelFormatter()
+                    LineDataSet(entries, context.getString(R.string.air_temp_chart_label)).apply {
+                        valueFormatter = ShortDateLabelFormatter()
                         color = ContextCompat.getColor(context, R.color.blue)
                         setDrawCircles(false)
                         lineWidth = LINE_WIDTH
+                        valueTextSize = VALUE_TEXT_SIZE
                         valueTextColor =
                             ContextCompat.getColor(context, R.color.gardenbot_green_dark)
                         mode = LineDataSet.Mode.HORIZONTAL_BEZIER
@@ -106,7 +108,7 @@ class ChartCalculationsViewModel @Inject constructor(
                 emit(
                     rawList
                         .filter { sensorData -> sensorData.airHum > 0 }
-                        .takeLast(10)
+                        .takeLast(MAX_ENTRIES)
                         .asSequence()
                         .mapIndexed { index, entry ->
                             Entry(index.toFloat(), entry.airHum.toFloat(), entry.createdAt)
@@ -120,11 +122,12 @@ class ChartCalculationsViewModel @Inject constructor(
         Transformations.switchMap(airHumEntrySet) { entries ->
             liveData(context = defScope.coroutineContext) {
                 emit(
-                    LineDataSet(entries, "Humedad Ambiental").apply {
-                        valueFormatter = DateLabelFormatter()
+                    LineDataSet(entries, context.getString(R.string.air_hum_chart_label)).apply {
+                        valueFormatter = ShortDateLabelFormatter()
                         color = ContextCompat.getColor(context, R.color.gardenbot_green)
                         setDrawCircles(false)
                         lineWidth = LINE_WIDTH
+                        valueTextSize = VALUE_TEXT_SIZE
                         valueTextColor =
                             ContextCompat.getColor(context, R.color.gardenbot_green_dark)
                         mode = LineDataSet.Mode.HORIZONTAL_BEZIER
@@ -146,7 +149,7 @@ class ChartCalculationsViewModel @Inject constructor(
                 emit(
                     rawList
                         .filter { sensorData -> sensorData.soilHum > 0 }
-                        .takeLast(10)
+                        .takeLast(MAX_ENTRIES)
                         .asSequence()
                         .mapIndexed { index, entry ->
                             Entry(index.toFloat(), entry.soilHum.toFloat(), entry.createdAt)
@@ -160,11 +163,12 @@ class ChartCalculationsViewModel @Inject constructor(
         Transformations.switchMap(soilHumEntrySet) { entries ->
             liveData(context = defScope.coroutineContext) {
                 emit(
-                    LineDataSet(entries, "Temperatura Ambiental").apply {
-                        valueFormatter = DateLabelFormatter()
+                    LineDataSet(entries, context.getString(R.string.soil_hum_chart_label)).apply {
+                        valueFormatter = ShortDateLabelFormatter()
                         color = ContextCompat.getColor(context, R.color.red)
                         setDrawCircles(false)
                         lineWidth = LINE_WIDTH
+                        valueTextSize = VALUE_TEXT_SIZE
                         valueTextColor =
                             ContextCompat.getColor(context, R.color.gardenbot_green_dark)
                         mode = LineDataSet.Mode.HORIZONTAL_BEZIER

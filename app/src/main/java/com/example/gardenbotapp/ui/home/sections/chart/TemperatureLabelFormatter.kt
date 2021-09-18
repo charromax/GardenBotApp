@@ -8,6 +8,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import com.example.gardenbotapp.util.formatTo
 import com.example.gardenbotapp.util.toDate
+import com.example.gardenbotapp.util.toPercentString
 import com.example.gardenbotapp.util.toTemperatureString
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.data.Entry
@@ -28,10 +29,31 @@ class TemperatureLabelFormatter : ValueFormatter() {
     }
 }
 
+class PercentageLabelFormatter : ValueFormatter() {
+
+    override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+        val format = DecimalFormat("###,##0.0")
+        return format.format(value).toPercentString()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun getPointLabel(entry: Entry?): String {
+        val format = DecimalFormat("###,##0.0")
+        return format.format(entry?.y).toPercentString()
+    }
+}
+
 class DateLabelFormatter : ValueFormatter() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun getPointLabel(entry: Entry?): String {
         return (entry?.data as String).toDate().formatTo("EEE, HH:mm")
+    }
+}
+
+class ShortDateLabelFormatter : ValueFormatter() {
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun getPointLabel(entry: Entry?): String {
+        return (entry?.data as String).toDate().formatTo("HH:mm")
     }
 }
 

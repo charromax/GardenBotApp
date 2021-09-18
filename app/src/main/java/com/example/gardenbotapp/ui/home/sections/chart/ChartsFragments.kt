@@ -11,8 +11,10 @@ import com.example.gardenbotapp.databinding.FragmentChartItemBinding
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.components.Description
+import com.github.mikephil.charting.formatter.ValueFormatter
 
-open class BaseChartFragment : GardenbotBaseFragment<FragmentChartItemBinding, ChartViewModel>() {
+abstract class BaseChartFragment :
+    GardenbotBaseFragment<FragmentChartItemBinding, ChartViewModel>() {
     override fun getViewModelClass() = ChartViewModel::class.java
     override var useSharedViewModel = true
     override fun getViewBinding() = FragmentChartItemBinding.inflate(LayoutInflater.from(context))
@@ -30,16 +32,19 @@ open class BaseChartFragment : GardenbotBaseFragment<FragmentChartItemBinding, C
         with(binding.chart) {
             description = Description().apply { isEnabled = false }
             setNoDataText(context.getString(R.string.chart_no_data_message))
-            axisRight.valueFormatter = TemperatureLabelFormatter()
+            axisRight.valueFormatter = setValueFormatterForChartType()
             axisLeft.isEnabled = false
             xAxis.isEnabled = false
             invalidate()
         }
     }
+
+    protected abstract fun setValueFormatterForChartType(): ValueFormatter?
 }
 
 
 class AirHumChartFragment : BaseChartFragment() {
+    override fun setValueFormatterForChartType() = PercentageLabelFormatter()
 
     override fun observeLiveData() {
         super.observeLiveData()
@@ -55,6 +60,7 @@ class AirHumChartFragment : BaseChartFragment() {
 }
 
 class AirTempChartFragment : BaseChartFragment() {
+    override fun setValueFormatterForChartType() = TemperatureLabelFormatter()
 
     override fun observeLiveData() {
         super.observeLiveData()
@@ -70,6 +76,7 @@ class AirTempChartFragment : BaseChartFragment() {
 }
 
 class SoilHumChartFragment : BaseChartFragment() {
+    override fun setValueFormatterForChartType() = PercentageLabelFormatter()
 
     override fun observeLiveData() {
         super.observeLiveData()

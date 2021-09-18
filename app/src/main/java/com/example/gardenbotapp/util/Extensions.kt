@@ -62,3 +62,7 @@ fun Date.formatTo(dateFormat: String, timeZone: TimeZone = TimeZone.getDefault()
 fun String.toTemperatureString(): String {
     return "${this}°C"
 }
+
+fun String.toPercentString(): String {
+    return "${this}%"
+}
