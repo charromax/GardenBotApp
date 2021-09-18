@@ -5,9 +5,7 @@
 package com.example.gardenbotapp.ui.home.sections.chart
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.data.domain.ChartRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
@@ -26,6 +24,7 @@ import kotlinx.coroutines.flow.retryWhen
 import javax.inject.Inject
 
 const val EXP_TOKEN = "Invalid/Expired token"
+const val MAX_ALLOWED_TEMPERATURE = 40
 
 @HiltViewModel
 class ChartViewModel @Inject constructor(
@@ -40,6 +39,7 @@ class ChartViewModel @Inject constructor(
     val chartEvents = chartEventsChannel.receiveAsFlow()
     private val _measureSub = MutableLiveData<Measure>()
     val measureSub: LiveData<Measure> get() = _measureSub
+
 
     init {
         subscribeToMeasures()
@@ -78,7 +78,6 @@ class ChartViewModel @Inject constructor(
             }
         }
     }
-
 
 
     fun refreshChartData(measure: Measure) {
@@ -120,4 +119,23 @@ class ChartViewModel @Inject constructor(
             }
         }
     }
+
+    val liveAirHumData: LiveData<Float> =
+        Transformations.switchMap(_measureSub) {
+            liveData { emit(it.airHum.toFloat()) }
+        }
+
+
+    val liveAirTempData: LiveData<Float> =
+        Transformations.switchMap(_measureSub) {
+            liveData(defScope.coroutineContext) {
+                val temperaturePercent = (it.airTemp * 100) / MAX_ALLOWED_TEMPERATURE
+                emit(temperaturePercent.toFloat())
+            }
+        }
+
+    val liveSoilHumData: LiveData<Float> =
+        Transformations.switchMap(_measureSub) {
+            liveData { emit(it.soilHum.toFloat()) }
+        }
 }

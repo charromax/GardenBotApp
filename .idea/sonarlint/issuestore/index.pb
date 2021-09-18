@@ -1,6 +1,4 @@
 
-s
-Capp/src/main/java/com/example/gardenbotapp/ui/home/HomeViewModel.kt,d\e\deceeb2eb32bdb69b84d3c32351e6cf85793a957
 t
 Dapp/src/main/java/com/example/gardenbotapp/ui/login/LoginFragment.kt,7\7\77e30a0e340c95c35fc2afb2e9a94fd0ba3e4d11
 {
@@ -11,8 +9,6 @@ Papp/src/test/java/com/example/gardenbotapp/ui/register/FakeRegisterRepository.k
 Oapp/src/test/java/com/example/gardenbotapp/ui/register/RegisterViewModelTest.kt,6\5\65d15e059b54346a0fb5d2dcb1ef062762aa3cff
 u
 Eapp/src/test/java/com/example/gardenbotapp/FakeGardenbotRepository.kt,8\d\8d5e87b7ac9e6f9ef59da480276048ba7e607065
-í
-bapp/src/main/java/com/example/gardenbotapp/ui/home/sections/notifications/NotificationsFragment.kt,2\6\265f3b7f87bc0a79167858ba5f331ece3385ab6d
 ì
 capp/src/main/java/com/example/gardenbotapp/ui/home/sections/notifications/NotificationsViewModel.kt,f\1\f194b37cf5d20217a101aeef0f52c1c935a402b3
 |
@@ -75,12 +71,8 @@ i
 9app/src/main/java/com/example/gardenbotapp/util/Errors.kt,1\6\16e05ac276ea986796395e3c3a0ad904af0bbbc1
 P
  app/src/main/AndroidManifest.xml,8\c\8c55c3ccc257e5907959013f99656e4c8ec3903e
-@
-app/build.gradle,f\4\f4a01d6a4fcb971362ec00a83903fd3902f52164
 ã
 [app/src/main/java/com/example/gardenbotapp/ui/home/sections/deviceorders/OrdersViewModel.kt,3\4\348dbfcde6407614f4a252b921c135c8be9d157f
-É
-Sapp/src/main/java/com/example/gardenbotapp/ui/home/sections/chart/ChartViewModel.kt,1\c\1cf23b447cee6b31808eba9fb669cdf2b19fac9b
 }
 Mapp/src/main/java/com/example/gardenbotapp/data/domain/ChartRepositoryImpl.kt,b\b\bb495928c5090173e17aa917b758c0188b945f4e
 y
@@ -89,9 +81,9 @@ Iapp/src/main/java/com/example/gardenbotapp/data/domain/ChartRepository.kt,1\7\
 Oapp/src/main/java/com/example/gardenbotapp/ui/onboarding/OnboardingViewModel.kt,a\e\ae0deaeb838caf34258cf2d076d06464a8aabec8
 ~
 Napp/src/main/java/com/example/gardenbotapp/ui/onboarding/OnboardingActivity.kt,5\1\510e27647199ed90b44034fd9eb0f0d41edcb5c3
-{
-Kapp/src/main/java/com/example/gardenbotapp/ui/base/GardenbotBaseFragment.kt,7\4\74db5183fa0af07c9a7b48a96b7c93896ea1252f
 Å
 Qapp/src/main/java/com/example/gardenbotapp/ui/onboarding/pages/PageTwoFragment.kt,d\6\d613755d891ba48a9e0f56d07838b6380ebfaae2
-Å
-Qapp/src/main/java/com/example/gardenbotapp/ui/home/sections/chart/ChartAdapter.kt,d\2\d28c5299093c160bf1b52a941a8f045c83ace1c2
+é
+^app/src/main/java/com/example/gardenbotapp/ui/home/sections/chart/TemperatureLabelFormatter.kt,d\c\dc2ae6b82950fe35969edeb96a4e8ce7b80dd94d
+m
+=app/src/main/java/com/example/gardenbotapp/util/Extensions.kt,7\5\75adc16c9a6957cdfc231133a7cded40f6e72f1c

@@ -1,14 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
   -->
-
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:theme="@style/GardenFragment"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_white_round_corners"
+    android:padding="8dp">
 
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/pager"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/charts_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:background="@drawable/bg_white_gray_stroke"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/pager"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="@id/charts_content"
+            app:layout_constraintStart_toStartOf="@id/charts_content"
+            app:layout_constraintTop_toTopOf="@id/charts_content" />
+
+        <com.ramijemli.percentagechartview.PercentageChartView
+            android:id="@+id/airHumLiveView"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/soilHumLiveView"
+            app:layout_constraintStart_toStartOf="@id/charts_content"
+            app:layout_constraintTop_toBottomOf="@+id/pager"
+            app:layout_constraintVertical_bias="0.0"
+            app:pcv_animDuration="800"
+            app:pcv_animInterpolator="anticipate_overshoot"
+            app:pcv_backgroundBarColor="@color/white"
+            app:pcv_gradientColors="#F44336 , #00BCD4"
+            app:pcv_gradientType="sweep"
+            app:pcv_mode="ring"
+            app:pcv_orientation="clockwise"
+            app:pcv_progress="40"
+            app:pcv_startAngle="90"
+            app:pcv_textColor="@color/black"
+            app:pcv_textSize="28sp"
+            app:pcv_textStyle="bold" />
+
+        <com.ramijemli.percentagechartview.PercentageChartView
+            android:id="@+id/airTempLiveView"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="@id/charts_content"
+            app:layout_constraintStart_toEndOf="@+id/soilHumLiveView"
+            app:layout_constraintTop_toTopOf="@+id/airHumLiveView"
+            app:pcv_animDuration="800"
+            app:pcv_animInterpolator="anticipate_overshoot"
+            app:pcv_backgroundBarColor="@color/white"
+            app:pcv_gradientColors="#F44336 , #00BCD4"
+            app:pcv_gradientType="sweep"
+            app:pcv_mode="ring"
+            app:pcv_orientation="clockwise"
+            app:pcv_progress="40"
+            app:pcv_startAngle="90"
+            app:pcv_textColor="@color/black"
+            app:pcv_textSize="28sp"
+            app:pcv_textStyle="bold" />
+
+        <com.ramijemli.percentagechartview.PercentageChartView
+            android:id="@+id/soilHumLiveView"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="@id/charts_content"
+            app:layout_constraintEnd_toStartOf="@+id/airTempLiveView"
+            app:layout_constraintStart_toEndOf="@+id/airHumLiveView"
+            app:layout_constraintTop_toTopOf="@+id/airHumLiveView"
+            app:pcv_animDuration="800"
+            app:pcv_animInterpolator="anticipate_overshoot"
+            app:pcv_backgroundBarColor="@color/white"
+            app:pcv_gradientColors="#F44336 , #00BCD4"
+            app:pcv_gradientType="sweep"
+            app:pcv_mode="ring"
+            app:pcv_orientation="clockwise"
+            app:pcv_progress="40"
+            app:pcv_startAngle="90"
+            app:pcv_textColor="@color/black"
+            app:pcv_textSize="28sp"
+            app:pcv_textStyle="bold" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/chart_frag_title"
+        style="@style/GardenLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="32dp"
+        android:layout_marginStart="32dp"
+        android:background="@color/full_white"
+        android:text="@string/chart_data_title"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
