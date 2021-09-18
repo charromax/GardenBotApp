@@ -40,11 +40,15 @@ abstract class BaseChartFragment :
     }
 
     protected abstract fun setValueFormatterForChartType(): ValueFormatter?
+    protected abstract fun setChartTitle(binding: FragmentChartItemBinding)
 }
 
 
 class AirHumChartFragment : BaseChartFragment() {
     override fun setValueFormatterForChartType() = PercentageLabelFormatter()
+    override fun setChartTitle(binding: FragmentChartItemBinding) {
+        binding.chartFragTitle.text = context?.getString(R.string.air_hum_chart_label)
+    }
 
     override fun observeLiveData() {
         super.observeLiveData()
@@ -61,6 +65,9 @@ class AirHumChartFragment : BaseChartFragment() {
 
 class AirTempChartFragment : BaseChartFragment() {
     override fun setValueFormatterForChartType() = TemperatureLabelFormatter()
+    override fun setChartTitle(binding: FragmentChartItemBinding) {
+        binding.chartFragTitle.text = context?.getString(R.string.air_temp_chart_label)
+    }
 
     override fun observeLiveData() {
         super.observeLiveData()
@@ -77,6 +84,9 @@ class AirTempChartFragment : BaseChartFragment() {
 
 class SoilHumChartFragment : BaseChartFragment() {
     override fun setValueFormatterForChartType() = PercentageLabelFormatter()
+    override fun setChartTitle(binding: FragmentChartItemBinding) {
+        binding.chartFragTitle.text = context?.getString(R.string.soil_hum_chart_label)
+    }
 
     override fun observeLiveData() {
         super.observeLiveData()
