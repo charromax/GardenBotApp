@@ -42,7 +42,7 @@ class LoginFragment : GardenbotBaseFragment<FragmentLoginBinding, LoginViewModel
                     getString(
                         R.string.dont_forget_me
                     )
-                else -> viewModel.loginUser()
+                else -> viewModel.loginUser(requireContext())
             }
         }
 

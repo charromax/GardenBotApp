@@ -5,53 +5,103 @@
 package com.example.gardenbotapp.ui.home.sections.deviceorders
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.exception.ApolloException
-import com.example.gardenbotapp.data.domain.GardenBotRepository
 import com.example.gardenbotapp.data.domain.ManualControlRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.type.Order
 import com.example.gardenbotapp.type.Payload
+import com.example.gardenbotapp.type.StatusRequest
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import com.example.gardenbotapp.ui.home.sections.chart.EXP_TOKEN
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.flow.retryWhen
 import javax.inject.Inject
 
-enum class OrderType { MANUAL, SETTINGS }
+enum class OrderType { MANUAL, SETTINGS, STATUS_REQUEST }
 enum class ConnectedDevice(val pin: Int) {
     LAMPARA(0), VENTILADOR(1), EXTRACTOR(2), INTRACTOR(3)
 }
 
 @HiltViewModel
 class OrdersViewModel @Inject constructor(
-    gardenBotRepository: GardenBotRepository,
     private val manualControlRepository: ManualControlRepository,
     private val preferencesManager: PreferencesManager,
     private val state: SavedStateHandle
-) : GardenBotBaseViewModel(gardenBotRepository) {
+) : GardenBotBaseViewModel() {
     private val ordersEventsChannel = Channel<OrdersEvents>()
     val ordersEvents = ordersEventsChannel.receiveAsFlow()
 
-    private val _deviceStateChanged = MutableLiveData<OnDeviceStateChanged>()
-    val onDeviceStateStateChanged: LiveData<OnDeviceStateChanged> get() = _deviceStateChanged
+    private val job = SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.IO + job)
 
-    fun refreshDeviceState() {
-        //TODO: retrieve device state from Gardenbot and update UI accordingly
+    override fun onCleared() {
+        super.onCleared()
+        job.cancel()
     }
 
+    init {
+        subscribeToDeviceStatusResponse()
+    }
+
+    fun refreshDeviceState(token: String? = null) {
+        val currentToken = getOrRefreshToken(token)
+        scope.launch {
+            val deviceId = async { preferencesManager.deviceIdFlow.first() }
+            try {
+                val response = manualControlRepository.sendDeviceStatusRequst(
+                    StatusRequest(deviceId.await(), OrderType.STATUS_REQUEST.name), currentToken
+                )
+                response?.let { ordersEventsChannel.send(OrdersEvents.OnOrderSent(it)) }
+
+            } catch (e: ApolloException) {
+                e.message?.let { message ->
+                    if (message.contains(EXP_TOKEN)) {
+                        tryRefreshToken(currentToken)
+                    } else {
+                        ordersEventsChannel.send(OrdersEvents.OnTokenError)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun subscribeToDeviceStatusResponse() {
+        scope.launch {
+            val deviceId = preferencesManager.deviceIdFlow.first()
+            manualControlRepository.statusResponseSub(deviceId)
+                .retryWhen { _, attempt ->
+                    delay((attempt * 1000))    //exp delay
+                    true
+                }
+                .collect { res ->
+                    if (res.hasErrors() || res.data?.newStatusResponse == null) {
+                        ordersEventsChannel.send(OrdersEvents.OnOrderError("ERROR: ${res.errors?.map { it.message }}"))
+                    } else {
+                        res.data?.let { data ->
+                            ordersEventsChannel.send(OrdersEvents.OnStatusResponseReceived(
+                                data.newStatusResponse.devices.map {
+                                    OnDeviceStateChanged(
+                                        ConnectedDevice.values()[it!!.dev_id],
+                                        it.status
+                                    )
+                                }
+                            ))
+                        }
+                    }
+                }
+        }
+    }
 
     fun sendOrder(selectedDevice: ConnectedDevice, action: Boolean, token: String? = null) {
-        val currentToken = token ?: runBlocking { preferencesManager.tokenFlow.first() }
-        viewModelScope.launch {
+        val currentToken = getOrRefreshToken(token)
+        scope.launch {
             val deviceId = preferencesManager.deviceIdFlow.first()
             try {
                 val response = manualControlRepository.sendMqttOrder(
@@ -66,15 +116,7 @@ class OrdersViewModel @Inject constructor(
             } catch (e: ApolloException) {
                 e.message?.let { message ->
                     if (message.contains(EXP_TOKEN)) {
-                        try {
-                            Log.i(TAG, "sendOrder: refresh token...")
-                            val res = async { refreshToken(currentToken) }
-                            val newToken = res.await()
-                            preferencesManager.updateToken(newToken?.refreshToken)
-                        } catch (e: ApolloException) {
-                            ordersEventsChannel.send(OrdersEvents.OnOrderError(e.message!!))
-                            preferencesManager.updateToken("")
-                        }
+                        tryRefreshToken(currentToken)
                     } else {
                         ordersEventsChannel.send(OrdersEvents.OnTokenError)
                     }
@@ -83,6 +125,23 @@ class OrdersViewModel @Inject constructor(
 
         }
     }
+
+    private suspend fun tryRefreshToken(currentToken: String) {
+        scope.launch {
+            try {
+                Log.i(TAG, "sendOrder: refresh token...")
+                val res = async { refreshToken(currentToken) }
+                val newToken = res.await()
+                preferencesManager.updateToken(newToken?.refreshToken)
+            } catch (e: ApolloException) {
+                ordersEventsChannel.send(OrdersEvents.OnOrderError(e.message!!))
+                preferencesManager.updateToken("")
+            }
+        }
+    }
+
+    private fun getOrRefreshToken(token: String?) =
+        token ?: runBlocking { preferencesManager.tokenFlow.first() }
 
     fun setInitialState() {
         viewModelScope.launch {
@@ -94,6 +153,8 @@ class OrdersViewModel @Inject constructor(
         object OnInitialState : OrdersEvents()
         data class OnOrderSent(val message: String) : OrdersEvents()
         data class OnOrderError(val message: String) : OrdersEvents()
+        data class OnStatusResponseReceived(val devices: List<OnDeviceStateChanged>) :
+            OrdersEvents()
         object OnTokenError : OrdersEvents()
     }
 

@@ -9,7 +9,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.exception.ApolloException
-import com.example.gardenbotapp.data.domain.GardenBotRepository
 import com.example.gardenbotapp.data.domain.NotificationsRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.data.remote.model.Notification
@@ -28,10 +27,9 @@ import javax.inject.Inject
 @HiltViewModel
 class NotificationsViewModel @Inject constructor(
     private val notificationsRepository: NotificationsRepository,
-    gardenBotBaseRepository: GardenBotRepository,
     private val preferencesManager: PreferencesManager,
     private val state: SavedStateHandle
-) : GardenBotBaseViewModel(gardenBotBaseRepository) {
+) : GardenBotBaseViewModel() {
 
     private val notificationsChannel = Channel<Errors>()
     val notificationsEvents = notificationsChannel.receiveAsFlow()

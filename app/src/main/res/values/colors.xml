@@ -4,6 +4,8 @@
 
 <resources>
     <color name="light_gray">#9F9F9F</color>
+    <color name="lighter_gray">#E1E1E1</color>
+    <color name="lightest_gray">#EAEAEA</color>
     <color name="dark_gray">#434343</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFF4F4F4</color>

@@ -9,7 +9,6 @@ import androidx.lifecycle.*
 import com.apollographql.apollo.api.Response
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.NewDeviceSubscription
-import com.example.gardenbotapp.data.domain.GardenBotRepository
 import com.example.gardenbotapp.data.domain.OnboardingRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.data.remote.model.Device
@@ -28,11 +27,10 @@ private val DEV_NAME = "deviceName"
 
 @HiltViewModel
 class OnboardingViewModel @Inject constructor(
-    gardenBotRepository: GardenBotRepository,
     private val onboardingRepository: OnboardingRepository,
     private val preferencesManager: PreferencesManager,
     private val state: SavedStateHandle
-) : GardenBotBaseViewModel(gardenBotRepository) {
+) : GardenBotBaseViewModel() {
 
     private val _deviceName = MutableLiveData<String>()
     val deviceName: LiveData<String> get() = _deviceName

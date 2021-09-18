@@ -5,10 +5,10 @@
 package com.example.gardenbotapp.data.local
 
 import android.content.Context
-import androidx.datastore.preferences.createDataStore
-import androidx.datastore.preferences.edit
-import androidx.datastore.preferences.emptyPreferences
-import androidx.datastore.preferences.preferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -29,10 +29,12 @@ data class FilterPreferences(
     val token: String
 )
 
+const val USER_PREFS = "user_prefs"
+
 @Singleton
 class PreferencesManager @Inject constructor(@ApplicationContext context: Context) {
-
-    private val dataStore = context.createDataStore("user_prefs")
+    private val Context.dataStore by preferencesDataStore(USER_PREFS)
+    private val dataStore = context.dataStore
 
     val preferencesFlow = dataStore.data
         .catch { exception ->
@@ -126,11 +128,11 @@ class PreferencesManager @Inject constructor(@ApplicationContext context: Contex
         }
 
     private object PreferencesKeys {
-        val SORT_ORDER = preferencesKey<String>("sort_order")
-        val SELECTED_CATEGORY = preferencesKey<String>("selected_category")
-        val SELECTED_DEVICE = preferencesKey<String>("selected_device")
-        val USER_ID = preferencesKey<String>("user_id")
-        val TOKEN = preferencesKey<String>("token")
+        val SORT_ORDER = stringPreferencesKey("sort_order")
+        val SELECTED_CATEGORY = stringPreferencesKey("selected_category")
+        val SELECTED_DEVICE = stringPreferencesKey("selected_device")
+        val USER_ID = stringPreferencesKey("user_id")
+        val TOKEN = stringPreferencesKey("token")
     }
 
 

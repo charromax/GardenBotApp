@@ -20,7 +20,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/control_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/vent_container"
@@ -32,7 +32,7 @@
                 android:layout_marginBottom="8dp"
                 app:cardElevation="4dp"
                 app:contentPadding="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+
                 app:layout_constraintDimensionRatio="w,1:1"
                 app:layout_constraintEnd_toStartOf="@+id/lamp_container"
                 app:layout_constraintStart_toStartOf="parent"
@@ -57,7 +57,7 @@
                 android:layout_marginBottom="8dp"
                 app:cardElevation="4dp"
                 app:contentPadding="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+
                 app:layout_constraintDimensionRatio="w,1:1"
                 app:layout_constraintEnd_toStartOf="@+id/ext_container"
                 app:layout_constraintStart_toEndOf="@+id/vent_container"
@@ -82,7 +82,7 @@
                 android:layout_marginBottom="8dp"
                 app:cardElevation="4dp"
                 app:contentPadding="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+
                 app:layout_constraintDimensionRatio="w,1:1"
                 app:layout_constraintEnd_toStartOf="@+id/int_container"
                 app:layout_constraintStart_toEndOf="@+id/lamp_container"
@@ -107,7 +107,7 @@
                 android:layout_marginBottom="8dp"
                 app:cardElevation="4dp"
                 app:contentPadding="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
+
                 app:layout_constraintDimensionRatio="w,1:1"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/ext_container"
@@ -122,6 +122,19 @@
                     android:textOff=""
                     android:textOn="" />
             </com.google.android.material.card.MaterialCardView>
+
+            <Button
+                android:id="@+id/refresh"
+                style="@style/GardenButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="4dp"
+                android:text="refresh"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ext_container" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>

@@ -9,7 +9,6 @@ import androidx.lifecycle.*
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.RegisterUserMutation
-import com.example.gardenbotapp.data.domain.GardenBotRepository
 import com.example.gardenbotapp.data.domain.RegisterUserRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.type.RegisterInput
@@ -23,12 +22,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RegisterViewModel @Inject constructor(
-    gardenBotRepository: GardenBotRepository,
     private val registerUserRepository: RegisterUserRepository,
     private val state: SavedStateHandle,
     private val preferencesManager: PreferencesManager,
     @ApplicationContext private val context: Context
-) : GardenBotBaseViewModel(gardenBotRepository) {
+) : GardenBotBaseViewModel() {
     private var registerResponse = MutableLiveData<RegisterUserMutation.Register>()
     val regResponse: LiveData<RegisterUserMutation.Register> get() = registerResponse
     private val regEventsChannel = Channel<RegisterEvents>()
