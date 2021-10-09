@@ -128,18 +128,16 @@ class LoginFragment : GardenbotBaseFragment<FragmentLoginBinding, LoginViewModel
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun observeLiveData() {
 
-        viewModel.token.observe(viewLifecycleOwner, { token ->
+        viewModel.logResponse.observe(viewLifecycleOwner, { login ->
+            viewModel.updatePreferences(login)
             binding.progressBar.visible(false)
-            if (token.isNotBlank() && token.isNotEmpty()) {
+            if (login.token.isNotBlank() && login.token.isNotEmpty()) {
                 setUIState(UIState.READY)
                 binding.root.snack(
                     "Bienvenidx a GardenBot!", Snackbar.LENGTH_SHORT
                 )
                 findNavController().navigate(LoginFragmentDirections.actionLoginFragmentToHomeFragment())
             }
-        })
-        viewModel.logResponse.observe(viewLifecycleOwner, { login ->
-            viewModel.updatePreferences(login)
         })
     }
 

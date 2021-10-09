@@ -4,7 +4,7 @@
 
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.GardenBotApp" parent="Theme.MaterialComponents.Light.NoActionBar">
+    <style name="Theme.GardenBotApp" parent="Base.Theme.MaterialThemeBuilder">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/gardenbot_green</item>
         <item name="colorPrimaryVariant">@color/gardenbot_green_dark</item>
@@ -12,10 +12,31 @@
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/gardenbot_green_light</item>
         <item name="colorSecondaryVariant">@color/gardenbot_green</item>
-        <item name="colorOnSecondary">@color/dark_gray</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:colorBackground">@color/white</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorError">@color/red</item>
+        <!--"On" colors define how text, icons and strokes are colored in relation to the surface-->
+        <!--on which they appear.-->
+        <item name="colorOnSecondary">@color/black</item>
+        <item name="colorOnBackground">@color/dark_gray</item>
+        <item name="colorOnSurface">@color/black</item>
+        <item name="colorOnError">@color/white</item>
+        <!--Material type attributes-->
+    </style>
+
+    <style name="Base.Theme.MaterialThemeBuilder" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:statusBarColor" tools:ignore="NewApi">?attr/colorSurface</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">true</item>
+        <item name="android:navigationBarColor" tools:ignore="NewApi">
+            ?android:attr/colorBackground
+        </item>
+        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>
+        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">
+            ?attr/colorControlHighlight
+        </item>
     </style>
 
     <style name="SplashTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
@@ -29,7 +50,7 @@
 
     <style name="GardenFragment" parent="Widget.MaterialComponents.CardView">
         <item name="shapeAppearanceOverlay">@style/RoundCorners</item>
-        <item name="background">@color/white</item>
+        <item name="background">@color/full_white</item>
     </style>
 
     <style name="GardenLabel" parent="TextAppearance.MaterialComponents.Subtitle2">
@@ -77,6 +98,14 @@
     <style name="HintText" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@color/gardenbot_green_light</item>
         <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="LabelText" parent="TextAppearance.AppCompat">
+        <item name="android:textColor">@color/gardenbot_green_light</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:textAllCaps">true</item>
     </style>
 
     <style name="LittleGrayText" parent="TextAppearance.AppCompat">

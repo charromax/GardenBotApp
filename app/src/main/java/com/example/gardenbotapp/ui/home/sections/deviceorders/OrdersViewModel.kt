@@ -14,7 +14,6 @@ import com.example.gardenbotapp.type.Order
 import com.example.gardenbotapp.type.Payload
 import com.example.gardenbotapp.type.StatusRequest
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
-import com.example.gardenbotapp.ui.home.sections.chart.EXP_TOKEN
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -35,38 +34,35 @@ class OrdersViewModel @Inject constructor(
     private val preferencesManager: PreferencesManager,
     private val state: SavedStateHandle
 ) : GardenBotBaseViewModel() {
+
     private val ordersEventsChannel = Channel<OrdersEvents>()
     val ordersEvents = ordersEventsChannel.receiveAsFlow()
-
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
+
+    init {
+        subscribeToDeviceStatusResponse()
+    }
 
     override fun onCleared() {
         super.onCleared()
         job.cancel()
     }
 
-    init {
-        subscribeToDeviceStatusResponse()
-    }
-
     fun refreshDeviceState(token: String? = null) {
-        val currentToken = getOrRefreshToken(token)
         scope.launch {
+            val currentToken = async { preferencesManager.tokenFlow.first() }
             val deviceId = async { preferencesManager.deviceIdFlow.first() }
             try {
                 val response = manualControlRepository.sendDeviceStatusRequst(
-                    StatusRequest(deviceId.await(), OrderType.STATUS_REQUEST.name), currentToken
+                    StatusRequest(deviceId.await(), OrderType.STATUS_REQUEST.name),
+                    currentToken.await()
                 )
                 response?.let { ordersEventsChannel.send(OrdersEvents.OnOrderSent(it)) }
 
             } catch (e: ApolloException) {
                 e.message?.let { message ->
-                    if (message.contains(EXP_TOKEN)) {
-                        tryRefreshToken(currentToken)
-                    } else {
-                        ordersEventsChannel.send(OrdersEvents.OnTokenError)
-                    }
+                    ordersEventsChannel.send(OrdersEvents.OnOrderError(message))
                 }
             }
         }
@@ -100,8 +96,8 @@ class OrdersViewModel @Inject constructor(
     }
 
     fun sendOrder(selectedDevice: ConnectedDevice, action: Boolean, token: String? = null) {
-        val currentToken = getOrRefreshToken(token)
         scope.launch {
+            val currentToken = async { preferencesManager.tokenFlow.first() }
             val deviceId = preferencesManager.deviceIdFlow.first()
             try {
                 val response = manualControlRepository.sendMqttOrder(
@@ -109,17 +105,13 @@ class OrdersViewModel @Inject constructor(
                         deviceId,
                         OrderType.MANUAL.name,
                         Order(action, selectedDevice.pin)
-                    ), currentToken
+                    ), currentToken.await()
                 )
                 response?.let { ordersEventsChannel.send(OrdersEvents.OnOrderSent(it)) }
 
             } catch (e: ApolloException) {
                 e.message?.let { message ->
-                    if (message.contains(EXP_TOKEN)) {
-                        tryRefreshToken(currentToken)
-                    } else {
-                        ordersEventsChannel.send(OrdersEvents.OnTokenError)
-                    }
+                    ordersEventsChannel.send(OrdersEvents.OnOrderError(message))
                 }
             }
 
@@ -140,9 +132,6 @@ class OrdersViewModel @Inject constructor(
         }
     }
 
-    private fun getOrRefreshToken(token: String?) =
-        token ?: runBlocking { preferencesManager.tokenFlow.first() }
-
     fun setInitialState() {
         viewModelScope.launch {
             ordersEventsChannel.send(OrdersEvents.OnInitialState)
@@ -150,16 +139,16 @@ class OrdersViewModel @Inject constructor(
     }
 
     sealed class OrdersEvents {
-        object OnInitialState : OrdersEvents()
         data class OnOrderSent(val message: String) : OrdersEvents()
         data class OnOrderError(val message: String) : OrdersEvents()
         data class OnStatusResponseReceived(val devices: List<OnDeviceStateChanged>) :
             OrdersEvents()
+
+        object OnInitialState : OrdersEvents()
         object OnTokenError : OrdersEvents()
     }
 
     data class OnDeviceStateChanged(val device: ConnectedDevice, val newState: Boolean)
-
     companion object {
         const val TAG = "OrdersViewModel"
     }

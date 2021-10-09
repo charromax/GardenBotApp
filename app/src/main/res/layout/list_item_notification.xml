@@ -26,9 +26,8 @@
             app:layout_constraintVertical_bias="0.0"
             tools:src="@drawable/ic_weather" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/notification_message"
-            style="@style/MaterialAlertDialog.MaterialComponents.Title.Text"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:padding="4dp"
@@ -37,7 +36,7 @@
             app:layout_constraintEnd_toStartOf="@+id/notification_image"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="asdasdasdasdasda" />
+            tools:text="asdasdasdasd cvbdfhfghrghfghdfghdfghfdghfdghf ghfg hfg hdfg hfdghfdghfdghfdghfdghfdghfdghdfghfdghdfghfdgasda" />
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/notification_date"

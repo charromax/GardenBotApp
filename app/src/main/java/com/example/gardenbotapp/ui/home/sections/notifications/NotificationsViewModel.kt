@@ -54,12 +54,7 @@ class NotificationsViewModel @Inject constructor(
                         if (res.hasErrors() || res.data?.newNotification == null) {
                             notificationsChannel.send(Errors.SubError("ERROR: ${res.errors?.map { it.message }}"))
                         } else {
-                            val notification = Notification(
-                                createdAt = res.data?.newNotification?.createdAt,
-                                code = res.data?.newNotification?.code,
-                                message = res.data?.newNotification?.message
-                            )
-                            _notificationSub.value = notification
+                            _notificationSub.value = Notification.fromMutation(res)
                         }
                     }
             } catch (e: ApolloException) {

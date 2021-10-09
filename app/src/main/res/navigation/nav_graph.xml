@@ -59,6 +59,13 @@
         <action
             android:id="@+id/action_homeFragment_to_onboardingActivity"
             app:destination="@id/onboarding" />
+        <action
+            android:id="@+id/action_homeFragment_to_parametersFragment"
+            app:enterAnim="@android:anim/slide_in_left"
+            app:exitAnim="@android:anim/slide_out_right"
+            app:popEnterAnim="@android:anim/slide_in_left"
+            app:popExitAnim="@android:anim/slide_out_right"
+            app:destination="@id/parametersFragment" />
     </fragment>
 
     <navigation
@@ -92,4 +99,9 @@
             android:name="com.example.gardenbotapp.ui.onboarding.OnboardingActivity"
             android:label="OnboardingActivity" />
     </navigation>
+    <fragment
+        android:id="@+id/parametersFragment"
+        android:name="com.example.gardenbotapp.ui.autopilot_parameters.ParametersFragment"
+        tools:layout="@layout/fragment_autopilot_params"
+        android:label="ParametersFragment" />
 </navigation>

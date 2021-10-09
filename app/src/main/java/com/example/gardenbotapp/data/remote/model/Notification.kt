@@ -4,6 +4,8 @@
 
 package com.example.gardenbotapp.data.remote.model
 
+import com.apollographql.apollo.api.Response
+import com.example.gardenbotapp.NewNotificationSubscription
 import com.example.gardenbotapp.R
 import java.util.*
 
@@ -23,6 +25,16 @@ data class Notification(
         WEATHER -> R.drawable.ic_weather
         WATERING -> R.drawable.ic_watering_plants
         else -> -1
+    }
+
+    companion object {
+        fun fromMutation(res: Response<NewNotificationSubscription.Data>): Notification {
+            return Notification(
+                createdAt = res.data?.newNotification?.createdAt,
+                code = res.data?.newNotification?.code,
+                message = res.data?.newNotification?.message
+            )
+        }
     }
 }
 
