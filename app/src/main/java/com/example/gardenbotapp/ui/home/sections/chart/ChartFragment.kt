@@ -9,17 +9,20 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.widget.ViewPager2
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentChartBinding
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.util.Errors
 import com.example.gardenbotapp.util.snack
+import com.example.gardenbotapp.util.toTemperatureString
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel>() {
 
+    private var hasUpdatedYet = false
     private val TAG = "CHART"
     override fun getViewBinding() = FragmentChartBinding.inflate(layoutInflater)
     override fun getViewModelClass() = ChartViewModel::class.java
@@ -33,6 +36,14 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
         super.setUpUI()
         collectEvents()
         setupChart()
+        setupAirTempLiveViewFormatter()
+    }
+
+    private fun setupAirTempLiveViewFormatter() {
+        binding.airTempLiveView.setTextFormatter {
+            val temp = (it * MAX_ALLOWED_TEMPERATURE) / 100
+            temp.toString().toTemperatureString()
+        }
     }
 
     /**
@@ -41,6 +52,8 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
     private fun setupChart() {
         chartAdapter = ChartsAdapter(charts, this)
         binding.pager.adapter = chartAdapter
+        binding.pager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+        })
     }
 
     private fun collectEvents() {
@@ -69,6 +82,30 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
 
         viewModel.measures.observe(viewLifecycleOwner, {
             calculationsViewModel.initModelCalculations(it)
+            if (hasUpdatedYet.not()) {
+                viewModel.manualUpdateNewMeasure(it.last())
+                hasUpdatedYet = true
+            }
+        })
+
+        viewModel.liveAirHumData.observe(viewLifecycleOwner, {
+            lifecycleScope.launchWhenResumed { binding.airHumLiveView.setProgress(it, true) }
+        })
+        viewModel.liveAirTempData.observe(viewLifecycleOwner, {
+            lifecycleScope.launchWhenResumed { binding.airTempLiveView.setProgress(it, true) }
+        })
+        viewModel.liveSoilHumData.observe(viewLifecycleOwner, {
+            lifecycleScope.launchWhenResumed { binding.soilHumLiveView.setProgress(it, true) }
+        })
+
+        viewModel.liveAirHumData.observe(viewLifecycleOwner, {
+            binding.airHumLiveView.setProgress(it, true)
+        })
+        viewModel.liveAirTempData.observe(viewLifecycleOwner, {
+            binding.airTempLiveView.setProgress(it, true)
+        })
+        viewModel.liveSoilHumData.observe(viewLifecycleOwner, {
+            binding.soilHumLiveView.setProgress(it, true)
         })
     }
 

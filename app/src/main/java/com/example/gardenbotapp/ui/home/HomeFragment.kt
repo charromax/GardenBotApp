@@ -5,6 +5,9 @@
 package com.example.gardenbotapp.ui.home
 
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.gardenbotapp.R
@@ -30,7 +33,6 @@ class HomeFragment : GardenbotBaseFragment<FragmentHomeBinding, HomeViewModel>()
     }
 
     override fun observeLiveData() {
-
         viewModel.deviceId.observe(viewLifecycleOwner, { deviceID ->
             if (deviceID.isEmpty()) {
 //                findNavController().navigate(R.id.onboarding)
@@ -49,6 +51,17 @@ class HomeFragment : GardenbotBaseFragment<FragmentHomeBinding, HomeViewModel>()
                 }
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return if (item.itemId == R.id.action_config) {
+            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToParametersFragment())
+            true
+        } else super.onOptionsItemSelected(item)
     }
 
 }
