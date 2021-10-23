@@ -31,8 +31,7 @@ enum class ConnectedDevice(val pin: Int) {
 @HiltViewModel
 class OrdersViewModel @Inject constructor(
     private val manualControlRepository: ManualControlRepository,
-    private val preferencesManager: PreferencesManager,
-    private val state: SavedStateHandle
+    private val preferencesManager: PreferencesManager
 ) : GardenBotBaseViewModel() {
 
     private val ordersEventsChannel = Channel<OrdersEvents>()
