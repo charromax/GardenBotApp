@@ -68,7 +68,7 @@ class ParametersFragment :
 
 @ExperimentalMaterialApi
 @Composable
-fun ParametersScreenMain(viewModel: ParametersViewModel = viewModel()) {
+fun ParametersScreenMain(paramsViewModel: ParametersViewModel = viewModel()) {
     Column(
         modifier = Modifier
             .background(MaterialTheme.colors.background)

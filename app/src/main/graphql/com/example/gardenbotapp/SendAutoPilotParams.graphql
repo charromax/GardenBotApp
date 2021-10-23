@@ -1,0 +1,3 @@
+mutation sendAutoPilotParams($payload: ParamsPayload!) {
+    sendAutoPilotParams(payload: $payload)
+}
