@@ -7,7 +7,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
@@ -30,11 +29,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.gardenbotapp.R
+import com.example.gardenbotapp.ui.autopilot_parameters.ParametersViewModel
 import java.util.*
-
+enum class HourPickerType{ON, OFF}
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HourPicker(context: Context, title: String, modifier: Modifier = Modifier) {
+fun HourPicker(context: Context, title: String, modifier: Modifier = Modifier, viewModel: ParametersViewModel, type:HourPickerType) {
     val calendar = Calendar.getInstance()
     val hour = calendar[Calendar.HOUR_OF_DAY]
     val minute = calendar[Calendar.MINUTE]
@@ -42,56 +42,51 @@ fun HourPicker(context: Context, title: String, modifier: Modifier = Modifier) {
     val timePickedDialog = TimePickerDialog(
         context,
         { _, hour: Int, _ ->
+            updateLampCycleViewModel(viewModel, hour, type)
             time.value = "$hour"
         }, hour, minute, true
     )
-
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.Start,
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .clip(MaterialTheme.shapes.small)
             .background(color = MaterialTheme.colors.surface)
             .border(1.dp, Color.Companion.LightGray, MaterialTheme.shapes.small)
-            .padding(vertical = 4.dp, horizontal = 16.dp)
+            .padding(vertical = 8.dp, horizontal = 4.dp)
     ) {
-        LabelText(
-            text = title,
-            modifier = Modifier.padding(bottom = 2.dp)
-        )
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+        IconButton(
+            onClick = { timePickedDialog.show() }, modifier = Modifier
+                .background(
+                    color = MaterialTheme.colors.primary,
+                    shape = MaterialTheme.shapes.small
+                )
         ) {
-            IconButton(
-                onClick = { timePickedDialog.show() }, modifier = Modifier
-                    .background(
-                        color = MaterialTheme.colors.primary,
-                        shape = MaterialTheme.shapes.small
-                    )
-            ) {
-                Icon(
-                    painterResource(R.drawable.ic_time),
-                    "hour picker",
-                    tint = MaterialTheme.colors.background
-                )
-            }
-            Text(
-                text = time.value,
-                modifier = Modifier.padding( start = 16.dp),
-                style = TextStyle(
-                    color = MaterialTheme.colors.onBackground,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp
-                )
+            Icon(
+                painterResource(R.drawable.ic_time),
+                "hour picker",
+                tint = MaterialTheme.colors.background
             )
         }
+        LabelText(
+                text = title,
+        modifier = Modifier.padding(bottom = 2.dp, start = 2.dp)
+        )
+        Text(
+            text = time.value,
+            modifier = Modifier.padding(start = 4.dp),
+            style = TextStyle(
+                color = MaterialTheme.colors.onBackground,
+                fontWeight = FontWeight.Bold,
+                fontSize = 26.sp
+            )
+        )
     }
 }
 
-@RequiresApi(Build.VERSION_CODES.O)
-@Preview
-@Composable
-fun HourPreview() {
-    HourPicker(LocalContext.current, stringResource(R.string.time_lamp_on))
+private fun updateLampCycleViewModel(viewModel: ParametersViewModel, hour: Int, type: HourPickerType) {
+    when(type) {
+        HourPickerType.ON -> viewModel.updateParams.hour_on = hour
+        HourPickerType.OFF -> viewModel.updateParams.hour_off = hour
+    }
 }

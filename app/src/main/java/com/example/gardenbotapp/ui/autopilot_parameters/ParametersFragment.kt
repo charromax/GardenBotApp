@@ -13,6 +13,8 @@ import androidx.annotation.RequiresApi
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,16 +43,21 @@ class ParametersFragment :
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding.composeFragContent.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
+                val isLoading by viewModel.loadingState.collectAsState()
                 MdcTheme {
-                    ParametersScreenMain(context = requireContext())
+                    if(isLoading) {
+                        //TODO: show loading UI
+                    } else ParametersScreenMain(context = requireContext())
                 }
             }
         }
         return super.onCreateView(inflater, container, savedInstanceState)
     }
+
 }
 
 

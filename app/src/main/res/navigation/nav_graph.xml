@@ -103,5 +103,9 @@
         android:id="@+id/parametersFragment"
         android:name="com.example.gardenbotapp.ui.autopilot_parameters.ParametersFragment"
         tools:layout="@layout/fragment_autopilot_params"
-        android:label="ParametersFragment" />
+        android:label="ParametersFragment" >
+        <action
+            android:id="@+id/action_parametersFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
 </navigation>

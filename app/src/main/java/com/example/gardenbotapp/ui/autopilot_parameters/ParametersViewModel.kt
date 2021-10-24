@@ -5,10 +5,10 @@
 package com.example.gardenbotapp.ui.autopilot_parameters
 
 import com.apollographql.apollo.exception.ApolloException
-import com.example.gardenbotapp.NewAutoPilotParamsResponseSubscription
 import com.example.gardenbotapp.data.domain.ParametersRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
-import com.example.gardenbotapp.data.remote.model.AutoPilotParams
+import com.example.gardenbotapp.data.remote.model.AutoPilotParamsPayload
+import com.example.gardenbotapp.data.remote.model.Parameters
 import com.example.gardenbotapp.di.ApplicationIoScope
 import com.example.gardenbotapp.type.StatusRequest
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
@@ -18,10 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.retryWhen
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -36,11 +33,22 @@ class ParametersViewModel @Inject constructor(
     private val _eventsChannel = Channel<ParametersEvents>()
     val eventsChannel = _eventsChannel.receiveAsFlow()
 
+    private val _loadingState = MutableStateFlow(false)
+    val loadingState: StateFlow<Boolean> = _loadingState
+
+    private val _paramsObtained = MutableStateFlow(Parameters())
+    val paramsObtained: StateFlow<Parameters> = _paramsObtained
+
+    var updateParams = Parameters()
+
     init {
-        requestCurrentParams()
         getCurrentParams()
+        requestCurrentParams()
     }
 
+    /**
+     * send params request to server to be relayed to gardenbot
+     */
     private fun requestCurrentParams() {
         scope.launch {
             val currentToken = async { preferencesManager.tokenFlow.first() }
@@ -53,6 +61,7 @@ class ParametersViewModel @Inject constructor(
                 response?.let { _eventsChannel.send(ParametersEvents.OnParamsUpdateSent(it)) }
 
             } catch (e: ApolloException) {
+                setLoadingState(false)
                 e.message?.let { message ->
                     _eventsChannel.send(ParametersEvents.OnParamsUpdateError(message))
                 }
@@ -60,6 +69,9 @@ class ParametersViewModel @Inject constructor(
         }
     }
 
+    /**
+     * subscribes to auto pilot parameters response from gardenbot
+     */
     private fun getCurrentParams() {
         scope.launch {
             val deviceId = preferencesManager.deviceIdFlow.first()
@@ -70,40 +82,56 @@ class ParametersViewModel @Inject constructor(
                 }
                 .collect { res ->
                     if (res.hasErrors() || res.data?.newAutoPilotParamsResponse == null) {
+                        setLoadingState(false)
                         _eventsChannel.send(ParametersEvents.OnParamsUpdateError("ERROR: ${res.errors?.map { it.message }}"))
                     } else {
                         res.data?.let { data ->
-                            _eventsChannel.send(
-                                ParametersEvents.OnParametersUpdateReceived(
-                                    data.newAutoPilotParamsResponse.params
-                                )
-                            )
+                            setLoadingState(false)
+                            _paramsObtained.value =
+                                Parameters.fromParams(data.newAutoPilotParamsResponse.params)
                         }
                     }
                 }
         }
     }
 
-    fun updateCurrentParams(payload: AutoPilotParams) {
+    private fun setLoadingState(state: Boolean) {
+        _loadingState.value = state
+    }
+
+    private fun updateCurrentParams(payload: AutoPilotParamsPayload) {
         scope.launch {
+            setLoadingState(true)
             val currentToken = async { preferencesManager.tokenFlow.first() }
             val params = async { payload.toParamsPayload(preferencesManager) }
             try {
                 val response =
                     autoPilotRepository.changeParams(params.await(), currentToken.await())
-                response?.let { _eventsChannel.send(ParametersEvents.OnParamsUpdateSent(it)) }
-
+                response?.let {
+                    setLoadingState(false)
+                    _eventsChannel.send(ParametersEvents.OnParamsUpdateSent(it))
+                }
             } catch (e: ApolloException) {
                 e.message?.let { message ->
+                    setLoadingState(false)
                     _eventsChannel.send(ParametersEvents.OnParamsUpdateError(message))
                 }
             }
         }
     }
 
+    fun requestUpdateParams() {
+        scope.launch {
+            updateCurrentParams(
+                AutoPilotParamsPayload(
+                    type = OrderType.PARAMS_STATUS_REQUEST.name.lowercase(),
+                    updateParams.toParams()
+                )
+            )
+        }
+    }
+
     sealed class ParametersEvents {
-        data class OnParametersUpdateReceived(val newParams: NewAutoPilotParamsResponseSubscription.Params) :
-            ParametersEvents()
         data class OnParamsUpdateError(val message: String) : ParametersEvents()
         data class OnParamsUpdateSent(val message: String) : ParametersEvents()
     }

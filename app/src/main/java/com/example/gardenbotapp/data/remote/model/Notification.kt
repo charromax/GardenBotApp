@@ -11,6 +11,7 @@ import java.util.*
 
 const val DEVICES = 101
 const val WEATHER = 102
+const val PARAMS_UPDATE = 103
 const val WATERING = 105
 
 data class Notification(
@@ -21,7 +22,7 @@ data class Notification(
 ) {
 
     val image = when (code) {
-        DEVICES -> R.drawable.ic_internet_of_things
+        DEVICES, PARAMS_UPDATE -> R.drawable.ic_internet_of_things
         WEATHER -> R.drawable.ic_weather
         WATERING -> R.drawable.ic_watering_plants
         else -> -1

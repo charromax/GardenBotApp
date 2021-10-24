@@ -5,7 +5,7 @@ import com.example.gardenbotapp.type.Params
 import com.example.gardenbotapp.type.ParamsPayload
 import kotlinx.coroutines.flow.first
 
-data class AutoPilotParams(
+data class AutoPilotParamsPayload(
     val type: String,
     val order: Params
 ) {

@@ -9,11 +9,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Button
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,6 +33,7 @@ import com.example.gardenbotapp.ui.autopilot_parameters.ParametersViewModel
 @Composable
 fun ParametersScreenMain(paramsViewModel: ParametersViewModel = viewModel(), context: Context) {
     val scrollState = rememberScrollState()
+    val paramsState by paramsViewModel.paramsObtained.collectAsState()
     Column(
         modifier = Modifier
             .background(MaterialTheme.colors.background)
@@ -55,6 +55,12 @@ fun ParametersScreenMain(paramsViewModel: ParametersViewModel = viewModel(), con
             style = MaterialTheme.typography.body1,
             color = MaterialTheme.colors.secondary
         )
+        Divider(
+            modifier = Modifier
+                .height(1.dp)
+                .padding(bottom = 4.dp)
+                .background(MaterialTheme.colors.secondaryVariant)
+        )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(4.dp),
@@ -69,20 +75,25 @@ fun ParametersScreenMain(paramsViewModel: ParametersViewModel = viewModel(), con
                     .border(1.dp, Color.LightGray, MaterialTheme.shapes.small)
                     .padding(horizontal = 4.dp, vertical = 8.dp)
             ) {
-                ParameterSlider(stringResource(R.string.air_temp_parameters), AutoPilotParams.TEMP)
+                ParameterSlider(
+                    stringResource(R.string.air_temp_parameters), AutoPilotParams.TEMP,
+                    paramsViewModel
+                )
                 ParameterSlider(
                     stringResource(R.string.air_hum_parameters),
-                    AutoPilotParams.AIR_HUM
+                    AutoPilotParams.AIR_HUM,
+                    paramsViewModel
                 )
                 ParameterSlider(
                     stringResource(R.string.soil_hum_parameters),
-                    AutoPilotParams.SOIL_HUM
+                    AutoPilotParams.SOIL_HUM,
+                    paramsViewModel
                 )
             }
-
             VentilationModeSelector(
                 cycle = VentilationCycleParams.fromInt(11),
-                mode = VentilationMode.MANUAL
+                mode = VentilationMode.MANUAL,
+                viewModel = paramsViewModel
             )
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -91,15 +102,23 @@ fun ParametersScreenMain(paramsViewModel: ParametersViewModel = viewModel(), con
             ) {
                 HourPicker(
                     context = context,
-                    stringResource(R.string.time_lamp_on),
-                    modifier = Modifier.padding(start = 16.dp)
+                    title = stringResource(R.string.time_lamp_on),
+                    type = HourPickerType.ON,
+                    viewModel = paramsViewModel
                 )
                 HourPicker(
-                    context = context, stringResource(R.string.time_lamp_off),
-                    modifier = Modifier.padding(end = 16.dp)
+                    context = context,
+                    title = stringResource(R.string.time_lamp_off),
+                    type = HourPickerType.ON,
+                    viewModel = paramsViewModel
                 )
             }
-            Button(onClick = { sendParamsToServer() }, modifier = Modifier.padding(vertical = 8.dp).fillMaxWidth()) {
+            Button(
+                onClick = { sendParamsToServer(paramsViewModel) },
+                modifier = Modifier
+                    .padding(vertical = 8.dp)
+                    .fillMaxWidth()
+            ) {
                 Text(
                     text = stringResource(R.string.update_gardenbot),
                     fontWeight = FontWeight.Bold,
@@ -111,7 +130,7 @@ fun ParametersScreenMain(paramsViewModel: ParametersViewModel = viewModel(), con
     }
 }
 
-private fun sendParamsToServer() {
-    TODO("Not yet implemented")
+private fun sendParamsToServer(paramsViewModel: ParametersViewModel) {
+    paramsViewModel.requestUpdateParams()
 }
 
