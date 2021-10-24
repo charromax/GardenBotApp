@@ -13,7 +13,6 @@ import com.example.gardenbotapp.di.ApplicationIoScope
 import com.example.gardenbotapp.type.StatusRequest
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import com.example.gardenbotapp.ui.home.sections.deviceorders.OrderType
-import com.example.gardenbotapp.ui.home.sections.deviceorders.OrdersViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
@@ -28,12 +27,11 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ParametersViewModel @Inject constructor(
+    @ApplicationIoScope
+    private val scope: CoroutineScope,
     private val preferencesManager: PreferencesManager,
     private val autoPilotRepository: ParametersRepository
 ) : GardenBotBaseViewModel() {
-    @Inject
-    @ApplicationIoScope
-    lateinit var scope: CoroutineScope
 
     private val _eventsChannel = Channel<ParametersEvents>()
     val eventsChannel = _eventsChannel.receiveAsFlow()
