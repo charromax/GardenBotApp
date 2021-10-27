@@ -1,4 +1,4 @@
-package com.example.gardenbotapp.data.remote.model
+package com.example.gardenbotapp.data.model
 
 import com.example.gardenbotapp.NewAutoPilotParamsResponseSubscription
 import com.example.gardenbotapp.type.Params

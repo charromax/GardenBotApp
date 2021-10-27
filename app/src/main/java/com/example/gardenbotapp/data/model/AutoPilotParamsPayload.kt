@@ -1,4 +1,4 @@
-package com.example.gardenbotapp.data.remote.model
+package com.example.gardenbotapp.data.model
 
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.type.Params

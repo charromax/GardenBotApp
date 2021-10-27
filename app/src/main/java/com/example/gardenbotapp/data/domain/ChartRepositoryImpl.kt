@@ -12,7 +12,7 @@ import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.MeasuresQuery
 import com.example.gardenbotapp.NewMeasureSubscription
 import com.example.gardenbotapp.data.remote.Client
-import com.example.gardenbotapp.data.remote.model.Measure
+import com.example.gardenbotapp.data.model.Measure
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf

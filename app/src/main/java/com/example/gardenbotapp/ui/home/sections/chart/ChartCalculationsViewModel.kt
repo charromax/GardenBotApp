@@ -14,7 +14,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.liveData
 import com.example.gardenbotapp.R
-import com.example.gardenbotapp.data.remote.model.Measure
+import com.example.gardenbotapp.data.model.Measure
 import com.example.gardenbotapp.di.ApplicationDefaultScope
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import com.github.mikephil.charting.data.Entry

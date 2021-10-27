@@ -10,9 +10,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Slider
 import androidx.compose.material.Switch
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -20,8 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.gardenbotapp.R
-import com.example.gardenbotapp.data.remote.model.VentilationCycleParams
-import com.example.gardenbotapp.ui.autopilot_parameters.ParametersViewModel
+import com.example.gardenbotapp.util.convertToVentilationFloat
 import java.util.*
 
 enum class VentilationMode { AUTO, MANUAL }
@@ -30,10 +26,11 @@ enum class VentilationMode { AUTO, MANUAL }
 @ExperimentalMaterialApi
 @Composable
 fun VentilationModeSelector(
-    mode: VentilationMode, cycle: VentilationCycleParams?, viewModel: ParametersViewModel
+    mode: VentilationMode,
+    timeOn: Int,
+    onModeChanged: (VentilationMode) -> Unit,
+    onVentilationTimeSet: (Float) -> Unit
 ) {
-    val ventMode = remember { mutableStateOf(mode) }
-    val timeVentOn = remember { mutableStateOf(cycle?.cycleOn ?: 0.5f) }
     Column(
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.Start,
@@ -45,55 +42,32 @@ fun VentilationModeSelector(
             .border(1.dp, Color.Companion.LightGray, MaterialTheme.shapes.small)
     ) {
         LabelText(
-            modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(top = 8.dp, start = 8.dp, end = 8.dp),
             text = stringResource(
                 R.string.vent_mode,
-                ventMode.value.name.uppercase(Locale.getDefault())
+                mode.name.uppercase(Locale.getDefault())
             ),
         )
         Row(
-            modifier = Modifier.padding(vertical = 2.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(bottom = 8.dp, start = 8.dp, end = 8.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Switch(
                 modifier = Modifier.padding(horizontal = 4.dp),
-                checked = ventMode.value == VentilationMode.AUTO,
+                checked = mode == VentilationMode.AUTO,
                 onCheckedChange = {
-                    ventMode.value =
-                        if (ventMode.value == VentilationMode.AUTO) VentilationMode.MANUAL else VentilationMode.AUTO
-                    viewModel.updateParams.auto_pilot_mode = ventMode.value.toString()
+                    onModeChanged.invoke(if (mode == VentilationMode.AUTO) VentilationMode.MANUAL else VentilationMode.AUTO)
                 })
-            DisappearingSlider(ventMode.value == VentilationMode.MANUAL, timeVentOn) { timeOn: Float ->
-                if (ventMode.value == VentilationMode.MANUAL) {
-                    updateViewModel(VentilationCycleParams(timeOn), viewModel)
-                }
+            AnimatedVisibility(visible = mode == VentilationMode.MANUAL) {
+                Slider(
+                    modifier = Modifier.padding(start = 16.dp, end = 0.dp),
+                    value = timeOn.convertToVentilationFloat(),
+                    onValueChange = {
+                        onVentilationTimeSet(it)
+                    })
             }
         }
     }
-}
 
-private fun updateViewModel(params: VentilationCycleParams, viewModel: ParametersViewModel) {
-    viewModel.updateParams.cycle_on = params.cycleOnInteger
-    viewModel.updateParams.cycle_off = params.cycleOffInteger
-}
-
-@ExperimentalAnimationApi
-@Composable
-fun DisappearingSlider(
-    value: Boolean,
-    timeVentOn: MutableState<Float>,
-    onChange: (timeOn: Float) -> Unit
-) {
-    if (value) {
-        AnimatedVisibility(visible = value) {
-            Slider(
-                modifier = Modifier.padding(start = 16.dp, end = 0.dp),
-                value = timeVentOn.value,
-                onValueChange = {
-                    timeVentOn.value = it
-                    onChange.invoke(timeVentOn.value)
-                })
-        }
-    }
 }

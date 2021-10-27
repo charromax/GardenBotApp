@@ -48,7 +48,7 @@
     <string name="air_hum_parameters">Parámetros de Humedad Ambiental</string>
     <string name="soil_hum_parameters">Parámetros de Humedad en suelo</string>
     <string name="vent_mode">Ciclo de Ventilación: %s</string>
-    <string name="time_lamp_on">Hora de encendido\nde Lámpara:</string>
-    <string name="time_lamp_off">Hora de apagado\nde Lámpara:</string>
+    <string name="time_lamp_on">Encendido\nde Lámpara:</string>
+    <string name="time_lamp_off">Apagado\nde Lámpara:</string>
     <string name="update_gardenbot">ACTUALIZAR GARDENBOT</string>
 </resources>

@@ -43,7 +43,6 @@ class ParametersFragment :
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         binding.composeFragContent.apply {
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
@@ -51,7 +50,7 @@ class ParametersFragment :
                 MdcTheme {
                     if(isLoading) {
                         //TODO: show loading UI
-                    } else ParametersScreenMain(context = requireContext())
+                    } else ParametersScreenMain(context = requireContext(), paramsViewModel = viewModel)
                 }
             }
         }
@@ -61,12 +60,3 @@ class ParametersFragment :
 }
 
 
-
-@RequiresApi(Build.VERSION_CODES.O)
-@ExperimentalAnimationApi
-@ExperimentalMaterialApi
-@Preview
-@Composable
-fun ComposablePreview() {
-    ParametersScreenMain(context = LocalContext.current)
-}

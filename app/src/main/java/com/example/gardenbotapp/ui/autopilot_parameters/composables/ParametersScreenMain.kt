@@ -11,8 +11,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,17 +23,31 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gardenbotapp.R
-import com.example.gardenbotapp.data.remote.model.VentilationCycleParams
 import com.example.gardenbotapp.ui.autopilot_parameters.AutoPilotParams
 import com.example.gardenbotapp.ui.autopilot_parameters.ParametersViewModel
+import com.example.gardenbotapp.ui.home.sections.chart.*
+import com.example.gardenbotapp.util.convertToAirHumFloat
+import com.example.gardenbotapp.util.convertToAirTempFloat
+import com.example.gardenbotapp.util.convertToVentMode
+import com.example.gardenbotapp.util.convertTosoilHumFloat
 
 @RequiresApi(Build.VERSION_CODES.O)
 @ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun ParametersScreenMain(paramsViewModel: ParametersViewModel = viewModel(), context: Context) {
+    val auto_pilot_mode = paramsViewModel.auto_pilot_mode.value
+    val min_hum = paramsViewModel.min_hum.value
+    val max_hum = paramsViewModel.max_hum.value
+    val min_soil = paramsViewModel.min_soil.value
+    val max_soil = paramsViewModel.max_soil.value
+    val min_temp = paramsViewModel.min_temp.value
+    val max_temp = paramsViewModel.max_temp.value
+    val hour_on = paramsViewModel.hour_on.value
+    val hour_off = paramsViewModel.hour_off.value
+    val cycle_on = paramsViewModel.cycle_on.value
+    val cycle_off = paramsViewModel.cycle_off.value
     val scrollState = rememberScrollState()
-    val paramsState by paramsViewModel.paramsObtained.collectAsState()
     Column(
         modifier = Modifier
             .background(MaterialTheme.colors.background)
@@ -73,28 +87,39 @@ fun ParametersScreenMain(paramsViewModel: ParametersViewModel = viewModel(), con
                     .fillMaxWidth()
                     .background(color = MaterialTheme.colors.surface)
                     .border(1.dp, Color.LightGray, MaterialTheme.shapes.small)
-                    .padding(horizontal = 4.dp, vertical = 8.dp)
+                    .padding(horizontal = 8.dp, vertical = 8.dp)
             ) {
                 ParameterSlider(
                     stringResource(R.string.air_temp_parameters), AutoPilotParams.TEMP,
-                    paramsViewModel
-                )
+                    min_temp.convertToAirTempFloat(),
+                    max_temp.convertToAirTempFloat()
+                ) { range ->
+                    paramsViewModel.updateSelectedRange(AutoPilotParams.TEMP, range)
+                }
                 ParameterSlider(
                     stringResource(R.string.air_hum_parameters),
                     AutoPilotParams.AIR_HUM,
-                    paramsViewModel
-                )
+                    min_hum.convertToAirHumFloat(),
+                    max_hum.convertToAirHumFloat()
+                ) { range ->
+                    paramsViewModel.updateSelectedRange(AutoPilotParams.AIR_HUM, range)
+                }
                 ParameterSlider(
                     stringResource(R.string.soil_hum_parameters),
                     AutoPilotParams.SOIL_HUM,
-                    paramsViewModel
-                )
+                    min_soil.convertTosoilHumFloat(),
+                    max_soil.convertTosoilHumFloat(),
+                ) { range ->
+                    paramsViewModel.updateSelectedRange(AutoPilotParams.SOIL_HUM, range)
+                }
             }
-            VentilationModeSelector(
-                cycle = VentilationCycleParams.fromInt(11),
-                mode = VentilationMode.MANUAL,
-                viewModel = paramsViewModel
-            )
+            VentilationModeSelector(auto_pilot_mode.convertToVentMode(),
+                cycle_on, { newMode ->
+                    paramsViewModel.updateVentilationMode(newMode)
+                },
+                { timeOn ->
+                    paramsViewModel.updateVentCycle(timeOn)
+                })
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
@@ -103,14 +128,18 @@ fun ParametersScreenMain(paramsViewModel: ParametersViewModel = viewModel(), con
                 HourPicker(
                     context = context,
                     title = stringResource(R.string.time_lamp_on),
-                    type = HourPickerType.ON,
-                    viewModel = paramsViewModel
+                    time = hour_on,
+                    onTimeChanged = {
+                        paramsViewModel.updateLampCycle(it, HourPickerType.ON)
+                    }
                 )
                 HourPicker(
                     context = context,
                     title = stringResource(R.string.time_lamp_off),
-                    type = HourPickerType.ON,
-                    viewModel = paramsViewModel
+                    time = hour_off,
+                    onTimeChanged = {
+                        paramsViewModel.updateLampCycle(it, HourPickerType.OFF)
+                    }
                 )
             }
             Button(
@@ -129,6 +158,7 @@ fun ParametersScreenMain(paramsViewModel: ParametersViewModel = viewModel(), con
         }
     }
 }
+
 
 private fun sendParamsToServer(paramsViewModel: ParametersViewModel) {
     paramsViewModel.requestUpdateParams()

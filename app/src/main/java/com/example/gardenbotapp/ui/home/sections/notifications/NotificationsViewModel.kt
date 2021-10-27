@@ -11,7 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.data.domain.NotificationsRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
-import com.example.gardenbotapp.data.remote.model.Notification
+import com.example.gardenbotapp.data.model.Notification
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import com.example.gardenbotapp.util.Errors
 import dagger.hilt.android.lifecycle.HiltViewModel

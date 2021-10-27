@@ -20,30 +20,34 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.ui.autopilot_parameters.ParametersViewModel
 import java.util.*
-enum class HourPickerType{ON, OFF}
+
+enum class HourPickerType { ON, OFF }
+
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HourPicker(context: Context, title: String, modifier: Modifier = Modifier, viewModel: ParametersViewModel, type:HourPickerType) {
+fun HourPicker(
+    context: Context,
+    title: String,
+    modifier: Modifier = Modifier,
+    time: Int,
+    onTimeChanged: ((Int) -> Unit)
+) {
     val calendar = Calendar.getInstance()
     val hour = calendar[Calendar.HOUR_OF_DAY]
     val minute = calendar[Calendar.MINUTE]
-    val time = remember { mutableStateOf("") }
     val timePickedDialog = TimePickerDialog(
         context,
         { _, hour: Int, _ ->
-            updateLampCycleViewModel(viewModel, hour, type)
-            time.value = "$hour"
+            onTimeChanged.invoke(hour)
         }, hour, minute, true
     )
     Row(
@@ -53,7 +57,7 @@ fun HourPicker(context: Context, title: String, modifier: Modifier = Modifier, v
             .clip(MaterialTheme.shapes.small)
             .background(color = MaterialTheme.colors.surface)
             .border(1.dp, Color.Companion.LightGray, MaterialTheme.shapes.small)
-            .padding(vertical = 8.dp, horizontal = 4.dp)
+            .padding(vertical = 8.dp, horizontal = 8.dp)
     ) {
         IconButton(
             onClick = { timePickedDialog.show() }, modifier = Modifier
@@ -69,11 +73,11 @@ fun HourPicker(context: Context, title: String, modifier: Modifier = Modifier, v
             )
         }
         LabelText(
-                text = title,
-        modifier = Modifier.padding(bottom = 2.dp, start = 2.dp)
+            text = title,
+            modifier = Modifier.padding(bottom = 2.dp, start = 2.dp)
         )
         Text(
-            text = time.value,
+            text = time.toString(),
             modifier = Modifier.padding(start = 4.dp),
             style = TextStyle(
                 color = MaterialTheme.colors.onBackground,
@@ -84,9 +88,3 @@ fun HourPicker(context: Context, title: String, modifier: Modifier = Modifier, v
     }
 }
 
-private fun updateLampCycleViewModel(viewModel: ParametersViewModel, hour: Int, type: HourPickerType) {
-    when(type) {
-        HourPickerType.ON -> viewModel.updateParams.hour_on = hour
-        HourPickerType.OFF -> viewModel.updateParams.hour_off = hour
-    }
-}

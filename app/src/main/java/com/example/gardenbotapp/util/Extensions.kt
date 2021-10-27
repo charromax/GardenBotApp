@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import com.example.gardenbotapp.ui.autopilot_parameters.composables.VentilationMode
 import com.google.android.material.snackbar.Snackbar
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -65,4 +66,8 @@ fun String.toTemperatureString(): String {
 
 fun String.toPercentString(): String {
     return "${this}%"
+}
+
+fun String.convertToVentMode(): VentilationMode {
+    return if (this.lowercase() == VentilationMode.AUTO.name.lowercase()) VentilationMode.AUTO else VentilationMode.MANUAL
 }

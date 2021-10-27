@@ -3,8 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Repositories/GardenBotApp/app/src/main/res/drawable/bg_white_gray_stroke.xml" value="0.2734375" />
         <entry key="..\:/Repositories/GardenBotApp/app/src/main/res/drawable/ic_time.xml" value="0.2734375" />
+        <entry key="..\:/Repositories/GardenBotApp/app/src/main/res/layout/fragment_chart.xml" value="0.25729166666666664" />
         <entry key="..\:/Repositories/GardenBotApp/app/src/main/res/layout/fragment_device_control.xml" value="0.11203703703703703" />
+        <entry key="..\:/Repositories/GardenBotApp/app/src/main/res/layout/fragment_home.xml" value="0.25729166666666664" />
       </map>
     </option>
   </component>

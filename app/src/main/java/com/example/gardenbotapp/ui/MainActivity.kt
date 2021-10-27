@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.gardenbotapp.R
-import com.example.gardenbotapp.data.remote.model.Notification
+import com.example.gardenbotapp.data.model.Notification
 import com.example.gardenbotapp.databinding.ActivityMainBinding
 import com.example.gardenbotapp.ui.autopilot_parameters.ParametersFragment
 import com.example.gardenbotapp.ui.autopilot_parameters.ParametersFragmentDirections
