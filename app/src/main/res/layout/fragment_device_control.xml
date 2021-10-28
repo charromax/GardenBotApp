@@ -2,11 +2,11 @@
   ~ Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
   -->
 
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/GardenFragment"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/bg_off_white_gray_strole"
     app:contentPadding="4dp"
     app:cardElevation="4dp">
 
@@ -20,6 +20,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/control_container"
             android:layout_width="match_parent"
+            android:paddingBottom="8dp"
             android:layout_height="wrap_content">
 
             <com.google.android.material.card.MaterialCardView
@@ -123,19 +124,6 @@
                     android:textOn="" />
             </com.google.android.material.card.MaterialCardView>
 
-            <Button
-                android:id="@+id/refresh"
-                style="@style/GardenButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="4dp"
-                android:layout_marginTop="4dp"
-                android:layout_marginEnd="4dp"
-                android:text="refresh"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/ext_container" />
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </FrameLayout>
 
@@ -144,8 +132,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
-        android:background="@color/design_default_color_background"
+        android:layout_marginTop="1dp"
+        android:background="@color/white"
         android:text="@string/control_manual" />
 
 
-</com.google.android.material.card.MaterialCardView>
+</FrameLayout>

@@ -11,8 +11,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,7 +23,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.ui.autopilot_parameters.AutoPilotParams
 import com.example.gardenbotapp.ui.autopilot_parameters.ParametersViewModel
-import com.example.gardenbotapp.ui.home.sections.chart.*
 import com.example.gardenbotapp.util.convertToAirHumFloat
 import com.example.gardenbotapp.util.convertToAirTempFloat
 import com.example.gardenbotapp.util.convertToVentMode
@@ -55,106 +52,114 @@ fun ParametersScreenMain(paramsViewModel: ParametersViewModel = viewModel(), con
             .padding(8.dp)
             .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = stringResource(R.string.params_screen_title),
-            style = MaterialTheme.typography.h5,
-            color = MaterialTheme.colors.onBackground,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = stringResource(R.string.params_screen_subtitle),
-            style = MaterialTheme.typography.body1,
-            color = MaterialTheme.colors.secondary
-        )
-        Divider(
-            modifier = Modifier
-                .height(1.dp)
-                .padding(bottom = 4.dp)
-                .background(MaterialTheme.colors.secondaryVariant)
-        )
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                text = stringResource(R.string.params_screen_title),
+                style = MaterialTheme.typography.h5,
+                color = MaterialTheme.colors.onBackground,
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = stringResource(R.string.params_screen_subtitle),
+                style = MaterialTheme.typography.body1,
+                color = MaterialTheme.colors.secondary
+            )
+            Divider(
+                modifier = Modifier
+                    .height(1.dp)
+                    .padding(bottom = 4.dp)
+                    .background(MaterialTheme.colors.secondaryVariant)
+            )
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier
-                    .clip(MaterialTheme.shapes.small)
-                    .fillMaxWidth()
-                    .background(color = MaterialTheme.colors.surface)
-                    .border(1.dp, Color.LightGray, MaterialTheme.shapes.small)
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                ParameterSlider(
-                    stringResource(R.string.air_temp_parameters), AutoPilotParams.TEMP,
-                    min_temp.convertToAirTempFloat(),
-                    max_temp.convertToAirTempFloat()
-                ) { range ->
-                    paramsViewModel.updateSelectedRange(AutoPilotParams.TEMP, range)
-                }
-                ParameterSlider(
-                    stringResource(R.string.air_hum_parameters),
-                    AutoPilotParams.AIR_HUM,
-                    min_hum.convertToAirHumFloat(),
-                    max_hum.convertToAirHumFloat()
-                ) { range ->
-                    paramsViewModel.updateSelectedRange(AutoPilotParams.AIR_HUM, range)
-                }
-                ParameterSlider(
-                    stringResource(R.string.soil_hum_parameters),
-                    AutoPilotParams.SOIL_HUM,
-                    min_soil.convertTosoilHumFloat(),
-                    max_soil.convertTosoilHumFloat(),
-                ) { range ->
-                    paramsViewModel.updateSelectedRange(AutoPilotParams.SOIL_HUM, range)
-                }
-            }
-            VentilationModeSelector(auto_pilot_mode.convertToVentMode(),
-                cycle_on, { newMode ->
-                    paramsViewModel.updateVentilationMode(newMode)
-                },
-                { timeOn ->
-                    paramsViewModel.updateVentCycle(timeOn)
-                })
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                HourPicker(
-                    context = context,
-                    title = stringResource(R.string.time_lamp_on),
-                    time = hour_on,
-                    onTimeChanged = {
-                        paramsViewModel.updateLampCycle(it, HourPickerType.ON)
-                    }
-                )
-                HourPicker(
-                    context = context,
-                    title = stringResource(R.string.time_lamp_off),
-                    time = hour_off,
-                    onTimeChanged = {
-                        paramsViewModel.updateLampCycle(it, HourPickerType.OFF)
-                    }
-                )
-            }
-            Button(
-                onClick = { sendParamsToServer(paramsViewModel) },
-                modifier = Modifier
-                    .padding(vertical = 8.dp)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = stringResource(R.string.update_gardenbot),
-                    fontWeight = FontWeight.Bold,
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
                     modifier = Modifier
-                        .padding(8.dp)
-                )
+                        .clip(MaterialTheme.shapes.small)
+                        .fillMaxWidth()
+                        .background(color = MaterialTheme.colors.surface)
+                        .border(1.dp, Color.LightGray, MaterialTheme.shapes.small)
+                        .padding(horizontal = 8.dp, vertical = 8.dp)
+                ) {
+                    ParameterSlider(
+                        stringResource(R.string.air_temp_parameters), AutoPilotParams.TEMP,
+                        min_temp.convertToAirTempFloat(),
+                        max_temp.convertToAirTempFloat()
+                    ) { range ->
+                        paramsViewModel.updateSelectedRange(AutoPilotParams.TEMP, range)
+                    }
+                    ParameterSlider(
+                        stringResource(R.string.air_hum_parameters),
+                        AutoPilotParams.AIR_HUM,
+                        min_hum.convertToAirHumFloat(),
+                        max_hum.convertToAirHumFloat()
+                    ) { range ->
+                        paramsViewModel.updateSelectedRange(AutoPilotParams.AIR_HUM, range)
+                    }
+                    ParameterSlider(
+                        stringResource(R.string.soil_hum_parameters),
+                        AutoPilotParams.SOIL_HUM,
+                        min_soil.convertTosoilHumFloat(),
+                        max_soil.convertTosoilHumFloat(),
+                    ) { range ->
+                        paramsViewModel.updateSelectedRange(AutoPilotParams.SOIL_HUM, range)
+                    }
+                }
+                VentilationModeSelector(auto_pilot_mode.convertToVentMode(),
+                    cycle_on, { newMode ->
+                        paramsViewModel.updateVentilationMode(newMode)
+                    },
+                    { timeOn ->
+                        paramsViewModel.updateVentCycle(timeOn)
+                    })
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    HourPicker(
+                        context = context,
+                        title = stringResource(R.string.time_lamp_on),
+                        time = hour_on,
+                        modifier = Modifier
+                            .fillMaxWidth(.5f)
+                            .padding(end = 2.dp),
+                        onTimeChanged = {
+                            paramsViewModel.updateLampCycle(it, HourPickerType.ON)
+                        }
+                    )
+                    HourPicker(
+                        context = context,
+                        title = stringResource(R.string.time_lamp_off),
+                        time = hour_off,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 2.dp),
+                        onTimeChanged = {
+                            paramsViewModel.updateLampCycle(it, HourPickerType.OFF)
+                        }
+                    )
+                }
             }
+        }
+        Button(
+            onClick = { sendParamsToServer(paramsViewModel) },
+            modifier = Modifier
+                .padding(vertical = 8.dp)
+                .fillMaxWidth()
+        ) {
+            Text(
+                text = stringResource(R.string.update_gardenbot),
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(8.dp)
+            )
         }
     }
 }

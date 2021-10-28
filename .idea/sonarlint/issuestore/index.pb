@@ -1,8 +1,6 @@
 
 ‹
 [app/src/main/java/com/example/gardenbotapp/ui/home/sections/deviceorders/OrdersViewModel.kt,3\4\348dbfcde6407614f4a252b921c135c8be9d157f
-Š
-Zapp/src/main/java/com/example/gardenbotapp/ui/home/sections/deviceorders/OrdersFragment.kt,3\5\35879bb5635dd7c3bf9efdf929ba1df57a4dcbcb
 ‹
 [app/src/main/java/com/example/gardenbotapp/ui/autopilot_parameters/composables/LabelText.kt,1\7\174aa6102bcea19a38a81907238a8e306c50e4be
 {
@@ -43,8 +41,6 @@ p
 @app/src/main/java/com/example/gardenbotapp/util/IntExtensions.kt,7\2\728253d4c4a02428085c2d46084b0c424c803b49
 l
 <app/src/main/java/com/example/gardenbotapp/util/Constants.kt,5\0\503797f1eda71a3bb7af2521e4325a52f9b7d14c
-Œ
-\app/src/main/java/com/example/gardenbotapp/ui/autopilot_parameters/composables/HourPicker.kt,e\3\e3c587c66713fe91aa263d85de146fdbfb42232b
 
 Oapp/src/main/java/com/example/gardenbotapp/ui/onboarding/OnboardingViewModel.kt,a\e\ae0deaeb838caf34258cf2d076d06464a8aabec8
 @
