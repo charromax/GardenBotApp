@@ -1,0 +1,190 @@
+# This file was generated based on ".graphqlconfig". Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+    subscription: Subscription
+}
+
+type AutoPilotParams {
+    auto_pilot_mode: String!
+    cycle_off: Int!
+    cycle_on: Int!
+    hour_off: Int!
+    hour_on: Int!
+    max_hum: Int!
+    max_soil: Int!
+    max_temp: Int!
+    min_hum: Int!
+    min_soil: Int!
+    min_temp: Int!
+}
+
+type AutoPilotParamsResponse {
+    deviceId: ID!
+    params: AutoPilotParams!
+}
+
+type Comment {
+    body: String!
+    createdAt: String!
+    id: ID!
+    username: String!
+}
+
+type Device {
+    createdAt: String!
+    deviceName: String!
+    id: ID!
+    isActivated: Boolean
+}
+
+type Like {
+    createdAt: String!
+    id: ID!
+    username: String!
+}
+
+type Measure {
+    airHum: Float!
+    airTemp: Float!
+    createdAt: String!
+    deviceId: ID!
+    id: ID!
+    soilHum: Float!
+}
+
+type Mutation {
+    activateDevice(deviceName: String!, userId: ID!): Device!
+    addMeasure(airHum: Float!, airTemp: Float!, deviceId: ID!, soilHum: Float!): Measure!
+    addNotification(code: Int!, deviceId: ID!, message: String!): Notification!
+    createComment(body: String!, postId: ID!): Post!
+    createPost(body: String!): Post!
+    deleteComment(commentId: ID!, postId: ID!): Post!
+    deletePost(postId: ID!): String!
+    likeDislike(postId: ID!): Post!
+    login(password: String!, username: String!): User!
+    paramsStatusResponse(deviceId: ID!, params: Params!): String!
+    register(registerInput: RegisterInput): User!
+    registerNewDevice(deviceName: String!): Device!
+    renameDevice(deviceId: ID!, newName: String!): User!
+    sendAutoPilotParams(payload: ParamsPayload!): String!
+    sendMqttOrder(payload: Payload): String!
+    statusRequest(request: StatusRequest!): String!
+    statusResponse(deviceId: ID!, devices: [SmallDev!]): String!
+}
+
+type Notification {
+    code: Int!
+    createdAt: String!
+    deviceId: ID!
+    id: ID!
+    message: String!
+}
+
+type Post {
+    body: String!
+    commentCount: Int!
+    comments: [Comment]!
+    createdAt: String!
+    id: ID!
+    likeCount: Int!
+    likes: [Like]!
+    username: String!
+}
+
+type Query {
+    checkToken: Boolean!
+    getAllDevices: [Device]!
+    getMeasures(deviceId: ID!): [Measure]!
+    getPost(postId: ID!): Post
+    getPosts: [Post]
+    refreshToken: String!
+}
+
+type SmallDevice {
+    dev_id: Int!
+    status: Boolean!
+}
+
+type StatusResponse {
+    deviceId: ID!
+    devices: [SmallDevice]!
+}
+
+type Subscription {
+    newAutoPilotParamsResponse(deviceId: ID!): AutoPilotParamsResponse!
+    newDevice(devName: String!): Device!
+    newMeasure(devId: ID!): Measure!
+    newNotification(devId: ID!): Notification!
+    newPost: Post!
+    newStatusResponse(deviceId: ID!): StatusResponse!
+}
+
+type User {
+    count: Int!
+    createdAt: String!
+    deviceCount: Int!
+    devices: [Device]!
+    email: String!
+    id: ID!
+    token: String!
+    username: String!
+}
+
+enum CacheControlScope {
+    PRIVATE
+    PUBLIC
+}
+
+input Order {
+    action: Boolean!
+    device_pin: Int!
+}
+
+input Params {
+    auto_pilot_mode: String!
+    cycle_off: Int!
+    cycle_on: Int!
+    hour_off: Int!
+    hour_on: Int!
+    max_hum: Int!
+    max_soil: Int!
+    max_temp: Int!
+    min_hum: Int!
+    min_soil: Int!
+    min_temp: Int!
+}
+
+input ParamsPayload {
+    deviceId: ID!
+    order: Params!
+    type: String!
+}
+
+input Payload {
+    deviceId: ID!
+    order: Order!
+    type: String!
+}
+
+input RegisterInput {
+    confirmPassword: String!
+    email: String!
+    password: String!
+    username: String!
+}
+
+input SmallDev {
+    dev_id: ID!
+    status: Boolean!
+}
+
+input StatusRequest {
+    deviceId: ID!
+    type: String!
+}
+
+
+"The `Upload` scalar type represents a file upload."
+scalar Upload

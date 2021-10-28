@@ -36,4 +36,7 @@ object RepositoryModule {
 
     @Provides
     fun provideAutoPilotParamsRepository(): ParametersRepository = ParamsRepositoryImpl()
+
+    @Provides
+    fun provideMainRepository():MainRepository = MainRepositoryImpl()
 }
