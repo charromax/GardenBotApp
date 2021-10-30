@@ -16,14 +16,14 @@ import com.example.gardenbotapp.type.StatusRequest
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.retryWhen
 import javax.inject.Inject
 
-enum class OrderType { MANUAL, SETTINGS, STATUS_REQUEST }
+enum class OrderType { MANUAL, SETTINGS, STATUS_REQUEST, PARAMS_STATUS_REQUEST }
 enum class ConnectedDevice(val pin: Int) {
     LAMPARA(0), VENTILADOR(1), EXTRACTOR(2), INTRACTOR(3)
 }
@@ -31,8 +31,7 @@ enum class ConnectedDevice(val pin: Int) {
 @HiltViewModel
 class OrdersViewModel @Inject constructor(
     private val manualControlRepository: ManualControlRepository,
-    private val preferencesManager: PreferencesManager,
-    private val state: SavedStateHandle
+    private val preferencesManager: PreferencesManager
 ) : GardenBotBaseViewModel() {
 
     private val ordersEventsChannel = Channel<OrdersEvents>()

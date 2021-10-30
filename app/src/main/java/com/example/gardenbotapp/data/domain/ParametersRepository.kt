@@ -4,10 +4,14 @@
 
 package com.example.gardenbotapp.data.domain
 
-import com.example.gardenbotapp.type.Payload
+import com.apollographql.apollo.api.Response
+import com.example.gardenbotapp.NewAutoPilotParamsResponseSubscription
+import com.example.gardenbotapp.type.ParamsPayload
+import com.example.gardenbotapp.type.StatusRequest
+import kotlinx.coroutines.flow.Flow
 
 interface ParametersRepository : GardenBotRepository {
-    suspend fun getCurrentParams(deviceId: String, token: String)
-    suspend fun changeParams(deviceId: String, token: String, params: Payload): String?
-
+    suspend fun sendParamsStatusRequest(statusRequest: StatusRequest, token: String): String?
+    suspend fun changeParams(payload: ParamsPayload, token: String): String?
+    suspend fun paramsStatusResponseSub(deviceId: String): Flow<Response<NewAutoPilotParamsResponseSubscription.Data>>
 }

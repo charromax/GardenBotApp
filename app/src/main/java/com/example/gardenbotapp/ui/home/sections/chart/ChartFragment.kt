@@ -14,6 +14,7 @@ import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentChartBinding
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.util.Errors
+import com.example.gardenbotapp.util.MAX_ALLOWED_TEMPERATURE
 import com.example.gardenbotapp.util.snack
 import com.example.gardenbotapp.util.toTemperatureString
 import dagger.hilt.android.AndroidEntryPoint

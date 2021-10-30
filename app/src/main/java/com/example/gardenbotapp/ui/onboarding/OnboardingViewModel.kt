@@ -11,7 +11,7 @@ import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.NewDeviceSubscription
 import com.example.gardenbotapp.data.domain.OnboardingRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
-import com.example.gardenbotapp.data.remote.model.Device
+import com.example.gardenbotapp.data.model.Device
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope

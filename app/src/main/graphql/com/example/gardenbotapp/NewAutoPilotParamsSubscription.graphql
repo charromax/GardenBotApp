@@ -1,0 +1,18 @@
+subscription newAutoPilotParamsResponse($deviceId: ID!) {
+    newAutoPilotParamsResponse(deviceId: $deviceId) {
+        params {
+            min_hum
+            max_hum
+            min_temp
+            max_temp
+            min_soil
+            max_soil
+            auto_pilot_mode
+            cycle_on
+            cycle_off
+            hour_on
+            hour_off
+        }
+    }
+
+}

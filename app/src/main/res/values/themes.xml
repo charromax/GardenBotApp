@@ -11,11 +11,11 @@
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
         <item name="colorSecondary">@color/gardenbot_green_light</item>
-        <item name="colorSecondaryVariant">@color/gardenbot_green</item>
+        <item name="colorSecondaryVariant">@color/light_gray</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="android:colorBackground">@color/white</item>
+        <item name="android:colorBackground">@color/full_white</item>
         <item name="colorSurface">@color/white</item>
         <item name="colorError">@color/red</item>
         <!--"On" colors define how text, icons and strokes are colored in relation to the surface-->
@@ -50,7 +50,7 @@
 
     <style name="GardenFragment" parent="Widget.MaterialComponents.CardView">
         <item name="shapeAppearanceOverlay">@style/RoundCorners</item>
-        <item name="background">@color/full_white</item>
+        <item name="background">@android:color/background_light</item>
     </style>
 
     <style name="GardenLabel" parent="TextAppearance.MaterialComponents.Subtitle2">

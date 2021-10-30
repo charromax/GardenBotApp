@@ -8,10 +8,11 @@ import androidx.lifecycle.*
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.data.domain.ChartRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
-import com.example.gardenbotapp.data.remote.model.Measure
+import com.example.gardenbotapp.data.model.Measure
 import com.example.gardenbotapp.di.ApplicationDefaultScope
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import com.example.gardenbotapp.util.Errors
+import com.example.gardenbotapp.util.MAX_ALLOWED_TEMPERATURE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -23,14 +24,6 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.retryWhen
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
-const val EXP_TOKEN = "Invalid/Expired token"
-const val MAX_ALLOWED_TEMPERATURE = 40
-const val MIN_ALLOWED_TEMPERATURE = 19
-const val MAX_ALLOWED_AIR_HUMIDITY = 85
-const val MIN_ALLOWED_AIR_HUMIDITY = 45
-const val MAX_ALLOWED_SOIL_HUMIDITY = 90
-const val MIN_ALLOWED_SOIL_HUMIDITY = 15
 
 @HiltViewModel
 class ChartViewModel @Inject constructor(

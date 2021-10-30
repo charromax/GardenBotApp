@@ -6,6 +6,25 @@ schema {
     subscription: Subscription
 }
 
+type AutoPilotParams {
+    auto_pilot_mode: String!
+    cycle_off: Int!
+    cycle_on: Int!
+    hour_off: Int!
+    hour_on: Int!
+    max_hum: Int!
+    max_soil: Int!
+    max_temp: Int!
+    min_hum: Int!
+    min_soil: Int!
+    min_temp: Int!
+}
+
+type AutoPilotParamsResponse {
+    deviceId: ID!
+    params: AutoPilotParams!
+}
+
 type Comment {
     body: String!
     createdAt: String!
@@ -45,12 +64,14 @@ type Mutation {
     deletePost(postId: ID!): String!
     likeDislike(postId: ID!): Post!
     login(password: String!, username: String!): User!
+    paramsStatusResponse(deviceId: ID!, params: Params!): String!
     register(registerInput: RegisterInput): User!
     registerNewDevice(deviceName: String!): Device!
     renameDevice(deviceId: ID!, newName: String!): User!
+    sendAutoPilotParams(payload: ParamsPayload!): String!
     sendMqttOrder(payload: Payload): String!
     statusRequest(request: StatusRequest!): String!
-    statusResponse(response: Response): String!
+    statusResponse(deviceId: ID!, devices: [SmallDev!]): String!
 }
 
 type Notification {
@@ -73,6 +94,7 @@ type Post {
 }
 
 type Query {
+    checkToken: Boolean!
     getAllDevices: [Device]!
     getMeasures(deviceId: ID!): [Measure]!
     getPost(postId: ID!): Post
@@ -91,6 +113,7 @@ type StatusResponse {
 }
 
 type Subscription {
+    newAutoPilotParamsResponse(deviceId: ID!): AutoPilotParamsResponse!
     newDevice(devName: String!): Device!
     newMeasure(devId: ID!): Measure!
     newNotification(devId: ID!): Notification!
@@ -119,6 +142,26 @@ input Order {
     device_pin: Int!
 }
 
+input Params {
+    auto_pilot_mode: String!
+    cycle_off: Int!
+    cycle_on: Int!
+    hour_off: Int!
+    hour_on: Int!
+    max_hum: Int!
+    max_soil: Int!
+    max_temp: Int!
+    min_hum: Int!
+    min_soil: Int!
+    min_temp: Int!
+}
+
+input ParamsPayload {
+    deviceId: ID!
+    order: Params!
+    type: String!
+}
+
 input Payload {
     deviceId: ID!
     order: Order!
@@ -130,11 +173,6 @@ input RegisterInput {
     email: String!
     password: String!
     username: String!
-}
-
-input Response {
-    deviceId: ID!
-    devices: [SmallDev]!
 }
 
 input SmallDev {

@@ -5,12 +5,15 @@
 package com.example.gardenbotapp.ui
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.example.gardenbotapp.R
-import com.example.gardenbotapp.data.remote.model.Notification
+import com.example.gardenbotapp.data.model.Notification
 import com.example.gardenbotapp.databinding.ActivityMainBinding
+import com.example.gardenbotapp.ui.autopilot_parameters.ParametersFragment
+import com.example.gardenbotapp.ui.autopilot_parameters.ParametersFragmentDirections
 import com.example.gardenbotapp.ui.home.HomeFragment
 import com.example.gardenbotapp.util.getCurrentFragment
 import com.example.gardenbotapp.util.setAsActionBar
@@ -46,9 +49,15 @@ open class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (getCurrentFragment() is HomeFragment) {
-            finish()
-        } else super.onBackPressed()
+        when {
+            getCurrentFragment() is HomeFragment -> {
+                finish()
+            }
+            getCurrentFragment() is ParametersFragment -> {
+                navController.navigate(ParametersFragmentDirections.actionParametersFragmentToHomeFragment())
+            }
+            else -> super.onBackPressed()
+        }
     }
 
     companion object {

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) 2021. Created by charr0max  -> manuelrg88@gmail.com
   -->
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    style="@style/GardenFragment"
     android:paddingVertical="4dp"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="4dp"
-    app:cardElevation="4dp">
+    android:background="@drawable/bg_off_white_gray_strole">
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -39,4 +38,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-</com.google.android.material.card.MaterialCardView>
+</FrameLayout>

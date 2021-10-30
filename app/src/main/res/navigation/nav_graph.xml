@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/mainFragment">
 
     <fragment
         android:id="@+id/loginFragment"
@@ -66,6 +66,15 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right"
             app:destination="@id/parametersFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_fullScreenAirTempFragment"
+            app:destination="@id/fullScreenAirTempFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_fullScreenAirHumFragment"
+            app:destination="@id/fullScreenAirHumFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_fullScreenSoilHumFragment"
+            app:destination="@id/fullScreenSoilHumFragment" />
     </fragment>
 
     <navigation
@@ -103,5 +112,32 @@
         android:id="@+id/parametersFragment"
         android:name="com.example.gardenbotapp.ui.autopilot_parameters.ParametersFragment"
         tools:layout="@layout/fragment_autopilot_params"
-        android:label="ParametersFragment" />
+        android:label="ParametersFragment" >
+        <action
+            android:id="@+id/action_parametersFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.gardenbotapp.ui.MainFragment"
+        android:label="MainFragment" >
+        <action
+            android:id="@+id/action_mainFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_homeFragment"
+            app:destination="@id/homeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fullScreenAirTempFragment"
+        android:name="com.example.gardenbotapp.ui.home.sections.chart.FullScreenAirTempFragment"
+        android:label="FullScreenAirTempFragment" />
+    <fragment
+        android:id="@+id/fullScreenAirHumFragment"
+        android:name="com.example.gardenbotapp.ui.home.sections.chart.FullScreenAirHumFragment"
+        android:label="FullScreenAirHumFragment" />
+    <fragment
+        android:id="@+id/fullScreenSoilHumFragment"
+        android:name="com.example.gardenbotapp.ui.home.sections.chart.FullScreenSoilHumFragment"
+        android:label="FullScreenSoilHumFragment" />
 </navigation>

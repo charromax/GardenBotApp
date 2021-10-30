@@ -33,4 +33,10 @@ object RepositoryModule {
 
     @Provides
     fun provideOnboardingRepository(): OnboardingRepository = OnboardingRepositoryImpl()
+
+    @Provides
+    fun provideAutoPilotParamsRepository(): ParametersRepository = ParamsRepositoryImpl()
+
+    @Provides
+    fun provideMainRepository():MainRepository = MainRepositoryImpl()
 }

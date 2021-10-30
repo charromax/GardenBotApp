@@ -14,7 +14,7 @@
     <color name="gardenbot_green_dark">#FF1E4A20</color>
     <color name="gardenbot_green_light">#FF5AE360</color>
     <color name="gardenbot_accent">#FFFF6D00</color>
-    <color name="full_white">#FFFFFF</color>
+    <color name="full_white">#FFFFFFFF</color>
 
     <color name="red">#D50000</color>
     <color name="green">#00C853</color>

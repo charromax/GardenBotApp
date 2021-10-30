@@ -77,9 +77,6 @@ class OrdersFragment : GardenbotBaseFragment<FragmentDeviceControlBinding, Order
             intractor.setOnCheckedChangeListener { button, state ->
                 if (button.isPressed) updateState(state, ConnectedDevice.INTRACTOR)
             }
-            refresh.setOnClickListener {
-                viewModel.refreshDeviceState()
-            }
         }
     }
 

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gardenbotapp.R
-import com.example.gardenbotapp.data.remote.model.Notification
+import com.example.gardenbotapp.data.model.Notification
 import com.example.gardenbotapp.databinding.ListItemNotificationBinding
 import com.example.gardenbotapp.util.formatTo
 import com.example.gardenbotapp.util.toDate
