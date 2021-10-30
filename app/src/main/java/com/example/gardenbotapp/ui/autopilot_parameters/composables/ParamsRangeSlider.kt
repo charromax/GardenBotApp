@@ -20,24 +20,24 @@ import com.example.gardenbotapp.util.*
 fun ParameterSlider(label: String, type: AutoPilotParams, start: Float, end: Float, onParamsRangeChanged:(ClosedFloatingPointRange<Float>)->Unit) {
     val positions = when (type) {
         AutoPilotParams.TEMP -> "${
-            start.shorten(1).convertToTemperature().toString()
+            start.convertToTemperature().toString()
                 .toTemperatureString()
         } - ${
-            end.shorten(1).convertToTemperature().toString()
+            end.convertToTemperature().toString()
                 .toTemperatureString()
         }"
         AutoPilotParams.SOIL_HUM -> "${
-            start.shorten(1).convertToSoilHumidityPercent().toString()
+            start.convertToSoilHumidityPercent().toString()
                 .toPercentString()
         } - ${
-            end.shorten(1).convertToSoilHumidityPercent().toString()
+            end.convertToSoilHumidityPercent().toString()
                 .toPercentString()
         }"
         AutoPilotParams.AIR_HUM -> "${
-            start.shorten(1).convertToAirHumidityPercent().toString()
+            start.convertToAirHumidityPercent().toString()
                 .toPercentString()
         } - ${
-            end.shorten(1).convertToAirHumidityPercent().toString()
+            end.convertToAirHumidityPercent().toString()
                 .toPercentString()
         }"
     }

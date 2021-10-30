@@ -6,26 +6,19 @@ package com.example.gardenbotapp.util
 
 import kotlin.math.roundToInt
 
-/**
- * extensions used to convert normalized float values from sliders into server-ready values
- */
-fun Float.shorten(decimals: Int): Float {
-    return String.format("%.$decimals" + "f", this).replace(',', '.').toFloat()
-}
-
-fun Float.convertToTemperature(): Float {
+fun Float.convertToTemperature(): Int {
     return calculate(this, MIN_ALLOWED_TEMPERATURE, MAX_ALLOWED_TEMPERATURE)
 }
 
 private fun calculate(fl: Float, minValue: Int, maxValue: Int) =
-    (fl * (maxValue - minValue)) + minValue
+    ((fl * (maxValue - minValue)) + minValue).roundToInt()
 
-fun Float.convertToAirHumidityPercent(): Float {
+fun Float.convertToAirHumidityPercent(): Int {
     return calculate(this, MIN_ALLOWED_AIR_HUMIDITY, MAX_ALLOWED_AIR_HUMIDITY)
 }
 
 
-fun Float.convertToSoilHumidityPercent(): Float {
+fun Float.convertToSoilHumidityPercent(): Int {
     return calculate(this, MIN_ALLOWED_SOIL_HUMIDITY, MAX_ALLOWED_SOIL_HUMIDITY)
 }
 

@@ -1,7 +1,5 @@
 
 ã
-[app/src/main/java/com/example/gardenbotapp/ui/home/sections/deviceorders/OrdersViewModel.kt,3\4\348dbfcde6407614f4a252b921c135c8be9d157f
-ã
 [app/src/main/java/com/example/gardenbotapp/ui/autopilot_parameters/composables/LabelText.kt,1\7\174aa6102bcea19a38a81907238a8e306c50e4be
 {
 Kapp/src/main/java/com/example/gardenbotapp/ui/register/RegisterViewModel.kt,8\3\8349bbe6497c3d2ab8f7267d1406fe0902fd24a7
@@ -9,18 +7,8 @@ Kapp/src/main/java/com/example/gardenbotapp/ui/register/RegisterViewModel.kt,8\
 Tapp/src/main/java/com/example/gardenbotapp/data/domain/RegisterUserRepositoryImpl.kt,9\5\955805d674af56328aadeb4eb788e719505b0f69
 }
 Mapp/src/main/java/com/example/gardenbotapp/data/domain/GardenBotRepository.kt,0\f\0fdb4b5272594259510d01151010eb69ba65425f
-è
-_app/src/main/java/com/example/gardenbotapp/ui/home/sections/chart/ChartCalculationsViewModel.kt,6\0\604d9e34be1ab518d38ca26e2f11d28743a00328
-
-Oapp/src/main/java/com/example/gardenbotapp/data/model/AutoPilotParamsPayload.kt,2\1\210ee96b108e35d51f9f5b672cac4d6ec8170ca3
-Ç
-Rapp/src/main/java/com/example/gardenbotapp/ui/home/sections/chart/ChartFragment.kt,d\2\d2e934749b9b795a160285fd4c591e8d87915961
-É
-Sapp/src/main/java/com/example/gardenbotapp/ui/home/sections/chart/ChartViewModel.kt,1\c\1cf23b447cee6b31808eba9fb669cdf2b19fac9b
 m
 =app/src/main/java/com/example/gardenbotapp/util/Extensions.kt,7\5\75adc16c9a6957cdfc231133a7cded40f6e72f1c
-r
-Bapp/src/main/java/com/example/gardenbotapp/util/FloatExtensions.kt,7\6\76ac8aab179e0844397a1b4f7b2dae2bbea59673
 p
 @app/src/main/java/com/example/gardenbotapp/data/model/Measure.kt,c\c\ccafe2eef6f68e1f0b7bb111ace8f7a246f94506
 o
@@ -29,16 +17,12 @@ m
 =app/src/main/java/com/example/gardenbotapp/data/model/User.kt,d\c\dcfca4b8bf28022ffdf38aec713502ad632b1fbf
 u
 Eapp/src/main/java/com/example/gardenbotapp/data/model/Notification.kt,5\8\584254b206911e21d8948c1039f786bebc7b4519
-ô
-iapp/src/main/java/com/example/gardenbotapp/ui/autopilot_parameters/composables/VentilationModeSelector.kt,b\f\bfa5ce6603a2dde30d6f14398dfbfa09e81ef05a
 s
 Capp/src/main/java/com/example/gardenbotapp/data/model/Parameters.kt,7\7\77f9462cb5c8b33a8b9790dc3ad19f7b92daf3f1
 y
 Iapp/src/main/java/com/example/gardenbotapp/data/domain/ChartRepository.kt,1\7\17a2e5a7aea0622056d95a970126d883f7023487
 à
 Xapp/src/main/java/com/example/gardenbotapp/ui/autopilot_parameters/ParametersFragment.kt,0\8\08d96b82968da3e2268871dbf92f810a7641398c
-p
-@app/src/main/java/com/example/gardenbotapp/util/IntExtensions.kt,7\2\728253d4c4a02428085c2d46084b0c424c803b49
 l
 <app/src/main/java/com/example/gardenbotapp/util/Constants.kt,5\0\503797f1eda71a3bb7af2521e4325a52f9b7d14c
 
@@ -51,3 +35,7 @@ bapp/src/main/java/com/example/gardenbotapp/ui/home/sections/notifications/Notif
 aapp/src/main/java/com/example/gardenbotapp/ui/home/sections/notifications/NotificationsAdapter.kt,8\2\821ea4062d859322a912999795cb2057f4e662f0
 ì
 capp/src/main/java/com/example/gardenbotapp/ui/home/sections/notifications/NotificationsViewModel.kt,f\1\f194b37cf5d20217a101aeef0f52c1c935a402b3
+å
+\app/src/main/java/com/example/gardenbotapp/ui/autopilot_parameters/composables/HourPicker.kt,e\3\e3c587c66713fe91aa263d85de146fdbfb42232b
+p
+@app/src/main/java/com/example/gardenbotapp/util/IntExtensions.kt,7\2\728253d4c4a02428085c2d46084b0c424c803b49

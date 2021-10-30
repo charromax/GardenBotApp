@@ -5,10 +5,8 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Slider
-import androidx.compose.material.Switch
+import androidx.compose.material.*
+import androidx.compose.material.SwitchDefaults.colors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -19,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.util.convertToVentilationFloat
 import java.util.*
+import androidx.compose.material.SwitchColors as SwitchColors
 
 enum class VentilationMode { AUTO, MANUAL }
 
@@ -55,6 +54,10 @@ fun VentilationModeSelector(
         ) {
             Switch(
                 modifier = Modifier.padding(horizontal = 4.dp),
+                colors = colors(
+                    checkedThumbColor = MaterialTheme.colors.primary,
+                    checkedTrackColor = MaterialTheme.colors.primary
+                ),
                 checked = mode == VentilationMode.AUTO,
                 onCheckedChange = {
                     onModeChanged.invoke(if (mode == VentilationMode.AUTO) VentilationMode.MANUAL else VentilationMode.AUTO)

@@ -66,6 +66,15 @@
             app:popEnterAnim="@android:anim/slide_in_left"
             app:popExitAnim="@android:anim/slide_out_right"
             app:destination="@id/parametersFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_fullScreenAirTempFragment"
+            app:destination="@id/fullScreenAirTempFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_fullScreenAirHumFragment"
+            app:destination="@id/fullScreenAirHumFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_fullScreenSoilHumFragment"
+            app:destination="@id/fullScreenSoilHumFragment" />
     </fragment>
 
     <navigation
@@ -119,4 +128,16 @@
             android:id="@+id/action_mainFragment_to_homeFragment"
             app:destination="@id/homeFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/fullScreenAirTempFragment"
+        android:name="com.example.gardenbotapp.ui.home.sections.chart.FullScreenAirTempFragment"
+        android:label="FullScreenAirTempFragment" />
+    <fragment
+        android:id="@+id/fullScreenAirHumFragment"
+        android:name="com.example.gardenbotapp.ui.home.sections.chart.FullScreenAirHumFragment"
+        android:label="FullScreenAirHumFragment" />
+    <fragment
+        android:id="@+id/fullScreenSoilHumFragment"
+        android:name="com.example.gardenbotapp.ui.home.sections.chart.FullScreenSoilHumFragment"
+        android:label="FullScreenSoilHumFragment" />
 </navigation>

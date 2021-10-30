@@ -156,7 +156,7 @@ class ParametersViewModel @Inject constructor(
         scope.launch {
             updateCurrentParams(
                 AutoPilotParamsPayload(
-                    type = OrderType.PARAMS_STATUS_REQUEST.name.lowercase(),
+                    type = OrderType.SETTINGS.name.lowercase(),
                     Params(
                         auto_pilot_mode.value,
                         min_hum.value,
@@ -175,31 +175,6 @@ class ParametersViewModel @Inject constructor(
         }
     }
 
-
-    /**
-     * set initial state for parameters sliders
-     */
-    fun getEndTemperatureValue(obtainedParams: Parameters) =
-        obtainedParams.max_temp.convertToAirTempFloat()
-
-    fun getStartTemperature(obtainedParams: Parameters) =
-        obtainedParams.min_temp.convertToAirTempFloat()
-
-
-    fun getEndSoilHumidity(obtainedParams: Parameters) =
-        obtainedParams.max_soil.convertTosoilHumFloat()
-
-
-    fun getStartSoilHumidity(obtainedParams: Parameters) =
-        obtainedParams.min_soil.convertTosoilHumFloat()
-
-
-    fun getEndAirHumidity(obtainedParams: Parameters) =
-        (obtainedParams.max_hum.convertToAirHumFloat())
-
-
-    fun getStartAirHumidity(obtainedParams: Parameters) =
-        (obtainedParams.min_hum.convertToAirHumFloat())
 
     /**
      * updates lamp's hour on and off
@@ -226,21 +201,21 @@ class ParametersViewModel @Inject constructor(
             when (slider) {
                 AutoPilotParams.TEMP -> {
                     min_temp.value =
-                        range.start.shorten(1).convertToTemperature().roundToInt()
+                        range.start.convertToTemperature()
                     max_temp.value =
-                        range.endInclusive.shorten(1).convertToTemperature().roundToInt()
+                        range.endInclusive.convertToTemperature()
                 }
                 AutoPilotParams.SOIL_HUM -> {
                     min_soil.value =
-                        range.start.shorten(1).convertToSoilHumidityPercent().roundToInt()
+                        range.start.convertToSoilHumidityPercent()
                     max_soil.value =
-                        range.endInclusive.shorten(1).convertToSoilHumidityPercent().roundToInt()
+                        range.endInclusive.convertToSoilHumidityPercent()
                 }
                 AutoPilotParams.AIR_HUM -> {
                     min_hum.value =
-                        range.start.shorten(1).convertToAirHumidityPercent().roundToInt()
+                        range.start.convertToAirHumidityPercent()
                     max_hum.value =
-                        range.endInclusive.shorten(1).convertToAirHumidityPercent().roundToInt()
+                        range.endInclusive.convertToAirHumidityPercent()
                 }
             }
         }

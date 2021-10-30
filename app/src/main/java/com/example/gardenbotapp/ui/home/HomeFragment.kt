@@ -53,6 +53,11 @@ class HomeFragment : GardenbotBaseFragment<FragmentHomeBinding, HomeViewModel>()
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        observeLiveData()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.menu, menu)
     }
