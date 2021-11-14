@@ -51,4 +51,5 @@
     <string name="time_lamp_on">Encendido\nde Lámpara:</string>
     <string name="time_lamp_off">Apagado\nde Lámpara:</string>
     <string name="update_gardenbot">ACTUALIZAR GARDENBOT</string>
+    <string name="send_to">Elige con qué app deseas compartir</string>
 </resources>

@@ -4,30 +4,39 @@
 
 package com.example.gardenbotapp.ui.home.sections.chart
 
+import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.net.Uri
+import android.util.DisplayMetrics
+import android.view.View
+import android.widget.FrameLayout
+import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import com.apollographql.apollo.exception.ApolloException
 import com.example.gardenbotapp.data.domain.ChartRepository
 import com.example.gardenbotapp.data.local.PreferencesManager
 import com.example.gardenbotapp.data.model.Measure
 import com.example.gardenbotapp.di.ApplicationDefaultScope
+import com.example.gardenbotapp.di.ApplicationIoScope
 import com.example.gardenbotapp.ui.base.GardenBotBaseViewModel
 import com.example.gardenbotapp.util.Errors
 import com.example.gardenbotapp.util.MAX_ALLOWED_TEMPERATURE
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.receiveAsFlow
-import kotlinx.coroutines.flow.retryWhen
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import javax.inject.Inject
+
 
 @HiltViewModel
 class ChartViewModel @Inject constructor(
     @ApplicationDefaultScope private val defScope: CoroutineScope,
+    @ApplicationIoScope private val ioScope: CoroutineScope,
     private val chartRepository: ChartRepository,
     private val preferencesManager: PreferencesManager
 ) : GardenBotBaseViewModel() {
@@ -38,6 +47,10 @@ class ChartViewModel @Inject constructor(
     val chartEvents = chartEventsChannel.receiveAsFlow()
     private val _measureSub = MutableLiveData<Measure>()
     val measureSub: LiveData<Measure> get() = _measureSub
+    private val _chartScreenShot = MutableLiveData<Uri>()
+    val chartScreenShot: LiveData<Uri> get() = _chartScreenShot
+    private val IMAGES_DIR = "images"
+    private val FILENAME = "chart.png"
 
 
     init {
@@ -47,6 +60,7 @@ class ChartViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         defScope.cancel()
+        ioScope.cancel()
     }
 
     /**
@@ -124,4 +138,53 @@ class ChartViewModel @Inject constructor(
         Transformations.switchMap(_measureSub) {
             liveData { emit(it.soilHum.toFloat()) }
         }
+
+    fun takeAndSaveScreenShot(fragment: Fragment) {
+        val bitmap = getBitmapFromView(fragment.view)
+        if (bitmap != null) {
+            saveScreenShot(fragment.requireContext(), bitmap)
+        }
+    }
+
+    private fun getBitmapFromView(view: View?): Bitmap? {
+        view?.let {
+            val bitmap = Bitmap.createBitmap(
+                view.measuredWidth, view.measuredHeight,
+                Bitmap.Config.ARGB_8888
+            )
+            val canvas = Canvas(bitmap)
+            view.layout(view.left, view.top, view.right, view.bottom)
+            view.draw(canvas)
+            return bitmap
+        }
+        return null
+    }
+
+    @Suppress("BlockingMethodInNonBlockingContext")
+    private fun saveScreenShot(context: Context, bitmap: Bitmap) {
+        // save bitmap to cache directory
+        viewModelScope.launch {
+            try {
+                withContext(ioScope.coroutineContext) {
+                    val cachePath = File(context.cacheDir, IMAGES_DIR)
+                    cachePath.mkdirs() // don't forget to make the directory
+                    val stream =
+                        FileOutputStream("$cachePath/chart.png") // overwrites this image every time
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    stream.close()
+                }
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            val imagePath = File(context.cacheDir, IMAGES_DIR)
+            val newFile = File(imagePath, FILENAME)
+            val contentUri: Uri =
+                FileProvider.getUriForFile(
+                    context,
+                    "com.example.gardenbotapp.fileprovider",
+                    newFile
+                )
+            _chartScreenShot.postValue(contentUri)
+        }
+    }
 }

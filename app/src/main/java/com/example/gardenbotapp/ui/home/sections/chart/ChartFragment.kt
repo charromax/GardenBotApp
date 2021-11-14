@@ -4,6 +4,7 @@
 
 package com.example.gardenbotapp.ui.home.sections.chart
 
+import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -13,12 +14,12 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentChartBinding
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
-import com.example.gardenbotapp.util.Errors
-import com.example.gardenbotapp.util.MAX_ALLOWED_TEMPERATURE
-import com.example.gardenbotapp.util.snack
-import com.example.gardenbotapp.util.toTemperatureString
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
+import android.content.Intent
+import com.example.gardenbotapp.util.*
+import kotlinx.coroutines.flow.collectLatest
+
 
 @AndroidEntryPoint
 class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel>() {
@@ -35,8 +36,19 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
 
     override fun setUpUI() {
         super.setUpUI()
-        collectEvents()
         setupChart()
+        collectEvents()
+    }
+
+    override fun setClickListeners() {
+        super.setClickListeners()
+        binding.shareButton.setOnClickListener {
+            viewModel.takeAndSaveScreenShot(this)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
         setupAirTempLiveViewFormatter()
     }
 
@@ -67,6 +79,7 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
                     is Errors.TokenError -> showSnack(getString(R.string.network_error_message))
                 }
             }
+
         }
     }
 
@@ -108,6 +121,10 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
         viewModel.liveSoilHumData.observe(viewLifecycleOwner, {
             binding.soilHumLiveView.setProgress(it, true)
         })
+
+        viewModel.chartScreenShot.observe(viewLifecycleOwner) {
+            activity?.shareImage(it)
+        }
     }
 
     private fun showSnack(message: String) {

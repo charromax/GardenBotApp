@@ -18,6 +18,15 @@
         android:supportsRtl="true"
         android:theme="@style/SplashTheme"
         tools:targetApi="n">
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.example.gardenbotapp.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/filepaths" />
+        </provider>
         <activity
             android:name=".ui.MainActivity"
             android:exported="true">
