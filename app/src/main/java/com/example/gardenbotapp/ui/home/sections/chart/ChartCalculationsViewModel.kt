@@ -50,9 +50,8 @@ class ChartCalculationsViewModel @Inject constructor(
         Transformations.switchMap(_measures) { fullList ->
             liveData(context = defScope.coroutineContext) {
                 emit(fullList.filter { sensorData ->
-                    sensorData.airTemp > 0
-                            && sensorData.airHum > 0
-                            && sensorData.soilHum > 0
+                    sensorData.airTemp != 0.0
+                            && sensorData.airHum != 0.0
                 })
             }
         }

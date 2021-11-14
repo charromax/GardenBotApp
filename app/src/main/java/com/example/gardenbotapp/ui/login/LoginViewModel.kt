@@ -55,8 +55,8 @@ class LoginViewModel @Inject constructor(
             } else {
                 loginResponse.value = try {
                     loginUserRepository.loginUser(
-                        username,
-                        password
+                        username.trim(),
+                        password.trim()
                     )
                 } catch (e: Exception) {
                     loginEventsChannel.send(LoginEvents.LoginError(e.message!!))
