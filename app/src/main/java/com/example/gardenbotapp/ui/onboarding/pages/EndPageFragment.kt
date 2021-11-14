@@ -9,6 +9,7 @@ import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentEndpageBinding
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.ui.onboarding.OnboardingViewModel
+import com.example.gardenbotapp.util.navigateHome
 
 class EndPageFragment : GardenbotBaseFragment<FragmentEndpageBinding, OnboardingViewModel>() {
     override fun getViewBinding() = FragmentEndpageBinding.inflate(layoutInflater)
@@ -17,16 +18,12 @@ class EndPageFragment : GardenbotBaseFragment<FragmentEndpageBinding, Onboarding
 
     override fun setClickListeners() {
         binding.skipButton.setOnClickListener {
-            takeMeToHomeFragment()
+            activity?.navigateHome()
         }
 
         binding.renameButton.setOnClickListener {
             //TODO: send rename mutation
         }
-    }
-
-    private fun takeMeToHomeFragment() {
-        findNavController().navigate(R.id.homeFragment)
     }
 
 }

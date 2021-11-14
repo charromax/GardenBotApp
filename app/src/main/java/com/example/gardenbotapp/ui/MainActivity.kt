@@ -16,13 +16,14 @@ import com.example.gardenbotapp.ui.autopilot_parameters.ParametersFragment
 import com.example.gardenbotapp.ui.autopilot_parameters.ParametersFragmentDirections
 import com.example.gardenbotapp.ui.home.HomeFragment
 import com.example.gardenbotapp.util.getCurrentFragment
+import com.example.gardenbotapp.util.navigateParamsToHome
 import com.example.gardenbotapp.util.setAsActionBar
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 open class MainActivity : AppCompatActivity() {
 
-    private lateinit var navController: NavController
+    lateinit var navController: NavController
     val notificationsList = arrayListOf<Notification>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +55,7 @@ open class MainActivity : AppCompatActivity() {
                 finish()
             }
             getCurrentFragment() is ParametersFragment -> {
-                navController.navigate(ParametersFragmentDirections.actionParametersFragmentToHomeFragment())
+                navigateParamsToHome()
             }
             else -> super.onBackPressed()
         }

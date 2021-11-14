@@ -16,3 +16,4 @@ local.properties
 /.idea/
 /app/src/main/graphql/com/example/gardenbotapp/schema.graphql
 /app/src/main/graphql/com/example/gardenbotapp/schema.json
+/.idea/

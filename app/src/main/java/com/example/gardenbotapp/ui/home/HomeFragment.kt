@@ -15,6 +15,8 @@ import com.example.gardenbotapp.databinding.FragmentHomeBinding
 import com.example.gardenbotapp.ui.MainActivity
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.util.Errors
+import com.example.gardenbotapp.util.navigateHomeToLogin
+import com.example.gardenbotapp.util.navigateHomeToParams
 import com.example.gardenbotapp.util.snack
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
@@ -35,7 +37,7 @@ class HomeFragment : GardenbotBaseFragment<FragmentHomeBinding, HomeViewModel>()
     override fun observeLiveData() {
         viewModel.deviceId.observe(viewLifecycleOwner, { deviceID ->
             if (deviceID.isEmpty()) {
-//                findNavController().navigate(R.id.onboarding)
+//                activity?.navigateToOnboarding()
             }
         })
 
@@ -44,7 +46,7 @@ class HomeFragment : GardenbotBaseFragment<FragmentHomeBinding, HomeViewModel>()
                 when (event) {
                     is Errors.TokenError -> {
                         binding.root.snack(event.message!!, Snackbar.LENGTH_SHORT)
-                        findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToLoginFragment())
+                        activity?.navigateHomeToLogin()
                     }
                     is Errors.HomeError -> binding.root.snack(event.message)
                     else -> Log.i(TAG, "onViewCreated: $event")
@@ -64,7 +66,7 @@ class HomeFragment : GardenbotBaseFragment<FragmentHomeBinding, HomeViewModel>()
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return if (item.itemId == R.id.action_config) {
-            findNavController().navigate(HomeFragmentDirections.actionHomeFragmentToParametersFragment())
+            activity?.navigateHomeToParams()
             true
         } else super.onOptionsItemSelected(item)
     }

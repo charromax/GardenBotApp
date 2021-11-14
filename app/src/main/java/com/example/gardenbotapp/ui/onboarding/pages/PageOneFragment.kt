@@ -10,6 +10,7 @@ package com.example.gardenbotapp.ui.onboarding.pages
  import com.example.gardenbotapp.databinding.FragmentPageOneBinding
  import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
  import com.example.gardenbotapp.ui.onboarding.OnboardingViewModel
+ import com.example.gardenbotapp.util.navigateOnboardingPageTwo
  import com.example.gardenbotapp.util.snack
  import dagger.hilt.android.AndroidEntryPoint
  import java.util.*
@@ -32,7 +33,7 @@ package com.example.gardenbotapp.ui.onboarding.pages
      override fun setClickListeners() {
          setTextWatcher()
          binding.submitBtn.setOnClickListener {
-             findNavController().navigate(PageOneFragmentDirections.actionPageOneFragmentToPageTwoFragment())
+             activity?.navigateOnboardingPageTwo()
              binding.root.snack(getString(R.string.init_activation))
          }
      }

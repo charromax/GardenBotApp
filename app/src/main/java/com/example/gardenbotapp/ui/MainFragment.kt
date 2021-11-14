@@ -8,6 +8,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.gardenbotapp.R
+import com.example.gardenbotapp.util.navigateMainToHome
+import com.example.gardenbotapp.util.navigateMainToLogin
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -18,16 +20,8 @@ class MainFragment : Fragment(R.layout.fragment_main) {
         super.onViewCreated(view, savedInstanceState)
         mainViewModel.checkAutologin()
         mainViewModel.isValidToken.observe(viewLifecycleOwner, { isValidToken ->
-            if (isValidToken) navigateHome() else
-                navigateLogin()
+            if (isValidToken) activity?.navigateMainToHome() else
+                activity?.navigateMainToLogin()
         })
-    }
-
-    private fun navigateLogin() {
-        findNavController().navigate(MainFragmentDirections.actionMainFragmentToLoginFragment())
-    }
-
-    private fun navigateHome() {
-        findNavController().navigate(MainFragmentDirections.actionMainFragmentToHomeFragment())
     }
 }

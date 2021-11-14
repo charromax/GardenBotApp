@@ -10,6 +10,7 @@ import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentPageTwoBinding
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.example.gardenbotapp.ui.onboarding.OnboardingViewModel
+import com.example.gardenbotapp.util.navigateOnboardingPageThree
 import com.example.gardenbotapp.util.snack
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -31,7 +32,7 @@ class PageTwoFragment : GardenbotBaseFragment<FragmentPageTwoBinding, Onboarding
                         event.message
                     )
                     OnboardingViewModel.OnboardingEvents.OnboardingSuccess -> {
-                        findNavController().navigate(PageTwoFragmentDirections.actionPageTwoFragmentToEndPageFragment())
+                        activity?.navigateOnboardingPageThree()
                     }
                     is OnboardingViewModel.OnboardingEvents.TokenError -> event.message?.let {
                         binding.root.snack(it)

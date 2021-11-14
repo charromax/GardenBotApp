@@ -8,14 +8,11 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentRegisterUserBinding
+import com.example.gardenbotapp.ui.MainActivity
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
-import com.example.gardenbotapp.util.UIState
-import com.example.gardenbotapp.util.enable
-import com.example.gardenbotapp.util.snack
-import com.example.gardenbotapp.util.visible
+import com.example.gardenbotapp.util.*
 import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
@@ -29,8 +26,7 @@ class RegisterFragment : GardenbotBaseFragment<FragmentRegisterUserBinding, Regi
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun setUpUI() {
-        activity?.title = getString(R.string.register_label)
-//        (activity as MainActivity).changeTitle(getString(R.string.register)) check which one works
+        (activity as? MainActivity)?.changeTitle(getString(R.string.register))
         setUIState(UIState.READY)
     }
 
@@ -45,7 +41,7 @@ class RegisterFragment : GardenbotBaseFragment<FragmentRegisterUserBinding, Regi
                 "Bienvenidx ${it.username}!",
                 Snackbar.LENGTH_SHORT
             )
-            findNavController().navigate(RegisterFragmentDirections.actionRegisterFragmentToOnboardingActivity())
+            activity?.navigateToOnboarding()
         })
         collectEventsFlow()
     }
