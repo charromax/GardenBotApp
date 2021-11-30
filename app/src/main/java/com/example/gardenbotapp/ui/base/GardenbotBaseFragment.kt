@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
+import com.example.gardenbotapp.ui.MainActivity
 
 abstract class GardenbotBaseFragment<VBinding : ViewBinding, VM : ViewModel> : Fragment() {
     open var useSharedViewModel: Boolean = false
@@ -47,9 +48,15 @@ abstract class GardenbotBaseFragment<VBinding : ViewBinding, VM : ViewModel> : F
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setUpActionBar()
         setUpUI()
         observeLiveData()
         setClickListeners()
+    }
+
+    open fun setUpActionBar() {
+        (activity as? MainActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        (activity as? MainActivity)?.supportActionBar?.setHomeButtonEnabled(true)
     }
 
     /**

@@ -19,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.gardenbotapp.databinding.FragmentAutopilotParamsBinding
+import com.example.gardenbotapp.ui.MainActivity
 import com.example.gardenbotapp.ui.autopilot_parameters.composables.ParametersScreenMain
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
 import com.google.android.material.composethemeadapter.MdcTheme

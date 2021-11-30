@@ -29,8 +29,13 @@ class HomeFragment : GardenbotBaseFragment<FragmentHomeBinding, HomeViewModel>()
     override fun getViewBinding() = FragmentHomeBinding.inflate(layoutInflater)
     override fun getViewModelClass() = HomeViewModel::class.java
 
+    override fun setUpActionBar() {
+        (activity as? MainActivity)?.supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        (activity as? MainActivity)?.supportActionBar?.setHomeButtonEnabled(false)
+    }
+
     override fun setUpUI() {
-        (activity as MainActivity).changeTitle(getString(R.string.gardenhome))
+        (activity as? MainActivity)?.changeTitle(getString(R.string.gardenhome))
         setHasOptionsMenu(true)
     }
 
