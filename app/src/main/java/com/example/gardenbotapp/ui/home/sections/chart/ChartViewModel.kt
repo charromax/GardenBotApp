@@ -8,9 +8,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.net.Uri
-import android.util.DisplayMetrics
 import android.view.View
-import android.widget.FrameLayout
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
@@ -26,7 +24,10 @@ import com.example.gardenbotapp.util.MAX_ALLOWED_TEMPERATURE
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.retryWhen
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -47,8 +48,8 @@ class ChartViewModel @Inject constructor(
     val chartEvents = chartEventsChannel.receiveAsFlow()
     private val _measureSub = MutableLiveData<Measure>()
     val measureSub: LiveData<Measure> get() = _measureSub
-    private val _chartScreenShot = MutableLiveData<Uri>()
-    val chartScreenShot: LiveData<Uri> get() = _chartScreenShot
+    private val _chartScreenShot = MutableLiveData<Uri?>()
+    val chartScreenShot: LiveData<Uri?> get() = _chartScreenShot
     private val IMAGES_DIR = "images"
     private val FILENAME = "chart.png"
 
@@ -114,7 +115,10 @@ class ChartViewModel @Inject constructor(
                     }
             } catch (e: Exception) {
                 e.message?.let { message ->
-                    chartEventsChannel.send(Errors.HomeError(message))
+                    if (message.contains("[Invalid/Expired token]"))
+                        chartEventsChannel.send(Errors.TokenError(message))
+                    else
+                        chartEventsChannel.send(Errors.HomeError(message))
                 }
             }
         }
@@ -186,5 +190,9 @@ class ChartViewModel @Inject constructor(
                 )
             _chartScreenShot.postValue(contentUri)
         }
+    }
+
+    fun clearScreenShot() {
+        _chartScreenShot.value = null
     }
 }

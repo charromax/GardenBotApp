@@ -4,7 +4,6 @@
 
 package com.example.gardenbotapp.ui.home.sections.chart
 
-import android.net.Uri
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
@@ -14,11 +13,9 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.gardenbotapp.R
 import com.example.gardenbotapp.databinding.FragmentChartBinding
 import com.example.gardenbotapp.ui.base.GardenbotBaseFragment
+import com.example.gardenbotapp.util.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
-import android.content.Intent
-import com.example.gardenbotapp.util.*
-import kotlinx.coroutines.flow.collectLatest
 
 
 @AndroidEntryPoint
@@ -76,10 +73,12 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
                     is Errors.ChartError -> showSnack(event.message)
                     is Errors.HomeError -> showSnack(event.message)
                     is Errors.SubError -> showSnack(event.message)
-                    is Errors.TokenError -> showSnack(getString(R.string.network_error_message))
+                    is Errors.TokenError -> {
+                        showSnack(event.message)
+                        activity?.navigateHomeToLogin()
+                    }
                 }
             }
-
         }
     }
 
@@ -122,8 +121,11 @@ class ChartFragment : GardenbotBaseFragment<FragmentChartBinding, ChartViewModel
             binding.soilHumLiveView.setProgress(it, true)
         })
 
-        viewModel.chartScreenShot.observe(viewLifecycleOwner) {
-            activity?.shareImage(it)
+        viewModel.chartScreenShot.observe(viewLifecycleOwner) {shot ->
+            shot?.let {
+                activity?.shareImage(it)
+                viewModel.clearScreenShot()
+            }
         }
     }
 
